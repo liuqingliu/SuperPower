@@ -1,0 +1,58 @@
+body{
+    background-color: #f7f7f7;
+    font-family: "Microsoft YaHei";
+}
+
+.header{
+    height:7.5rem;
+    background-color:#f15a24;
+    padding: 0.75rem 1.75rem;
+}
+
+.header .header-img{
+    height: 5.9375rem;
+    width: 5.9375rem;
+}
+
+.header .header-title{
+    color: #fff;
+    margin-left: 1rem;
+}
+
+.header .bind-phone{
+    margin-top:2.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+}
+
+.header .header-title span{
+    display: inherit;
+}
+
+.header .header-title .higher-title{
+    font-size: 1.5rem;
+}
+
+.header .header-title .lower-title{
+    font-size: 1.25rem;
+}
+
+.header .header-title .sub-title-1{
+    margin-top:0.625rem;
+}
+
+.header .header-title .sub-title-2{
+    margin-top:0.5rem;
+}
+
+.main{
+    margin-top: 1.4375rem;
+}
+
+.main .list-group-item{
+    height: 4.0625rem;
+}
+.main .list-group-item img{
+    width:2.375rem;
+    height:2.375rem;
+}
