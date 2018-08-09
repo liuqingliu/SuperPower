@@ -52,8 +52,21 @@ body{
 
 .main .list-group-item{
     height: 4.0625rem;
+    border: 0;
 }
 .main .list-group-item img{
     width:2.375rem;
     height:2.375rem;
 }
+
+.main .item-hr{
+    height: 1px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+}
+
+.item-hr hr{
+    margin:0;
+}
+
