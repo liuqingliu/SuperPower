@@ -26,9 +26,9 @@
     <div class="header-title pull-left">
         <span class="higher-title">Tristan</span>
         <span class="lower-title sub-title-1">账号：15701160070</span>
-        <span class="lower-title sub-title-2">点这里绑定手机号，享更多优惠</span>
+        <span class="lower-title">点这里绑定手机号，享更多优惠</span>
     </div>
-    <img src="P1_01.png" alt="绑定手机号" class="img-rounded bind-phone pull-right">
+    <img src="{{URL::asset('images/p1_01.png')}}" alt="绑定手机号" class="img-rounded bind-phone pull-right">
 </section>
 <section class="main container">
     <ul class="list-group">

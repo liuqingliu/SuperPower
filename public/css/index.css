@@ -35,15 +35,16 @@ body{
 
 .header .header-title .lower-title{
     font-size: 1.25rem;
+    margin-top:0.3rem;
 }
 
 .header .header-title .sub-title-1{
-    margin-top:0.625rem;
+    margin-top:0.425rem;
 }
 
-.header .header-title .sub-title-2{
-    margin-top:0.5rem;
-}
+/*.header .header-title .sub-title-2{*/
+    /*margin-top:0.4rem;*/
+/*}*/
 
 .main{
     margin-top: 1.4375rem;
