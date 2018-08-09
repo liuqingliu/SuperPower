@@ -11,7 +11,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <!-- 私有 -->
-    <link href="index.css" rel="stylesheet">
+    <link href="{{URL::asset('css/index.css')}}" rel="stylesheet">
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
     <!--[if lt IE 9]>
@@ -22,7 +22,7 @@
 <body>
 <!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
 <section class="header container">
-    <img src="header.png" alt="头像" class="img-rounded header-img pull-left">
+    <img src="{{URL::asset('images/header.png')}}" alt="头像" class="img-rounded header-img pull-left">
     <div class="header-title pull-left">
         <span class="higher-title">Tristan</span>
         <span class="lower-title sub-title-1">账号：15701160070</span>
@@ -33,38 +33,38 @@
 <section class="main container">
     <ul class="list-group">
         <li class="list-group-item">
-            <img src="p1_02.png" alt="头像" class="img-rounded header-img pull-left">
+            <img src="{{URL::asset('images/p1_02.png')}}" alt="头像" class="img-rounded header-img pull-left">
             <span>账户充值(余额：18.26元)</span>
             <span>充值优惠</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_02.png" class="pull-left">
+            <img src="{{URL::asset('images/p1_04.png')}}" class="pull-left">
             <span class="pull-left">我的充电记录</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_04.png" class="pull-left">
+            <img src="{{URL::asset('images/p1_05.png')}}" class="pull-left">
             <span class="pull-left">电卡充值</span>
             <span class="pull-right">多充多送</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_05.png" class="pull-left">
+            <img src="{{URL::asset('images/p1_06.png')}}" class="pull-left">
             <span class="pull-left">正在充电</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_06.png" class="pull-left">
+            <img src="{{URL::asset('images/p1_07.png')}}" class="pull-left">
             <span class="pull-left">附近电站</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_07.png" class="pull-left">
+            <img src="{{URL::asset('images/p1_08.png')}}" class="pull-left">
             <span class="pull-left">运营商管理平台</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_08.png" class="pull-left">
+            <img src="{{URL::asset('images/p1_09.png')}}" class="pull-left">
             <span class="pull-left">诚邀合伙人加盟</span>
             <span class="pull-right">合作方式丰富多样</span>
         </li>
         <li class="list-group-item">
-            <img src="p1_09.png">
+            <img src="{{URL::asset('images/p1_10.png')}}">
             <span>关于</span>
         </li>
     </ul>

@@ -5,12 +5,14 @@
  * Date: 2018/8/9
  * Time: 7:39
  */
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     public function index()
     {
-        var_dump("111");exit;
+        return view('center/index');
     }
 }
