@@ -11,7 +11,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <!-- 私有 -->
-    <link href="{{URL::asset('css/index.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('css/index.css?1.2')}}" rel="stylesheet">
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
     <!--[if lt IE 9]>
@@ -41,6 +41,8 @@
             <img src="{{URL::asset('images/p1_04.png')}}" class="pull-left">
             <span class="pull-left">我的充电记录</span>
         </li>
+    </ul>
+    <ul class="list-group">
         <li class="list-group-item">
             <img src="{{URL::asset('images/p1_05.png')}}" class="pull-left">
             <span class="pull-left">电卡充值</span>
@@ -54,6 +56,8 @@
             <img src="{{URL::asset('images/p1_07.png')}}" class="pull-left">
             <span class="pull-left">附近电站</span>
         </li>
+    </ul>
+    <ul class="list-group">
         <li class="list-group-item">
             <img src="{{URL::asset('images/p1_08.png')}}" class="pull-left">
             <span class="pull-left">运营商管理平台</span>
