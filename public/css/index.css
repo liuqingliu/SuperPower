@@ -3,6 +3,7 @@ body{
     font-family: "Microsoft YaHei";
 }
 
+/*header头*/
 .header{
     height:7.5rem;
     background-color:#f15a24;
@@ -42,9 +43,7 @@ body{
     margin-top:0.425rem;
 }
 
-/*.header .header-title .sub-title-2{*/
-    /*margin-top:0.4rem;*/
-/*}*/
+/*中间主体*/
 
 .main .list-group{
     margin-top: 1.4375rem;
@@ -69,4 +68,55 @@ body{
 .item-hr hr{
     margin:0;
 }
+
+.main .list-group-item .img-left{
+    margin-left: 1.4375rem;
+    margin-top: 0.4rem;
+}
+
+.main .list-group-item .img-right{
+    margin-top: 0.4rem;
+    position: relative;
+}
+
+.main .list-group-item .font-1{
+    font-size: 1.4375rem;
+    color: #777777;
+}
+
+.main .list-group-item .font-2{
+    font-size: 1.4375rem;
+    color: #b3b3b3;
+}
+
+.hint-img{
+    display:block;
+    background:#f00;
+    border-radius:100%;
+    width:0.5rem;
+    height:0.5rem;
+    top:0rem;
+    right:-0.5rem;
+    position:absolute;
+}
+/*底部导航*/
+.footer .navbar{
+    height:  7.5rem;
+    padding-top:2.5rem;
+}
+.footer .bottom-img{
+    height: 2.0625rem;
+    width: 2.375rem
+}
+
+.footer .font-3{
+    font-size: 1.25rem;
+    color: #777777;
+}
+
+.footer .font-4{
+    font-size: 1.25rem;
+    color: #f15a24;
+}
+
 
