@@ -107,9 +107,10 @@ html {
 /*底部导航*/
 .footer .navbar{
     height: 4.5625rem;
-    padding-top:1.0625rem;
+    padding-top:0.6rem;
     background-color: #fafafa;
 }
+
 .footer .bottom-img{
     height: 2.0625rem;
     width: 2.375rem

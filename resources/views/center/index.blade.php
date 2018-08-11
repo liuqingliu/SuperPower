@@ -80,20 +80,20 @@
 </section>
 <section class="footer">
     <nav class="navbar  navbar-fixed-bottom" role="navigation">
-        <div class="row container">
-            <div class="col-xs-4">
+        <div class="row">
+            <div class="col-xs-4 col-md-4 col-lg-4">
                 <a href="#">
                     <img src="{{URL::asset('images/p1_11_on.png')}}" class="bottom-img img-responsive center-block">
                     <span class="text-center center-block font-3">正在充电</span>
                 </a>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-4 col-md-4 col-lg-4">
                 <a href="#">
                     <img src="{{URL::asset('images/p1_12_off.png')}}" class="bottom-img img-responsive center-block">
                     <span class="text-center center-block font-3">扫码充电</span>
                 </a>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-4 col-md-4 col-lg-4">
                 <a href="#">
                     <img src="{{URL::asset('images/p1_13_on.png')}}" class="bottom-img img-responsive center-block">
                     <span class="text-center center-block font-4">个人中心</span>
