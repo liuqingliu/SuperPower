@@ -21,7 +21,7 @@
 </head>
 <body>
 <!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
-<section class="header container">
+<section class="header">
     <img src="{{URL::asset('images/header.png')}}" alt="头像" class="img-rounded header-img pull-left">
     <div class="header-title pull-left">
         <span class="higher-title">Tristan</span>

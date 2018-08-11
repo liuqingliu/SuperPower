@@ -1,13 +1,18 @@
 body{
     background-color: #f7f7f7;
     font-family: "Microsoft YaHei";
+    height: 57.5rem;
+}
+
+html {
+    font-size: 62.5%; /*10 ÷ 16 × 100% = 62.5%*/
 }
 
 /*header头*/
 .header{
     height:7.5rem;
     background-color:#f15a24;
-    padding: 0.75rem 1.75rem;
+    padding: 0.75rem 1.25rem;
 }
 
 .header .header-img{
@@ -101,8 +106,9 @@ body{
 }
 /*底部导航*/
 .footer .navbar{
-    height:  7.5rem;
-    padding-top:2.5rem;
+    height: 4.5625rem;
+    padding-top:1.0625rem;
+    background-color: #fafafa;
 }
 .footer .bottom-img{
     height: 2.0625rem;
