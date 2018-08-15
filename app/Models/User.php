@@ -15,7 +15,14 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'headimgurl', //微信头像
+        'nickname', //微信昵称
+        'phone', //用户手机号
+        'last_login_time',//最后登录时间
+        'user_status',//用户状态
+        'user_money',//用户余额
+        'charging_total_cnt',//累计充电次数
+        'charging_total_time'//累计充电时长
     ];
 
     /**
@@ -24,6 +31,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'openid', 'user_id',
     ];
 }
