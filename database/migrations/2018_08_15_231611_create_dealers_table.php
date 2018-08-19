@@ -16,18 +16,17 @@ class CreateDealersTable extends Migration
     {
         Schema::create('dealers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('order_id',16)->unique();
-            $table->string('user_id',16)->unique();
-            $table->string('id_card',32);
-            $table->string('parent_user_id',16)->index();
-            $table->string('province',16);
-            $table->string('city',16);
-            $table->string('area',32);
-            $table->string('name',16);
-            $table->integer('total_income',false,true);//总收益
-            $table->integer('income_withdraw',false,true);//经销商可提现收益
-            $table->integer('give_proportion',false,true);//抽成比例值，计算需成0.01
-            $table->string('remark');
+            $table->string('user_id',16)->unique()->default("");
+            $table->string('id_card',32)->default("");
+            $table->string('parent_user_id',16)->index()->default("");
+            $table->string('province',16)->default("");
+            $table->string('city',16)->default("");
+            $table->string('area',32)->default("");
+            $table->string('name',16)->default("");
+            $table->integer('total_income',false,true)->default(0);//总收益
+            $table->integer('income_withdraw',false,true)->default(0);//经销商可提现收益
+            $table->integer('give_proportion',false,true)->default(0);//抽成比例值，计算需成0.01
+            $table->string('remark')->default("");
             $table->timestamps();
         });
     }
@@ -39,6 +38,6 @@ class CreateDealersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('dealers');
     }
 }

@@ -16,19 +16,20 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id',16)->unique();
-            $table->string('openid',34)->index();
-            $table->string('headimgurl');
-            $table->string('nickname',16);
-            $table->string('phone',16)->index();
-            $table->tinyInteger('user_type',false,true);
-            $table->tinyInteger('user_status',false,true);
-            $table->string('ip',16);
+            $table->string('user_id',16)->unique()->default("");
+            $table->string('openid',34)->index()->default("");
+            $table->string('headimgurl')->default("");
+            $table->string('nickname',16)->default("");
+            $table->string('phone',22)->index()->default("");
+            $table->tinyInteger('user_type',false,true)->default(0);
+            $table->tinyInteger('user_status',false,true)->default(0);
+            $table->string('ip',16)->default("");
             $table->dateTime('user_last_login');
-            $table->integer('user_money',false,true);
-            $table->integer('charging_total_cnt',false,true);
-            $table->integer('charging_total_time',false,true);//秒为单位
+            $table->integer('user_money',false,true)->default(0);
+            $table->integer('charging_total_cnt',false,true)->default(0);
+            $table->integer('charging_total_time',false,true)->default(0);//秒为单位
             $table->timestamps();
+
         });
     }
 

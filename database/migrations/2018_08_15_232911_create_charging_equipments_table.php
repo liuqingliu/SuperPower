@@ -17,16 +17,16 @@ class CreateChargingEquipmentsTable extends Migration
         Schema::create('charging_equipments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('equipment_id',16)->unique();
-            $table->string('province',16);
-            $table->string('city',16);
-            $table->string('area',32);
-            $table->string('street',32);
-            $table->string('address',64);
-            $table->tinyInteger('equipment_status',false, true);
-            $table->string('jack_info');
-            $table->tinyInteger('net_status',false,true);//联网状态
-            $table->integer('charging_cost',false,true);//充电成本
-            $table->integer('charging_unit_price',false,true);//充电单价
+            $table->string('province',16)->default("");
+            $table->string('city',16)->default("");
+            $table->string('area',32)->default("");
+            $table->string('street',32)->default("");
+            $table->string('address',64)->default("");
+            $table->tinyInteger('equipment_status',false, true)->default(0);
+            $table->string('jack_info')->default("");
+            $table->tinyInteger('net_status',false,true)->default(0);//联网状态
+            $table->integer('charging_cost',false,true)->default(0);//充电成本
+            $table->integer('charging_unit_price',false,true)->default(0);//充电单价
             $table->dateTime('active_time');
             $table->string('parent_user_id',16)->index();
             $table->timestamps();
@@ -40,6 +40,6 @@ class CreateChargingEquipmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('charging_equipments');
     }
 }

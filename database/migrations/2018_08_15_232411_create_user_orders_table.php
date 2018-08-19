@@ -16,12 +16,12 @@ class CreateUserOrdersTable extends Migration
     {
         Schema::create('user_orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('order_id',16)->unique();
-            $table->integer('price',false,true);
-            $table->tinyInteger('order_status',false,true);
-            $table->string('openid',34)->index();
-            $table->tinyInteger('order_type',false,true);
-            $table->string('pay_id',64);//支付回调id（真正的支付id）
+            $table->string('order_id',16)->unique()->default("");
+            $table->integer('price',false,true)->default(0);
+            $table->tinyInteger('order_status',false,true)->default(0);
+            $table->string('openid',34)->index()->default("");
+            $table->tinyInteger('order_type',false,true)->default(0);
+            $table->string('pay_id',64)->default("");//支付回调id（真正的支付id）
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ class CreateUserOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('user_orders');
     }
 }
