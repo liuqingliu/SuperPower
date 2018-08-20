@@ -7,8 +7,8 @@
  */
 namespace App\Http\Controllers;
 use App\Models\Logic\Order;
+use App\Models\User;
 use App\Models\UserOrder;
-use App\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -57,5 +57,13 @@ class UserController extends Controller
     public function about()
     {
         return view('user/about');
+    }
+
+    //更新用户手机号，由于只能自己更新自己手机号，所以没有参数
+    public function updateUserPhone()
+    {
+        $userId = "1";
+        $userInfo = User::find($userId);
+
     }
 }
