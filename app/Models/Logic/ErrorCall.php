@@ -11,4 +11,6 @@ namespace App\Models\Logic;
 class ErrorCall
 {
     public static $errSucc = ["errno" => "0", "errmsg" => "ok"];
+    public static $errNotFoundInfo = ["errno" => "1", "errmsg" => "没发现信息"];
+    public static $errParams = ["errno"=>"2","errmsg"=>"参数错误"];
 }

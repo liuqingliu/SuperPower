@@ -16,3 +16,7 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::get('/user/updateUserPhone','UserController@updateUserPhone');//更新用户手机号
+Route::get('/electric/getrechargelog','ElectricController@getRechargeLog');//获取用户的充电记录

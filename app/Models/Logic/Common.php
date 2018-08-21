@@ -23,4 +23,9 @@ class Common
         return ($unitPrice * 0.01 * 1.0 / 60.0) * $time;//unit单位是分，换为元，再算一个小时的，乘以时间就是花费
     }
 
+    public static function myJson($errArr, $data = null)
+    {
+        return response()->json(['errno'=>1,'errmsg'=>$errArr["errmsg"],'result'=>$data]);
+    }
+
 }

@@ -7,9 +7,9 @@
  */
 namespace App\Http\Controllers;
 
-use App\Models\ChargingEquipment;
 use App\Models\ElectricCardOrder;
 use App\Models\Logic\Common;
+use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
 use App\Models\UserRechargeOrder;
 use Illuminate\Http\Request;
@@ -57,5 +57,27 @@ class ElectricController extends Controller
     public function rechargelog()
     {
         return view('electric/rechargelog');
+    }
+
+    public function getRechargeLog(Request $request)
+    {
+        $count = isset($request->count) ? (int)$request->count : 10;
+        $userId = 1;
+        $data = UserRechargeOrder::with("chargingEquipment")->where("user_id", $userId)->orderBy('created_at', 'desc')->paginate($count);
+        return Common::myJson(ErrorCall::$errSucc, $data->toArray());
+    }
+
+    public function updateCharging(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'count' => 'sometimes|int|max:20|min:1',
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams);
+        }
+        $count = isset($request->count) ? (int)$request->count : 10;
+        $userId = 1;
+        $data = UserRechargeOrder::with("chargingEquipment")->where("user_id", $userId)->orderBy('created_at', 'desc')->paginate($count);
+        return Common::myJson(ErrorCall::$errSucc, $data->toArray());
     }
 }

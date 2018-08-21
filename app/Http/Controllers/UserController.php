@@ -9,7 +9,9 @@ namespace App\Http\Controllers;
 use App\Models\Logic\Order;
 use App\Models\User;
 use App\Models\UserOrder;
+use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
+use Validator;
 
 class UserController extends Controller
 {
@@ -59,11 +61,19 @@ class UserController extends Controller
         return view('user/about');
     }
 
-    //更新用户手机号，由于只能自己更新自己手机号，所以没有参数
-    public function updateUserPhone()
+    //更新用户手机号
+    public function updateUserPhone(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'phone' => ['required',new ValidatePhoneRule],
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status'=>1,'msg'=>'更新失败！']);
+        }
         $userId = "1";
         $userInfo = User::find($userId);
-
+        $userInfo->phone = $request->phone;
+        $res = $userInfo->save();
+        return response()->json(['status'=>0,'msg'=>'更新成功！','data'=>$res]);
     }
 }
