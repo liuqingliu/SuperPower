@@ -14,7 +14,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'App\Events\Event' => [
-            'App\Listeners\EventListener',
+//            'App\Listeners\EventListener',
+            'App\Listeners\CreateUserListener',//生成用户监听事件
         ],
     ];
 
