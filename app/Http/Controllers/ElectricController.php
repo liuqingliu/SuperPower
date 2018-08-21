@@ -61,14 +61,6 @@ class ElectricController extends Controller
 
     public function getRechargeLog(Request $request)
     {
-        $count = isset($request->count) ? (int)$request->count : 10;
-        $userId = 1;
-        $data = UserRechargeOrder::with("chargingEquipment")->where("user_id", $userId)->orderBy('created_at', 'desc')->paginate($count);
-        return Common::myJson(ErrorCall::$errSucc, $data->toArray());
-    }
-
-    public function updateCharging(Request $request)
-    {
         $validator = Validator::make($request->all(), [
             'count' => 'sometimes|int|max:20|min:1',
         ]);
@@ -79,5 +71,24 @@ class ElectricController extends Controller
         $userId = 1;
         $data = UserRechargeOrder::with("chargingEquipment")->where("user_id", $userId)->orderBy('created_at', 'desc')->paginate($count);
         return Common::myJson(ErrorCall::$errSucc, $data->toArray());
+    }
+
+    public function updateChargingOrder(Request $request)
+    {
+        $userId = 1;
+        $chargingOrderInfo = UserRechargeOrder::find($userId);
+        if($chargingOrderInfo["user_id"]!=$userId){
+            return Common::myJson(ErrorCall::$errNotSelfUser);
+        }
+        if($chargingOrderInfo["recharge_status"]!=0){
+            return Common::myJson(ErrorCall::$errChargingStatus);
+        }
+        $chargingOrderInfo->recharge_status = 1;//停止充电
+        $chargingOrderInfo->recharge_time = time()-strtotime($chargingOrderInfo->created_at);//单位秒
+        $res = $chargingOrderInfo->save();
+        if(!$res){
+            return Common::myJson(ErrorCall::$errNet);
+        }
+        return Common::myJson(ErrorCall::$errSucc);
     }
 }

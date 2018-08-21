@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/user/updateUserPhone','UserController@updateUserPhone');//更新用户手机号
 Route::get('/electric/getrechargelog','ElectricController@getRechargeLog');//获取用户的充电记录
+Route::post('/electric/updateChargingOrder','ElectricController@updateChargingOrder');//停止充电
