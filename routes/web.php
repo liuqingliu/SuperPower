@@ -18,10 +18,6 @@ Route::get('/', function () {
 Route::any('/wechat', 'WeChatController@serve');
 
 Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo']], function () {
-    Route::get('/user/center', function () {
-//        $user = session('wechat.oauth_user'); // 拿到授权用户资料
-//        dd($user);
-    });
     Route::get('/user/center', 'UserController@center')->name('user_center');
     Route::get('/user/detail', 'UserController@detail')->name('user_detail');
     Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');

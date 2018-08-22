@@ -7,6 +7,7 @@
  */
 namespace App\Http\Controllers;
 
+use App\Models\ElectricCard;
 use App\Models\ElectricCardOrder;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
@@ -61,34 +62,65 @@ class ElectricController extends Controller
 
     public function getRechargeLog(Request $request)
     {
+        $userInfo = session("user_info");
+        if(empty($userInfo)){
+            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
+        }
         $validator = Validator::make($request->all(), [
             'count' => 'sometimes|int|max:20|min:1',
         ]);
         if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams);
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $count = isset($request->count) ? (int)$request->count : 10;
-        $userId = 1;
-        $data = UserRechargeOrder::with("chargingEquipment")->where("user_id", $userId)->orderBy('created_at', 'desc')->paginate($count);
+        $data = UserRechargeOrder::with("chargingEquipment")->where("openid", $userInfo->openid)->orderBy('created_at', 'desc')->paginate($count);
         return Common::myJson(ErrorCall::$errSucc, $data->toArray());
     }
 
+    //停止充电
     public function updateChargingOrder(Request $request)
     {
-        $userId = 1;
-        $chargingOrderInfo = UserRechargeOrder::find($userId);
-        if($chargingOrderInfo["user_id"]!=$userId){
+        $userInfo = session("user_info");
+        if(empty($userInfo)){
+            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
+        }
+        $chargingOrderInfo = UserRechargeOrder::where('openid',$userInfo->openid)->first();
+        if($chargingOrderInfo["user_id"]!=$request->order_id){
             return Common::myJson(ErrorCall::$errNotSelfUser);
         }
-        if($chargingOrderInfo["recharge_status"]!=0){
+        if($chargingOrderInfo["recharge_status"]!=Common::CHARGING_STATUS_DEFAULT){
             return Common::myJson(ErrorCall::$errChargingStatus);
         }
-        $chargingOrderInfo->recharge_status = 1;//停止充电
+        $chargingOrderInfo->recharge_status = Common::CHARGING_STATUS_STOP;//停止充电
         $chargingOrderInfo->recharge_time = time()-strtotime($chargingOrderInfo->created_at);//单位秒
         $res = $chargingOrderInfo->save();
         if(!$res){
             return Common::myJson(ErrorCall::$errNet);
         }
         return Common::myJson(ErrorCall::$errSucc);
+    }
+    //获取电卡信息
+    public function getElectricCardInfo(Request $request)
+    {
+        $userInfo = session("user_info");
+        if(empty($userInfo)){
+            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
+        }
+        $validator = Validator::make($request->all(), [
+            'electric_card_id' => 'required|int|max:20|min:10',
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $electricCardInfo = ElectricCard::where("card_id", $request->electric_card_id)->where("card_status", Common::ELETRIC_CARD_STATUS_DEFAULT)->first();
+        if(empty($electricCardInfo)) {
+            return Common::myJson(ErrorCall::$errElectricCardEmpaty);
+        }
+        return Common::myJson(ErrorCall::$errSucc, ["card_id" => $electricCardInfo->card_id, "bind_phone" => $electricCardInfo->bind_phone, "money" => $electricCardInfo->money]);
+    }
+
+    public function bindPhone()
+    {
+
     }
 }

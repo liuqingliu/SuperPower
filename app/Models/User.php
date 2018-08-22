@@ -24,6 +24,8 @@ class User extends Authenticatable
         'charging_total_cnt',//累计充电次数
         'charging_total_time',//累计充电时长
         'ip',//用户注册ip
+        'openid',
+        'user_id',
     ];
 
     /**
@@ -32,8 +34,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'openid', 'user_id',
+
     ];
 
     public $timestamps = true;
+
+    public function dealer()
+    {
+        return $this->hasOne(Dealer::class, 'user_id', 'user_id');
+    }
 }

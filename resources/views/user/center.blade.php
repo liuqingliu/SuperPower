@@ -23,11 +23,15 @@
 <body>
 <!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
 <section class="header">
-    <img src="{{URL::asset('images/header.png')}}" alt="头像" class="img-rounded header-img pull-left">
+    <img src="{{URL::asset($user_info->headimgurl)}}" alt="头像" class="img-rounded header-img pull-left">
     <div class="header-title pull-left">
-        <span class="higher-title">Tristan</span>
-        <span class="lower-title sub-title-1">账号：15701160070</span>
+        <span class="higher-title">{{$user_info->nickname}}</span>
+        <span class="lower-title sub-title-1">账号：{{$user_info->user_id}}</span>
+        @if (empty($user_info->phone))
         <span class="lower-title">点这里绑定手机号，享更多优惠</span>
+        @else
+        <span class="lower-title">{{$user_info->phone}}</span>
+        @endif
     </div>
     <img src="{{URL::asset('images/p1_01.png')}}" alt="绑定手机号" class="img-rounded bind-phone pull-right">
 </section>
@@ -35,7 +39,7 @@
     <ul class="list-group">
         <li class="list-group-item">
             <img src="{{URL::asset('images/p1_02.png')}}" alt="头像" class="img-rounded header-img pull-left">
-            <span class="pull-left img-left font-1">账户充值(<span class="font-2">余额：18.261元</span>)</span>
+            <span class="pull-left img-left font-1">账户充值(<span class="font-2">余额：{{$user_info->user_money}}元</span>)</span>
             <span class="pull-right img-right font-2">充值优惠<i class="hint-img"></i></span>
         </li>
         <li class="list-group-item item-hr"><hr></li>

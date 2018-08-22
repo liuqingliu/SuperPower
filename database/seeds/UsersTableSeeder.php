@@ -13,6 +13,6 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $users = factory(User::class)->times(50)->make();
-        User::insert($users->makeVisible(['openid', 'user_id'])->toArray());
+        User::insert($users->toArray());
     }
 }

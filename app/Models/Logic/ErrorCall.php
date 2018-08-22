@@ -17,4 +17,8 @@ class ErrorCall
     public static $errNotSelfUser = ["errno" => 4, "errmsg" => "不是用户本人"];
     public static $errChargingStatus = ["errno" => 5, "errmsg" => "充电订单状态有误"];
     public static $errNet = ["errno" => 6, "errmsg" => "网络错误"];
+    public static $errPassword = ["errno" => 7, "errmsg" => "密码错误"];
+    public static $errOrderNotExist = ["errno" => 8, "errmsg" => "订单不存在"];
+    public static $errUserInfoExpired = ["errno" => 9, "errmsg" => "用户信息已过期"];
+    public static $errElectricCardEmpaty = ["errno" => 10, "errmsg" => "卡号不存在或未激活"];
 }

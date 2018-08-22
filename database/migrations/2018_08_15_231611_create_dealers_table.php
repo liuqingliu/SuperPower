@@ -27,6 +27,7 @@ class CreateDealersTable extends Migration
             $table->integer('income_withdraw',false,true)->default(0);//经销商可提现收益
             $table->integer('give_proportion',false,true)->default(0);//抽成比例值，计算需成0.01
             $table->string('remark')->default("");
+            $table->string('password',16)->default("");
             $table->timestamps();
         });
     }

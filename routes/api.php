@@ -13,11 +13,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 
-Route::get('/user/updateUserPhone','UserController@updateUserPhone');//更新用户手机号
-Route::get('/electric/getrechargelog','ElectricController@getRechargeLog');//获取用户的充电记录
-Route::post('/electric/updateChargingOrder','ElectricController@updateChargingOrder');//停止充电
+Route::post('/user/updateUserPhone', 'UserController@updateUserPhone');//更新用户手机号
+Route::get('/electric/getRechargeLog', 'ElectricController@getRechargeLog');//获取用户的充电记录
+Route::post('/electric/updateChargingOrder', 'ElectricController@updateChargingOrder');//停止充电
+Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo');//电卡详情
+Route::post('/electric/bindPhone', 'ElectricController@bindPhone');//电卡绑定手机号
