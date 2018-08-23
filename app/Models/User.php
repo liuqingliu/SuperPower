@@ -26,6 +26,7 @@ class User extends Authenticatable
         'ip',//用户注册ip
         'openid',
         'user_id',
+        'api_token'
     ];
 
     /**

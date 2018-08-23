@@ -26,5 +26,6 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
         'user_id' => $faker->unique()->buildingNumber,
         'openid' => $faker->randomLetter,
         'ip' => $faker->localIpv4,
+        'api_token' => $faker->unique(),
     ];
 });

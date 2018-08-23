@@ -28,6 +28,7 @@ class CreateUsersTable extends Migration
             $table->integer('user_money',false,true)->default(0);
             $table->integer('charging_total_cnt',false,true)->default(0);
             $table->integer('charging_total_time',false,true)->default(0);//秒为单位
+            $table->string('api_token',60)->default("");
             $table->timestamps();
 
         });

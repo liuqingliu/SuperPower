@@ -14,11 +14,15 @@ use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
 use App\Models\UserRechargeOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ElectricController extends Controller
 {
     public function cardorderpay()
     {
+        $userInfo = session(Common::SESSION_KEY_USER);
+        dd($userInfo);
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('electric/cardorderpay',[
@@ -62,10 +66,7 @@ class ElectricController extends Controller
 
     public function getRechargeLog(Request $request)
     {
-        $userInfo = session("user_info");
-        if(empty($userInfo)){
-            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
-        }
+        $userInfo = Auth::guard("api")->user();
         $validator = Validator::make($request->all(), [
             'count' => 'sometimes|int|max:20|min:1',
         ]);
@@ -80,10 +81,7 @@ class ElectricController extends Controller
     //停止充电
     public function updateChargingOrder(Request $request)
     {
-        $userInfo = session("user_info");
-        if(empty($userInfo)){
-            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
-        }
+        $userInfo = Auth::guard("api")->user();
         $chargingOrderInfo = UserRechargeOrder::where('openid',$userInfo->openid)->first();
         if($chargingOrderInfo["user_id"]!=$request->order_id){
             return Common::myJson(ErrorCall::$errNotSelfUser);
@@ -102,10 +100,6 @@ class ElectricController extends Controller
     //获取电卡信息
     public function getElectricCardInfo(Request $request)
     {
-        $userInfo = session("user_info");
-        if(empty($userInfo)){
-            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
-        }
         $validator = Validator::make($request->all(), [
             'electric_card_id' => 'required|int|max:20|min:10',
         ]);
@@ -116,11 +110,6 @@ class ElectricController extends Controller
         if(empty($electricCardInfo)) {
             return Common::myJson(ErrorCall::$errElectricCardEmpaty);
         }
-        return Common::myJson(ErrorCall::$errSucc, ["card_id" => $electricCardInfo->card_id, "bind_phone" => $electricCardInfo->bind_phone, "money" => $electricCardInfo->money]);
-    }
-
-    public function bindPhone()
-    {
-
+        return Common::myJson(ErrorCall::$errSucc, ["card_id" => $electricCardInfo->card_id,  "money" => $electricCardInfo->money]);
     }
 }

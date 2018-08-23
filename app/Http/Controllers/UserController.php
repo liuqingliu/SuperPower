@@ -15,14 +15,14 @@ use App\Models\User;
 use App\Models\UserOrder;
 use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function center(Request $request)
     {
         $wxUser = session('wechat.oauth_user');
-        $userInfo = session('user_info');
+        $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
             dd("请求非法");
         }
@@ -39,7 +39,7 @@ class UserController extends Controller
                 ]);
                 $userInfoReal = User::where("openid",$wxUser['default']->id)->where("user_status", Common::USER_TYPE_NORMAL)->first();
             }
-            session(['user_info' => $userInfoReal]);
+            session([Common::SESSION_KEY_USER => $userInfoReal]);
             $userInfo = $userInfoReal;
         }
 
@@ -57,11 +57,7 @@ class UserController extends Controller
 
     public function detail()
     {
-        $userInfo = session('user_info');
-        if (empty($userInfo)) {
-            return redirect('/user/center');
-        }
-
+        $userInfo = session(Common::SESSION_KEY_USER);
         return view('user/detail',[
             "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time"],$userInfo)
         ]);
@@ -69,10 +65,7 @@ class UserController extends Controller
 
     public function bindphone()
     {
-        $userInfo = session("user_info");
-        if (empty($userInfo)) {
-            return redirect('/user/center');
-        }
+        $userInfo = session(Common::SESSION_KEY_USER);
         return view('user/bindphone',[
             "user_info" => Common::getNeedObj(["phone"], $userInfo)
         ]);
@@ -81,10 +74,7 @@ class UserController extends Controller
 
     public function order()
     {
-        $userInfo = session("user_info");
-        if(empty($userInfo)){
-            return redirect('/user/center');
-        }
+        $userInfo = session(Common::SESSION_KEY_USER);
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('user/order',[
@@ -95,10 +85,7 @@ class UserController extends Controller
 
     public function orderanswser(Request $request)
     {
-        $userInfo = session("user_info");
-        if(empty($userInfo)){
-            return redirect('/user/center');
-        }
+        $userInfo = session(Common::SESSION_KEY_USER);
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|string|max:30|min:16',
         ]);
@@ -116,17 +103,13 @@ class UserController extends Controller
 
     public function about()
     {
-        $userInfo = session("user_info");
-        if(empty($userInfo)){
-            return redirect('/user/center');
-        }
         return view('user/about');
     }
 
     //更新用户手机号
     public function updateUserPhone(Request $request)
     {
-        $userInfo = session("user_info");
+        $userInfo = Auth::guard("api")->user();
         if(empty($userInfo)){
             return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
         }

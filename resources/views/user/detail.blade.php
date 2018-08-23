@@ -1,2 +1,1 @@
-<?php
-echo "111";
+{{$user_info}}

@@ -19,6 +19,7 @@ class ErrorCall
     public static $errNet = ["errno" => 6, "errmsg" => "网络错误"];
     public static $errPassword = ["errno" => 7, "errmsg" => "密码错误"];
     public static $errOrderNotExist = ["errno" => 8, "errmsg" => "订单不存在"];
-    public static $errUserInfoExpired = ["errno" => 9, "errmsg" => "用户信息已过期"];
+    public static $errUserInfoExpired = ["errno" => 9, "errmsg" => "用户信息已过期,请重新登录"];
     public static $errElectricCardEmpaty = ["errno" => 10, "errmsg" => "卡号不存在或未激活"];
+    public static $errInvalidRequest = ["errno" => 11, "errmsg" => "非法请求"];
 }
