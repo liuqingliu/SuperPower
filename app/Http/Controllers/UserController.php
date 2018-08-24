@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UserOrder;
 use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -35,10 +36,14 @@ class UserController extends Controller
                     'headimgurl'=>$wxUser['default']->avatar,
                     'nickname' => $wxUser['default']->nickname,
                     'ip' => $request->getClientIp(),
-                    'user_last_login' => date("Y-m-d H:i:s")
+                    'user_last_login' => date("Y-m-d H:i:s"),
+                    'api_token' => md5($wxUser['default']->id."cxm*#*".time()),
                 ]);
                 $userInfoReal = User::where("openid",$wxUser['default']->id)->where("user_status", Common::USER_TYPE_NORMAL)->first();
             }
+            $userInfoReal->user_last_login = date("Y-m-d H:i:s");
+            $userInfoReal->api_token = md5($wxUser['default']->id."cxm*#*".time());
+            $res = $userInfoReal->save();
             session([Common::SESSION_KEY_USER => $userInfoReal]);
             $userInfo = $userInfoReal;
         }
@@ -51,6 +56,7 @@ class UserController extends Controller
                 "user_money",
                 "user_id",
                 "user_type",
+                "api_token"
             ], $userInfo),
         ]);
     }

@@ -15,6 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', 'UserController@center')->name('login')->middleware('wechat.oauth:default,snsapi_userinfo');//这里是登录
+
 Route::any('/wechat', 'WeChatController@serve');
 
 Route::get('/user/center', 'UserController@center')->name('user_center')->middleware('wechat.oauth:default,snsapi_userinfo');
