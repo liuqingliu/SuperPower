@@ -8,7 +8,7 @@
         function jsApiCall()
         {
             WeixinJSBridge.invoke(
-                'getBrandWCPayRequest',{"appId":"wx604f85d199ae04c9","timeStamp":"1535205805","nonceStr":"5b8161ade0ff4","package":"prepay_id=wx252203258871748e3223e84b4087392516","signType":"MD5","paySign":"80F40EC449942FE8914801785AD8AF42"},
+                'getBrandWCPayRequest',{"appId":"wx604f85d199ae04c9","timeStamp":"1535206291","nonceStr":"5b816393b54cc","package":"prepay_id=wx2522113121896933df54b5b91814180647","signType":"MD5","paySign":"B1B1BAE3C83619FC261D44D94F18BA63"},
                 function(res){
                     WeixinJSBridge.log(res.err_msg);
                     alert(res.err_code+res.err_desc+res.err_msg);

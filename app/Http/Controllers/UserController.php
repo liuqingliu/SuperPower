@@ -188,6 +188,7 @@ class UserController extends Controller
 
         if(isset($result["prepay_id"])) {
             $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
+            Log::info("jssdk:".serialize($jssdk));
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
             $orderInfo = UserOrder::where("order_id",$createParams["order_id"])->first();
