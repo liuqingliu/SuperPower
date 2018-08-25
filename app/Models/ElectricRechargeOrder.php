@@ -15,9 +15,11 @@ class ElectricRechargeOrder extends Model
         'card_id',
         'equipment_id',
         'jack_id',
+        'recharge_total_time',
         'recharge_unit_money',
         'recharge_time',
         'recharge_status',
+        'wat'
     ];
 
     public $timestamps = true;

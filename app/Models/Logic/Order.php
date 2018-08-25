@@ -11,31 +11,38 @@ class Order
     public static $payMoneyList = [
         "2" => [
             "real_price" => 2,
-            "send_price" => 0,
+            "given_price" => 0,
         ],
         "30" => [
-            "real_price" => 29,
-            "send_price" => 1,
+            "real_price" => 30,
+            "given_price" => 1,
         ],
         "50" => [
             "real_price" => 50,
-            "send_price" => 3,
+            "given_price" => 3,
         ],
         "100" => [
             "real_price" => 100,
-            "send_price" => 5,
+            "given_price" => 5,
         ],
         "200" => [
             "real_price" => 200,
-            "send_price" => 12,
+            "given_price" => 12,
         ],
         "300" => [
             "real_price" => 300,
-            "send_price" => 20,
+            "given_price" => 20,
         ]
     ];
 
+    const PAY_METHOD_WECHAT = 1;
+
+    const ORDER_STATUS_DEFAULT = 0;
+    const ORDER_STATUS_SUCCESS = 1;//成功
+    const ORDER_STATUS_FAILED = 2;//失败
+    const ORDER_STATUS_CLOSED = 3;//关闭
+
     public static $payMethodList = [
-        "1" => "weichat"
+        self::PAY_METHOD_WECHAT => "weichat"
     ];
 }

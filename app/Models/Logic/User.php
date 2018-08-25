@@ -6,8 +6,12 @@
  * Time: 16:41
  */
 namespace App\Models\Logic;
-use Illuminate\Http\Request;
+
 class User
 {
 
+    public static function isNewUser($createTime)
+    {
+        return (time()-strtotime($createTime)) < Common::ONE_WEEK_SECONDES;
+    }
 }

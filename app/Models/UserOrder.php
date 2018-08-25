@@ -16,10 +16,12 @@ class UserOrder extends Model
         'price',
         'order_status',
         'order_type',
+        "openid",
+        "pay_id"
     ];
 
     protected $hidden = [
-        "openid","pay_id"
+
     ];
 
     public $timestamps = true;

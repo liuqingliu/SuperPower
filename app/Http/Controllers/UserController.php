@@ -11,11 +11,13 @@ use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
 use App\Models\Logic\User as UserLogic;
+use App\Models\Logic\Snowflake;
 use App\Models\User;
 use App\Models\UserOrder;
 use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -44,6 +46,9 @@ class UserController extends Controller
             $userInfoReal->user_last_login = date("Y-m-d H:i:s");
             $userInfoReal->api_token = md5($wxUser['default']->id."cxm*#*".time());
             $res = $userInfoReal->save();
+            if(!$res){
+                dd("请刷新重试");
+            }
             session([Common::SESSION_KEY_USER => $userInfoReal]);
             $userInfo = $userInfoReal;
         }
@@ -78,7 +83,7 @@ class UserController extends Controller
         return view('center/index');
     }
 
-    public function order()
+    public function order(Request $request)
     {
         $userInfo = session(Common::SESSION_KEY_USER);
         $payMoneyList = Order::$payMoneyList;
@@ -86,6 +91,7 @@ class UserController extends Controller
         return view('user/order',[
             "pay_money_list" => $payMethodList,
             "pay_method_list" => $payMoneyList,
+            "new_user" => UserLogic::isNewUser($userInfo->created_at),
         ]);
     }
 
@@ -116,9 +122,6 @@ class UserController extends Controller
     public function updateUserPhone(Request $request)
     {
         $userInfo = Auth::guard("api")->user();
-        if(empty($userInfo)){
-            return Common::myJson(ErrorCall::$errUserInfoExpired, ["result" => "请重新登录"]);
-        }
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],
             'user_password' => 'sometimes|string|max:20|min:6'
@@ -140,6 +143,57 @@ class UserController extends Controller
             return Common::myJson(ErrorCall::$errSucc, $res);
         }else{
             return Common::myJson(ErrorCall::$errSys, ["res_1" => $res, "res_2" => $resDealer]);
+        }
+    }
+
+//    创建用户充电订单
+    public function createOrder(Request $request)
+    {
+        $userInfo = Auth::guard("api")->user();//是否正常登陆过
+        $validator = Validator::make($request->all(), [
+            'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        //可以充值了？就需要判断提交上来的是否有效
+        $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
+        $extends = "";
+
+        if(UserLogic::isNewUser($userInfo->created_at)){
+            $extends = json_encode(["given_price" => Order::$payMoneyList[$request->pay_money_type]["given_price"] * 100]);
+        }
+
+        $createParams = [
+            "order_id" => Snowflake::nextId(),
+            "price" => $price * 100,
+            "extends" => $extends,
+            "openid" => $userInfo->openid,
+            "order_type" => Order::PAY_METHOD_WECHAT,
+        ];
+        $res = UserOrder::create($createParams);
+        if(!$res){
+            return Common::myJson(ErrorCall::$errCreateOrderFail);
+        }
+        //创建微信支付
+        $app = app('wechat.payment');
+        $result = $app->order->unify([
+            'body' => '充小满-充电了',
+            'out_trade_no' => $createParams["order_id"],
+            'total_fee' => 1,
+            'trade_type' => 'JSAPI',
+            'openid' => $userInfo->openid,
+            'notify_url' => 'http://www.babyang.top/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+        ]);
+
+        if(isset($result["prepay_id"])) {
+            $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
+            return Common::myJson(ErrorCall::$errSucc,$jssdk);
+        }else{
+            $orderInfo = UserOrder::where("order_id",$createParams["order_id"])->first();
+            $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
+            $orderInfo->save();
+            return Common::myJson(ErrorCall::$errSucc,$result["err_code_des"]);
         }
     }
 }

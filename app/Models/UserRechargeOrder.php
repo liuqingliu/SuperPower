@@ -15,8 +15,10 @@ class UserRechargeOrder extends Model
         'user_id',
         'equipment_id',
         'jack_id',
+        'recharge_total_time',
         'recharge_unit_money',
         'recharge_time',
+        'wat',
     ];
 
     public function chargingEquipment()

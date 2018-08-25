@@ -13,12 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
 Route::group(['middleware' => ['auth:api']], function () {
-    Route::post('/user/updateUserPhone', 'UserController@updateUserPhone');//更新用户手机号
+    Route::get('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
+    Route::get('/user/createOrder', 'UserController@createOrder')->name('createorder');//更新用户手机号
     Route::get('/electric/getRechargeLog', 'ElectricController@getRechargeLog');//获取用户的充电记录
     Route::post('/electric/updateChargingOrder', 'ElectricController@updateChargingOrder');//停止充电
     Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo');//电卡详情

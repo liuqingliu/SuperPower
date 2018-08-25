@@ -22,106 +22,66 @@
  *
  * Total 64 bit integer/string
  */
+namespace App\Models\Logic;
 
-class SnowFlake
+class Snowflake
 {
-    /**
-     * Offset from Unix Epoch
-     * Unix Epoch : January 1 1970 00:00:00 GMT
-     * Epoch Offset : January 1 2000 00:00:00 GMT
-     */
-    const EPOCH_OFFSET = 1483200000000;
-    const SIGN_BITS = 1;
-    const TIMESTAMP_BITS = 41;
-    const DATACENTER_BITS = 5;
-    const MACHINE_ID_BITS = 5;
-    const SEQUENCE_BITS = 12;
+    const workerIdBits                 = 4;
+    const sequenceBits                 = 10;
+    private static $workerId           = 0;
+    private static $twepoch            = 1361775855078;
+    private static $sequence           = 0;
+    private static $workerIdShift      = 10;
+    private static $timestampLeftShift = 14;
+    private static $sequenceMask       = 1023;
+    private static $lastTimestamp      = -1;
 
-    /**
-     * @var mixed
-     */
-    protected $datacenter_id;
-
-    /**
-     * @var mixed
-     */
-    protected $machine_id;
-
-    /**
-     * @var null|int
-     */
-    protected $lastTimestamp = null;
-
-    /**
-     * @var int
-     */
-    protected $sequence = 1;
-    protected $signLeftShift = self::TIMESTAMP_BITS + self::DATACENTER_BITS + self::MACHINE_ID_BITS + self::SEQUENCE_BITS;
-    protected $timestampLeftShift = self::DATACENTER_BITS + self::MACHINE_ID_BITS + self::SEQUENCE_BITS;
-    protected $dataCenterLeftShift = self::MACHINE_ID_BITS + self::SEQUENCE_BITS;
-    protected $machineLeftShift = self::SEQUENCE_BITS;
-    protected $maxSequenceId = -1 ^ (-1 << self::SEQUENCE_BITS);
-    protected $maxMachineId = -1 ^ (-1 << self::MACHINE_ID_BITS);
-    protected $maxDataCenterId = -1 ^ (-1 << self::DATACENTER_BITS);
-
-    /**
-     * Constructor to set required paremeters
-     *
-     * @param mixed $dataCenter_id Unique ID for datacenter (if multiple locations are used)
-     * @param mixed $machine_id Unique ID for machine (if multiple machines are used)
-     * @throws \Exception
-     */
-    public function __construct($dataCenter_id, $machine_id)
+    private static function _getWorkerId($wordId)
     {
-        if ($dataCenter_id > $this->maxDataCenterId) {
-            throw new \Exception('dataCenter id should between 0 and ' . $this->maxDataCenterId);
+        self::$workerId = $wordId;
+        if (self::$workerId === 0) {
+            preg_match_all('/\d+/', md5(php_uname()), $arr);
+            self::$workerId = implode('', $arr[0]) % 15;
         }
-        if ($machine_id > $this->maxMachineId) {
-            throw new \Exception('machine id should between 0 and ' . $this->maxMachineId);
-        }
-        $this->datacenter_id = $dataCenter_id;
-        $this->machine_id = $machine_id;
     }
 
-    /**
-     * Generate an unique ID based on SnowFlake
-     * @return string
-     * @throws \Exception
-     */
-    public function generateID()
+    private static function _timeGen()
     {
-        $sign = 0; // default 0
-        $timestamp = $this->getUnixTimestamp();
-        if ($timestamp < $this->lastTimestamp) {
-            throw new \Exception('"Clock moved backwards!');
+        $time  = explode(' ', microtime());
+        $time2 = substr($time[0], 2, 3);
+
+        return $time[1] . $time2;
+    }
+
+    private static function _tilNextMillis($lastTimestamp)
+    {
+        $timestamp = self::_timeGen();
+        while ($timestamp <= $lastTimestamp) {
+            $timestamp = self::_timeGen();
         }
-        if ($timestamp == $this->lastTimestamp) { //与上次时间戳相等，需要生成序列号
-            $sequence = ++$this->sequence;
-            if ($sequence == $this->maxSequenceId) { //如果序列号超限，则需要重新获取时间
-                $timestamp = $this->getUnixTimestamp();
-                while ($timestamp <= $this->lastTimestamp) {
-                    $timestamp = $this->getUnixTimestamp();
-                }
-                $this->sequence = 0;
-                $sequence = ++$this->sequence;
+
+        return $timestamp;
+    }
+    //*id     最大值 12872564620034048    （由时间戳 strtotime('2038-01-19 03:14:07')."999"  生成 id）
+    //*bigint 最大值 9223372036854775807
+    public static function nextId($wordId = 0)
+    {
+        self::_getWorkerId($wordId);
+        $timestamp = self::_timeGen();
+        if (self::$lastTimestamp == $timestamp) {
+            self::$sequence = (self::$sequence + 1) & self::$sequenceMask;
+            if (self::$sequence == 0) {
+                $timestamp = self::_tilNextMillis(self::$lastTimestamp);
             }
         } else {
-            $this->sequence = 0;
-            $sequence = ++$this->sequence;
+            self::$sequence = 0;
         }
-        $this->lastTimestamp = $timestamp;
-        $time = (int)($timestamp - self::EPOCH_OFFSET);
-        $id = ($sign << $this->signLeftShift) | ($time << $this->timestampLeftShift) | ($this->datacenter_id << $this->dataCenterLeftShift) | ($this->machine_id << $this->machineLeftShift) | $sequence;
-        return (string)$id;
-    }
+        if ($timestamp < self::$lastTimestamp) {
+            throw new Excwption('Clock moved backwards.  Refusing to generate id for ' . (self::$lastTimestamp - $timestamp) . ' milliseconds');
+        }
+        self::$lastTimestamp = $timestamp;
+        $nextId              = ((sprintf('%.0f', $timestamp) - sprintf('%.0f', self::$twepoch)) << self::$timestampLeftShift) | (self::$workerId << self::$workerIdShift) | self::$sequence;
 
-    /**
-     * Get UNIX timestamp in microseconds
-     *
-     * @return int  Timestamp in microseconds
-     */
-    private function getUnixTimestamp()
-    {
-        return floor(microtime(true) * 1000);
+        return $nextId;
     }
 }

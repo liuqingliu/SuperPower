@@ -22,4 +22,6 @@ class ErrorCall
     public static $errUserInfoExpired = ["errno" => 9, "errmsg" => "用户信息已过期,请重新登录"];
     public static $errElectricCardEmpaty = ["errno" => 10, "errmsg" => "卡号不存在或未激活"];
     public static $errInvalidRequest = ["errno" => 11, "errmsg" => "非法请求"];
+    public static $errCreateOrderFail = ["errno" => 12, "errmsg" => "创建订单失败"];
+    public static $errNotLogin = ["errno" => 13, "errmsg" => "请刷新重新登陆"];
 }

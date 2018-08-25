@@ -28,6 +28,9 @@ class Common
     const ELETRIC_CARD_STATUS_DEFAULT = 0;//电卡默认状态
     const ELETRIC_CARD_STATUS_FREEZONE = 1;//电卡冻结状态
 
+    //时间
+    const ONE_WEEK_SECONDES = 7 * 24 * 3600;
+
     //session_key
     const SESSION_KEY_USER = "user_info";
 

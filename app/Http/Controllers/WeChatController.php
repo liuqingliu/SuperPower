@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 
+//这里用来处理微信消息
 class WeChatController extends Controller
 {
 

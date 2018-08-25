@@ -22,6 +22,7 @@ class CreateUserOrdersTable extends Migration
             $table->string('openid',34)->index()->default("");
             $table->tinyInteger('order_type',false,true)->default(0);
             $table->string('pay_id',64)->default("");//支付回调id（真正的支付id）
+            $table->string('extends')->default("");
             $table->timestamps();
         });
     }

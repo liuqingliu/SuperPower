@@ -19,9 +19,11 @@ class CreateElectricRechargeOrdersTable extends Migration
             $table->string('card_id',16)->index()->default("");//电卡号
             $table->string('equipment_id',16)->index()->default("");//充电设备编号
             $table->string('jack_id',16)->default("");//充电插口编号
+            $table->unsignedInteger('recharge_total_time')->default(0);//需充电时长（根据用户选择标准来）
             $table->integer('recharge_unit_money',false,true)->default(0);//充电单价
             $table->unsignedTinyInteger('recharge_status' )->default(0);//充电状态
             $table->integer('recharge_time',false,true)->default(0);//充电时长
+            $table->integer('wat',false,true)->default(0);//充电功率
             $table->timestamps();
         });
     }

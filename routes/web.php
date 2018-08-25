@@ -12,12 +12,13 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return 1;
 });
 
 Route::get('/login', 'UserController@center')->name('login')->middleware('wechat.oauth:default,snsapi_userinfo');//这里是登录
 
-Route::any('/wechat', 'WeChatController@serve');
+Route::any('/wechat', 'WeChatController@serve')->name("wechatserve");
+Route::any('/payment/wechatnotify', 'PaymentController@wechatnotify')->name("wechatnotify");
 
 Route::get('/user/center', 'UserController@center')->name('user_center')->middleware('wechat.oauth:default,snsapi_userinfo');
 

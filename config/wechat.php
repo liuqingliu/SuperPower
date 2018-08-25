@@ -59,10 +59,10 @@ return [
      */
     'official_account' => [
         'default' => [
-            'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID', 'wx604f85d199ae04c9'),         // AppID
-            'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET', '73e660eef2ad57d257f2f7fb6d75104e'),    // AppSecret
-            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', 'lccharge123lccharge123'),           // Token
-            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', 'XaIKejj2hBQCrMOclpehnENgGHuMNrNb2BZ5wvFP2ko'),                 // EncodingAESKey
+            'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID', ''),         // AppID
+            'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET', ''),    // AppSecret
+            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', ''),           // Token
+            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', ''),                 // EncodingAESKey
 
             /*
              * OAuth 配置
@@ -103,19 +103,20 @@ return [
 
     /*
      * 微信支付
+     * 如需使用敏感接口（如退款、发送红包等）需要配置 API 证书路径(登录商户平台下载 API 证书)
      */
-    // 'payment' => [
-    //     'default' => [
-    //         'sandbox'            => env('WECHAT_PAYMENT_SANDBOX', false),
-    //         'app_id'             => env('WECHAT_PAYMENT_APPID', ''),
-    //         'mch_id'             => env('WECHAT_PAYMENT_MCH_ID', 'your-mch-id'),
-    //         'key'                => env('WECHAT_PAYMENT_KEY', 'key-for-signature'),
-    //         'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
-    //         'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
-    //         'notify_url'         => 'http://example.com/payments/wechat-notify',                           // 默认支付结果通知地址
-    //     ],
-    //     // ...
-    // ],
+     'payment' => [
+         'default' => [
+             'sandbox'            => env('WECHAT_PAYMENT_SANDBOX', false),
+             'app_id'             => env('WECHAT_PAYMENT_APPID', ''),
+             'mch_id'             => env('WECHAT_PAYMENT_MCH_ID', ''),
+             'key'                => env('WECHAT_PAYMENT_KEY', ''),
+//             'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
+//             'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
+             'notify_url'         => 'http://www.babyang.top/payment/wechatnotify',                           // 默认支付结果通知地址(可覆盖)
+         ],
+         // ...
+     ],
 
     /*
      * 企业微信
