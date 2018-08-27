@@ -13,6 +13,7 @@ use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
 use App\Models\UserRechargeOrder;
+use App\Models\Logic\User as UserLogic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -21,8 +22,6 @@ class ElectricController extends Controller
 {
     public function cardorderpay()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
-        dd($userInfo);
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('electric/cardorderpay',[
@@ -31,11 +30,17 @@ class ElectricController extends Controller
         ]);
     }
 
-    public function cardorderpayanswer()
+    public function cardorderpayanswer(Request $request)
     {
-        $electricCardOrders = ElectricCardOrder::find(1,["order_status"])->toArray();
+        $validator = Validator::make($request->all(), [
+            'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
+        ]);
+        if ($validator->fails()) {
+            return redirect("/user/center");
+        }
+        $electricCardOrders = ElectricCardOrder::where("card_id",$request->card_id)->select(["order_status"])->first();
         return view('electric/cardorderpayanswer',[
-            "order_status" => $electricCardOrders["order_status"]
+            "order_status" => $electricCardOrders->order_status
         ]);
     }
 
@@ -101,7 +106,7 @@ class ElectricController extends Controller
     public function getElectricCardInfo(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'electric_card_id' => 'required|int|max:20|min:10',
+            'card_id' => 'required|int|max:20|min:10',
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
@@ -111,5 +116,55 @@ class ElectricController extends Controller
             return Common::myJson(ErrorCall::$errElectricCardEmpaty);
         }
         return Common::myJson(ErrorCall::$errSucc, ["card_id" => $electricCardInfo->card_id,  "money" => $electricCardInfo->money]);
+    }
+
+    //创建电卡充值订单
+    public function createOrder(Request $request)
+    {
+        $userInfo = Auth::guard("api")->user();//是否正常登陆过
+        $validator = Validator::make($request->all(), [
+            'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
+            'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        //可以充值了？就需要判断提交上来的是否有效
+        $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
+        $extends = "";
+
+        $createParams = [
+            "order_id" => Snowflake::nextId(),
+            "card_id" => $request->card_id,
+            "price" => $price * 100,
+            "extends" => $extends,
+            "openid" => $userInfo->openid,
+            "order_type" => Order::PAY_METHOD_WECHAT,
+        ];
+        $res = ElectricCardOrder::create($createParams);
+        if(!$res){
+            return Common::myJson(ErrorCall::$errCreateOrderFail);
+        }
+        //创建微信支付
+        $app = app('wechat.payment');
+        $result = $app->order->unify([
+            'body' => '充小满-充电了',
+            'out_trade_no' => $createParams["order_id"],
+            'total_fee' => 1,
+            'trade_type' => 'JSAPI',
+            'openid' => $userInfo->openid,
+            'notify_url' => 'http://www.babyang.top/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+        ]);
+
+        if(isset($result["prepay_id"])) {
+            $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
+            Log::info("jssdk:".serialize($jssdk));
+            return Common::myJson(ErrorCall::$errSucc,$jssdk);
+        }else{
+            $orderInfo = ElectricCardOrder::where("order_id",$createParams["order_id"])->first();
+            $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
+            $orderInfo->save();
+            return Common::myJson(ErrorCall::$errSucc,$result["err_code_des"]);
+        }
     }
 }

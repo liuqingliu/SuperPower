@@ -1,0 +1,43 @@
+.item{
+     background: #fff;
+     height: 6.875rem;
+     position: relative;
+     list-style: none;
+}
+.item-img{
+     height: 0.5rem;
+     width: 0.5rem;
+     position: absolute;
+     top:1.35rem;
+     left: 1.4375rem;
+}
+ .item-location{
+     position: absolute;
+     top:1rem;
+     left: 2.625rem;
+}
+.item-date {
+    position: absolute;
+    top: 2.7rem;
+    left: 2.625rem;
+}
+.item-time-interval{
+	position: absolute;
+    top:2.7rem;
+    left: 12rem;
+}
+.item-money{
+	position: absolute;
+     top:4.1rem;
+     left: 2.625rem;
+}
+.item-time-total{
+position: absolute;
+     top:4.1rem;
+     left: 12rem;
+}
+.item-line{
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+}

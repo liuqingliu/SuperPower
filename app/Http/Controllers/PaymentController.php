@@ -7,7 +7,6 @@
  */
 
 namespace App\Http\Controllers;
-use App\Jobs\SendEmail;
 use App\Mail\WechatOrder;
 use App\Models\Logic\Common;
 use App\Models\Logic\Order;
@@ -23,9 +22,9 @@ class PaymentController extends Controller
     //注意：请把 “支付成功与否” 与 “是否处理完成” 分开，它俩没有必然关系。
     //比如：微信通知你用户支付完成，但是支付失败了(result_code 为 'FAIL')，
     //你应该更新你的订单为支付失败，但是要告诉微信处理完成。
-    public function wechatnotify()
+    public function wechatnotify(Request $request)
     {
-        Log::info("payment_notify_request:start111-".__FUNCTION__);
+        Log::info("payment_notify_request:start111-".__FUNCTION__.",request:".serialize($request->toArray()));
         $app = app('wechat.payment');
         $response = $app->handlePaidNotify(function ($message, $fail) {
             Log::info("notfiy:message:".serialize($message));
@@ -49,10 +48,8 @@ class PaymentController extends Controller
             }
             if($wxOrder["total_fee"]!=$order->price){
                 $message = "查询到微信订单信息异常:".serialize($wxOrder);
-                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new SendEmail($message));
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder($message));
             }
-
-
 
             if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
                 // 用户是否支付成功

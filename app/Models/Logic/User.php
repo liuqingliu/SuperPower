@@ -7,11 +7,15 @@
  */
 namespace App\Models\Logic;
 
+use App\Models\UserOrder;
+
 class User
 {
 
-    public static function isNewUser($createTime)
+    public static function isNewUser($openid, $createTime)
     {
-        return (time()-strtotime($createTime)) < Common::ONE_WEEK_SECONDES;
+        $flag = (time()-strtotime($createTime)) < Common::ONE_WEEK_SECONDES;
+        $orderCount = UserOrder::where("openid",$openid)->count();
+        return $flag && !$orderCount;
     }
 }

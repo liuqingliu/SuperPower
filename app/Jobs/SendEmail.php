@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Mail\WechatOrder;
 use App\Models\Logic\Common;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -10,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Mail;
+use Mockery\Exception;
 
 class SendEmail implements ShouldQueue
 {
@@ -20,12 +20,18 @@ class SendEmail implements ShouldQueue
      *
      * @return void
      */
-    protected $msg;
+    protected $mailType;
 
-    public function __construct($msg)
+    protected $emailUser = ["609163616@qq.com"];
+
+    protected $content;
+
+
+    public function __construct($mailType, $content)
     {
         //
-        $this->msg = $msg;
+        $this->mailType = $mailType;
+        $this->content = $content;
     }
 
     /**
@@ -36,15 +42,15 @@ class SendEmail implements ShouldQueue
     public function handle()
     {
         //
-        Mail::raw("ces",function ($message){
-            // 收件人的邮箱地址
-            $message->to(['609163616@qq.com']);
-            // 邮件主题
-            $message->subject('队列发送邮件');
-        })->view('emails.wechat.order')
-            ->with([
-                'msg' => $this->msg,
-            ]);
+        try{
+            $mailTypeClass = 'App\Mail\\'.$this->mailType;
+            echo $mailTypeClass."\n";
+            Mail::to($this->emailUser)->send(new $mailTypeClass($this->content));
+            echo "ok\n";
+        }catch (\Exception $exception){
+            dd($exception->getMessage());
+        }
+
     }
 
     /**
@@ -56,6 +62,6 @@ class SendEmail implements ShouldQueue
     public function failed(\Exception $exception)
     {
         // 给用户发送失败通知，等等...
-        var_dump($exception->getMessage());
+        Log::info("fail_send_email:".serialize($exception->getMessage()));
     }
 }

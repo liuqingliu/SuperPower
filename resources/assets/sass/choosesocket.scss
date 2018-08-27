@@ -1,0 +1,145 @@
+.up-down {
+	width: 1.4375rem;
+	height: 0.8125rem;
+}
+
+.container1 {
+	margin-top: 3.4375rem;
+	text-align: center;
+}
+
+.img-faile {
+	width: 7.8125rem;
+	height: 9.8125rem;
+}
+
+.faile-text {
+	font-size: 2.5rem;
+	margin-top: 18.75rem;
+	text-align: center;
+	color: #000000;
+}
+.location-detail {
+	background: #FFFFFF;
+	padding-left: 1.75rem;
+	padding-right: 1.75rem;
+	padding-bottom: 0.75rem;
+}
+.middle-text {
+     font-size: 1.125rem;
+     color: #777777;
+}
+.middle-text2 {
+     font-size: 1.125rem;
+     color: #B3B3B3
+}
+ .mini-text2 {
+     font-size: 1rem;
+     color: #777777;
+}
+ .mini-text-green {
+     font-size: 1rem;
+     color: #46ba4b;
+}
+ .number-red-text {
+     font-size: 1.5rem;
+     color: #F15A24;
+}
+ .number-green-text {
+     font-size: 1.5rem;
+     color: #46BA4B;
+}
+ 
+.detail-img {
+	height: 1.4375rem;
+	width: 1.4375rem;
+}
+
+.div-big {
+	background: #ffffff;
+	margin-top: 1rem;
+	height: 16.1875rem;
+}
+
+
+.socket-block {
+	list-style: none;
+}
+.socket-block2 {
+	list-style: none;
+	margin-top: 1.125rem;
+}
+.col-xs-1-5 {
+	width: 20%;
+	float: left;
+}
+
+@media (min-width: 768px) {
+	.col-sm-1-5 {
+		width: 20%;
+		float: left;
+	}
+}
+
+@media (min-width: 992px) {
+	.col-md-1-5 {
+		width: 20%;
+		float: left;
+	}
+}
+
+@media (min-width: 1200px) {
+	.col-lg-1-5 {
+		width: 20%;
+		float: left;
+	}
+}
+.inner-block-no{
+	border: 1px solid #000;
+    border-color: #f15a24;
+    border-radius: 0.5rem;
+	height: 5.3125rem;
+ 	margin-left: 0.599rem;
+ 	margin-right: 0.599rem;
+ 	text-align: center;
+}
+.inner-block-yes{
+	border:1px solid #000;
+    border-color: #46BA4B;
+    border-radius: 0.5rem;
+	height: 5.3125rem;
+ 	text-align: center;
+ 	margin-left: 0.599rem;
+ 	margin-right: 0.599rem;
+}
+.block-text1{
+	margin-top: 1rem;
+	margin-bottom: 0.1rem;
+}
+.block-text2{
+	margin-bottom: 0;
+}
+.count-way{
+	height: 4.3rem;
+	padding-left: 1.75rem;
+	padding-right: 1.75rem;
+	padding-top: 1rem;
+	margin-bottom: 0;
+	margin-top: 1rem;
+}
+.count-way2{
+	height: 4.5rem;
+	padding-left: 1.75rem;
+	padding-right: 1.75rem;
+	padding-top: 1rem;
+	margin-bottom: 0;
+}
+.big-red-text{
+	font-size:1.5625rem;
+	color: #F15A24;
+}
+.tips-img{
+     height: 1.875rem;
+     width: 1.875rem;
+     margin-top: 1.75rem;
+}

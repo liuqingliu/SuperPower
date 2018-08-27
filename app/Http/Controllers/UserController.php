@@ -27,9 +27,6 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
-        $wxOrder = ["ss" => 11,"ff" => 22];
-        $message = "查询到微信订单信息异常:".serialize($wxOrder);
-        SendEmail::dispatch($message);
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
@@ -97,7 +94,7 @@ class UserController extends Controller
         return view('user/order',[
             "pay_money_list" => $payMethodList,
             "pay_method_list" => $payMoneyList,
-            "new_user" => UserLogic::isNewUser($userInfo->created_at),
+            "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
         ]);
     }
 
@@ -152,7 +149,7 @@ class UserController extends Controller
         }
     }
 
-//    创建用户充电订单
+//    创建用户充值订单
     public function createOrder(Request $request)
     {
         $userInfo = Auth::guard("api")->user();//是否正常登陆过
@@ -166,7 +163,7 @@ class UserController extends Controller
         $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
         $extends = "";
 
-        if(UserLogic::isNewUser($userInfo->created_at)){
+        if(UserLogic::isNewUser($userInfo->openid, $userInfo->created_at)){
             $extends = json_encode(["given_price" => Order::$payMoneyList[$request->pay_money_type]["given_price"] * 100]);
         }
 
