@@ -6,6 +6,8 @@
  * Time: 7:39
  */
 namespace App\Http\Controllers;
+use App\Jobs\SendEmail;
+use App\Mail\WechatOrder;
 use App\Models\Dealer;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
@@ -18,12 +20,17 @@ use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function center(Request $request)
     {
+        $wxOrder = ["ss" => 11,"ff" => 22];
+        $message = "查询到微信订单信息异常:".serialize($wxOrder);
+        Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder($message));
+        dd("shit");
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){

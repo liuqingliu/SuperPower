@@ -7,10 +7,14 @@
  */
 
 namespace App\Http\Controllers;
+use App\Jobs\SendEmail;
+use App\Mail\WechatOrder;
+use App\Models\Logic\Common;
 use App\Models\Logic\Order;
 use App\Models\UserOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 
 class PaymentController extends Controller
@@ -36,12 +40,18 @@ class PaymentController extends Controller
             $wxOrder = $app->order->queryByOutTradeNumber($message['out_trade_no']);//
             if ($wxOrder['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
                 // 用户是否支付成功
-                if (array_get($wxOrder, 'result_code') !== 'SUCCESS' || array_get($wxOrder, 'trade_state') !== 'SUCCESS') {
+                if (array_get($wxOrder, 'result_code') !== 'SUCCESS'
+                    || array_get($wxOrder, 'trade_state') !== 'SUCCESS') {
                     return $fail('还没有支付成功哦~');
                 }
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }
+            if($wxOrder["total_fee"]!=$order->price){
+                $message = "查询到微信订单信息异常:".serialize($wxOrder);
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new SendEmail($message));
+            }
+
 
 
             if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态

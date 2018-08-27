@@ -34,6 +34,11 @@ class Common
     //session_key
     const SESSION_KEY_USER = "user_info";
 
+    //mail_exception_wechat_order
+    public static $emailOferrorForWechcatOrder = [
+        "609163616@qq.com"
+    ];
+
     public static function getNeedArray($needArr, $org)
     {
         $res = [];
