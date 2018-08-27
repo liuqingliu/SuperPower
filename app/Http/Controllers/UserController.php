@@ -29,8 +29,7 @@ class UserController extends Controller
     {
         $wxOrder = ["ss" => 11,"ff" => 22];
         $message = "查询到微信订单信息异常:".serialize($wxOrder);
-        Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder($message));
-        dd("shit");
+        SendEmail::dispatch($message);
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
