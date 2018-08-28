@@ -25,8 +25,8 @@ class ElectricController extends Controller
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('electric/cardorderpay',[
-            "pay_money_list" => $payMethodList,
-            "pay_method_list" => $payMoneyList,
+            "pay_money_list" => $payMoneyList,
+            "pay_method_list" =>$payMethodList ,
         ]);
     }
 

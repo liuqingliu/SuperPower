@@ -7,7 +7,7 @@
     <!-- title -->
     <div class="text-center title-container">
         <a href="javascript:history.back(-1);" class="title-back">
-            <img class="title-back-img" src="{{URL::asset('images/p2_01.png}}" alt="返回">
+            <img class="title-back-img" src="{{URL::asset('images/p2_01.png')}}" alt="返回">
             <span class="title-back-text">返回</span>
         </a>
         <span class="title-text">电卡充值</span>
@@ -17,7 +17,7 @@
 @if ($success_flag))
     <section class="body1" style="display: none;">
         <div class="img-container">
-            <img src="{{URL::asset('images/p13_01.png}}" class="img-status" />
+            <img src="{{URL::asset('images/p13_01.png')}}" class="img-status" />
         </div>
         <div align="center" style="margin-top:1rem;">
             <span class="text-48-grey">已成功充值，金额实时到账</span>
@@ -29,7 +29,7 @@
 @else
     <section class="body2">
         <div class="img-container">
-            <img src="{{URL::asset('images/p14_01.png}}" class="img-status" />
+            <img src="{{URL::asset('images/p14_01.png')}}" class="img-status" />
         </div>
         <div align="center" style="margin-top:1rem;">
 				<span class="text-48-grey">获取充值结果失败，请重试

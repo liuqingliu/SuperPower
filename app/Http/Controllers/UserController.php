@@ -92,8 +92,8 @@ class UserController extends Controller
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('user/order',[
-            "pay_money_list" => $payMethodList,
-            "pay_method_list" => $payMoneyList,
+            "pay_money_list" => $payMoneyList,
+            "pay_method_list" => $payMethodList,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
         ]);
     }

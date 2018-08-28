@@ -19,14 +19,14 @@
 <section class="body">
     <ul class="board1">
         <li class="borad-heigh">
-            <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_05.png}}" alt="电卡卡号">
+            <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_05.png')}}" alt="电卡卡号">
             <span class="borad-text-left">电卡卡号</span>
             <input class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="点击输入卡号" oninput="if(value.length>11)value=value.slice(0,11)">
-            <img class="borad-img-right pull-right img-rounded" src="{{URL::asset('images/p9_02.png}}">
+            <img class="borad-img-right pull-right img-rounded" src="{{URL::asset('images/p9_02.png')}}">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
-            <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p9_05.png}}" alt="电卡余额">
+            <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p9_05.png')}}" alt="电卡余额">
             <span class="borad-text-left">电卡余额</span>
             <span class="borad-text-right" style="margin-left: 1.15rem;">10.08元</span>
         </li>
@@ -35,53 +35,20 @@
     <div class="big-div">
         <div class="borad-heigh">
             <span class="pull-left borad-text-left">选择充值金额</span>
-            <span class=" pull-right mini-text-red" style="visibility: hidden;">新客服专享优惠活动注册7天后结束<img src="{{URL::asset('images/p6_01.png}}" class="img1"></span>
+            <span class=" pull-right mini-text-red" style="visibility: hidden;">新客服专享优惠活动注册7天后结束<img src="{{URL::asset('images/p6_01.png')}}" class="img1"></span>
         </div>
         <div class="line"></div>
         <div>
             <ul class="recharge-ul">
+                @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
                     <div class="money-block">
                         <div class="recharge-block_title mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充2元</p>
-                        <p class="mini-text-red recharge-block-text">赠送1元</p>
+                        <p class="text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
+                        <p class="mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>
                 </li>
-                <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
-                        <div class="recharge-block_title-hidden mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充2元</p>
-                        <p class="mini-text-red recharge-block-text">赠送1元</p>
-                    </div>
-                </li>
-                <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
-                        <div class="recharge-block_title mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充2元</p>
-                        <p class="mini-text-red recharge-block-text">赠送1元</p>
-                    </div>
-                </li>
-                <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
-                        <div class="recharge-block_title-hidden mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充2元</p>
-                        <p class="mini-text-red recharge-block-text">赠送1元</p>
-                    </div>
-                </li>
-                <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
-                        <div class="recharge-block_title mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充2元</p>
-                        <p class="mini-text-red recharge-block-text">赠送1元</p>
-                    </div>
-                </li>
-                <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
-                        <div class="recharge-block_title-hidden mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充2元</p>
-                        <p class="mini-text-red recharge-block-text">赠送1元</p>
-                    </div>
-                </li>
+                @endforeach
             </ul>
         </div>
     </div>
@@ -89,9 +56,9 @@
         <p class="borad-text-left">选择支付方式</p>
 
         <p class="pull-left borad-text-left">
-            <img class="img-logo" src="{{URL::asset('images/p6_04.png}}"> 微信支付
+            <img class="img-logo" src="{{URL::asset('images/p6_04.png')}}"> 微信支付
         </p>
-        <img class="img-logo pull-right" src="{{URL::asset('images/p6_05.png}}">
+        <img class="img-logo pull-right" src="{{URL::asset('images/p6_05.png')}}">
 
     </div>
 </section>
