@@ -17,7 +17,7 @@
 <section class="body">
     <p class="mini-text tip">电力正在源源不断的充入你的爱车。</p>
     <div class="bigimg-container">
-        <img src="{{URL::asset('images/p16_01.gif" class="recharge-img"/>
+        <img src="{{URL::asset('images/p16_01.gif')}}" class="recharge-img"/>
     </div>
     <div style="height: 9.5rem;">
         <div class="pull-left container1">
