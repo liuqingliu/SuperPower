@@ -1,29 +1,13 @@
-<!DOCTYPE html>
-<html lang="zh-Cn">
+@extends('layouts.default')
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>账户充值</title>
-    <!-- Bootstrap -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
-    <!--你自己的样式文件 -->
-    <link href="../css/usersOrder.css" rel="stylesheet">
-    <link href="../css/public.css" rel="stylesheet">
-    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
+@section('title', '账户充值')
 
-<body>
+@section('content')
 <section class="header">
     <!-- title -->
     <div class="text-center title-container">
-        <a href="#" class="title-back">
-            <img class="title-back-img" src="../images/p2_01.png" alt="返回">
+        <a href="javascript:history.back(-1);" class="title-back">
+            <img class="title-back-img" src="{{URL::asset('images/p2_01.png}}" alt="返回">
             <span class="title-back-text">返回</span>
         </a>
         <span class="title-text">账户充值</span>
@@ -41,7 +25,7 @@
     <div class="big-div">
         <div class="borad-heigh">
             <span class="pull-left borad-text-left">选择充值金额</span>
-            <span class=" pull-right mini-text-red">新客服专享优惠活动注册7天后结束<img src="../images/p6_01.png" class="img1"></span>
+            <span class=" pull-right mini-text-red">新客服专享优惠活动注册7天后结束<img src="{{URL::asset('images/p6_01.png}}" class="img1"></span>
         </div>
         <div class="line"></div>
         <div>
@@ -96,9 +80,9 @@
         <p class="borad-text-left">选择支付方式</p>
 
         <p class="pull-left borad-text-left">
-            <img class="img-logo" src="../images/p6_04.png"> 微信支付
+            <img class="img-logo" src="{{URL::asset('images/p6_04.png}}"> 微信支付
         </p>
-        <img class="img-logo pull-right" src="../images/p6_05.png">
+        <img class="img-logo pull-right" src="{{URL::asset('images/p6_05.png}}">
 
     </div>
 </section>
@@ -110,39 +94,32 @@
         <a href="#" onclick="" class="mini-text">为电卡充值，点击这里</a>
     </div>
 </section>
-
-<!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
-<script src="../js/jquery.js"></script>
-<!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
-<script src="../js/bootstrap.min.js"></script>
-</body>
-
-</html>
+@endsection
 {{--onclick="callpay()"--}}
-<script type="text/javascript">
-    //调用微信JS api 支付
-    function jsApiCall()
-    {
-        WeixinJSBridge.invoke(
-            'getBrandWCPayRequest',{"appId":"wx604f85d199ae04c9","timeStamp":"1535206291","nonceStr":"5b816393b54cc","package":"prepay_id=wx2522113121896933df54b5b91814180647","signType":"MD5","paySign":"B1B1BAE3C83619FC261D44D94F18BA63"},
-            function(res){
-                WeixinJSBridge.log(res.err_msg);
-                alert(res.err_code+res.err_desc+res.err_msg);
-            }
-        );
-    }
+{{--<script type="text/javascript">--}}
+    {{--//调用微信JS api 支付--}}
+    {{--function jsApiCall()--}}
+    {{--{--}}
+        {{--WeixinJSBridge.invoke(--}}
+            {{--'getBrandWCPayRequest',{"appId":"wx604f85d199ae04c9","timeStamp":"1535206291","nonceStr":"5b816393b54cc","package":"prepay_id=wx2522113121896933df54b5b91814180647","signType":"MD5","paySign":"B1B1BAE3C83619FC261D44D94F18BA63"},--}}
+            {{--function(res){--}}
+                {{--WeixinJSBridge.log(res.err_msg);--}}
+                {{--alert(res.err_code+res.err_desc+res.err_msg);--}}
+            {{--}--}}
+        {{--);--}}
+    {{--}--}}
 
-    function callpay()
-    {
-        if (typeof WeixinJSBridge == "undefined"){
-            if( document.addEventListener ){
-                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
-            }else if (document.attachEvent){
-                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
-                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
-            }
-        }else{
-            jsApiCall();
-        }
-    }
-</script>
+    {{--function callpay()--}}
+    {{--{--}}
+        {{--if (typeof WeixinJSBridge == "undefined"){--}}
+            {{--if( document.addEventListener ){--}}
+                {{--document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);--}}
+            {{--}else if (document.attachEvent){--}}
+                {{--document.attachEvent('WeixinJSBridgeReady', jsApiCall);--}}
+                {{--document.attachEvent('onWeixinJSBridgeReady', jsApiCall);--}}
+            {{--}--}}
+        {{--}else{--}}
+            {{--jsApiCall();--}}
+        {{--}--}}
+    {{--}--}}
+{{--</script>--}}

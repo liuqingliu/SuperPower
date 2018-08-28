@@ -105,15 +105,15 @@ class UserController extends Controller
             'order_id' => 'required|string|max:30|min:16',
         ]);
         if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+            redirect("user/center");
         }
         $orderInfo = UserOrder::where("openid", $userInfo["openid"])
             ->where("order_id", $request->order_id)
             ->first();
         if (empty($orderInfo)) {
-            return Common::myJson(ErrorCall::$errOrderNotExist);
+            redirect("user/center");
         }
-        return view('user/orderanswser',["pay_status" => $orderInfo["order_status"]]);
+        return view('user/orderanswser',["success_flag" => ($orderInfo["order_status"] == Order::ORDER_STATUS_SUCCESS)]);
     }
 
     public function about()
