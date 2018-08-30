@@ -84,7 +84,7 @@ class ElectricController extends Controller
     }
 
     //停止充电
-    public function updateChargingOrder(Request $request)
+    public function stopChargingOrder(Request $request)
     {
         $userInfo = Auth::guard("api")->user();
         $chargingOrderInfo = UserRechargeOrder::where('openid',$userInfo->openid)->first();
@@ -100,6 +100,7 @@ class ElectricController extends Controller
         if(!$res){
             return Common::myJson(ErrorCall::$errNet);
         }
+        //todo 调用阿里云接口
         return Common::myJson(ErrorCall::$errSucc);
     }
     //获取电卡信息
@@ -159,12 +160,12 @@ class ElectricController extends Controller
         if(isset($result["prepay_id"])) {
             $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
             Log::info("jssdk:".serialize($jssdk));
+            //todo 调用阿里云接口 开通插座
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
             $orderInfo = ElectricCardOrder::where("order_id",$createParams["order_id"])->first();
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
-            $orderInfo->save();
-            return Common::myJson(ErrorCall::$errSucc,$result["err_code_des"]);
+            return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
     }
 }

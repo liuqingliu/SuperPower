@@ -24,4 +24,5 @@ class ErrorCall
     public static $errInvalidRequest = ["errno" => 11, "errmsg" => "非法请求"];
     public static $errCreateOrderFail = ["errno" => 12, "errmsg" => "创建订单失败"];
     public static $errNotLogin = ["errno" => 13, "errmsg" => "请刷新重新登陆"];
+    public static $errWechatPayPre = ["errno" => 14, "errmsg" => "微信接口有误，请刷新重试"];
 }

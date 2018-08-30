@@ -192,12 +192,13 @@ class UserController extends Controller
         if(isset($result["prepay_id"])) {
             $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
             Log::info("jssdk:".serialize($jssdk));
+            //todo 调用阿里云接口 开通插座
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
             $orderInfo = UserOrder::where("order_id",$createParams["order_id"])->first();
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
             $orderInfo->save();
-            return Common::myJson(ErrorCall::$errSucc,$result["err_code_des"]);
+            return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
     }
 }
