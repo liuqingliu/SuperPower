@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use Illuminate\Http\Request;
-use Overtrue\EasySms\EasySms;
+use SmsManager;
 
 class ApiController extends Controller
 {
@@ -21,16 +21,9 @@ class ApiController extends Controller
 
     public function sendMessage()
     {
-        $config = config('easysms');
-//        dd($app);
-        $easySms = new EasySms($config);
-        $easySms->send(13188888888, $message);
-        $easySms->send('15701160070', [
-            'content'  => '',
-            'template' => 'SMS_143560259',
-            'data' => [
-                'code' => 6379
-            ],
-        ]);
+        $canSend = SmsManager::validateSendable();
+        $sendResult = SmsManager::requestVerifySms();
+        $state = SmsManager::state();
+//        dd($canSend,$sendResult,$state);
     }
 }

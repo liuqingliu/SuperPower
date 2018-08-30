@@ -9,26 +9,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Dealer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use SmsManager;
 
 class DealerController extends Controller
 {
     public function center()
     {
-        $totalIncome = Dealer::find(1)->total_income;
-        //今日收益需要实时计算吗？ todo 询问
-        $dayIncome = 122;
-        $totalUsers = 133;
-        $totalChargeCount = 143234;
-        return view('dealer/center',[
-            "day_income" => $dayIncome,
-            "total_income" => $totalIncome,
-            "total_users" => $totalUsers,
-            "total_charge_count" => $totalChargeCount,
-        ]);
+//        $totalIncome = Dealer::find(1)->total_income;
+//        //今日收益需要实时计算吗？ todo 询问
+//        $dayIncome = 122;
+//        $totalUsers = 133;
+//        $totalChargeCount = 143234;
+//        return view('dealer/center',[
+//            "day_income" => $dayIncome,
+//            "total_income" => $totalIncome,
+//            "total_users" => $totalUsers,
+//            "total_charge_count" => $totalChargeCount,
+//        ]);
+        return view('dealer/center');
     }
 
-    public function electriccardmanage()
+    public function electriccardmanage(Request $request)
     {
+        //验证数据
+        $validator = Validator::make($request->all(), [
+            'mobile'     => 'required|confirm_mobile_not_change|confirm_rule:mobile_required',
+            'verifyCode' => 'required|verify_code',
+            //more...
+        ]);
+        if ($validator->fails()) {
+            //验证失败后建议清空存储的发送状态，防止用户重复试错
+            SmsManager::forgetState();
+            dd($validator->errors());
+        }
+        dd(1);
         return view('dealer/electriccardmanage');
     }
 

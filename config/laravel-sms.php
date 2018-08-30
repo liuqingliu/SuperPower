@@ -13,8 +13,8 @@ return [
     */
     'route' => [
         'enable'     => true,
-        'prefix'     => 'laravel-sms',
-        'middleware' => ['api'],
+        'prefix'     => 'lcint-sms',
+        'middleware' => ['web'],
     ],
 
     /*
@@ -65,8 +65,8 @@ return [
     |
     */
     'code' => [
-        'length'        => 5,
-        'validMinutes'  => 5,
+        'length'        => 4,
+        'validMinutes'  => 2,
         'repeatIfValid' => false,
         'maxAttempts'   => 0,
     ],
@@ -160,7 +160,7 @@ return [
     */
     'storage' => [
         'driver' => '',
-        'prefix' => 'laravel_sms',
+        'prefix' => 'lcint-sms',
     ],
 
     /*
@@ -172,7 +172,7 @@ return [
     | 运行'php artisan migrate'命令可以自动生成
     |
     */
-    'dbLogs' => false,
+    'dbLogs' => true,
 
     /*
     |--------------------------------------------------------------------------

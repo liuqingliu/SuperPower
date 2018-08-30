@@ -41,7 +41,7 @@
 
         function getUrl() {
             return opts.requestUrl ||
-                '/laravel-sms/' + (opts.voice ? 'voice-verify' : 'verify-code')
+                '/lcint-sms/' + (opts.voice ? 'voice-verify' : 'verify-code')
         }
 
         function getRequestData() {
