@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/getCaptcha', 'ApiController@getCaptcha')->name('getcaptcha');//获取图片验证码
-    Route::post('/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
+    Route::get('/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
     Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
     Route::post('/user/createOrder', 'UserController@createOrder')->name('createorder');//创建用户支付订单
     Route::post('/electric/createOrder', 'UserController@createOrder')->name('electriccreateorder');//创建电卡支付订单
