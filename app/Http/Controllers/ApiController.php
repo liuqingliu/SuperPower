@@ -13,6 +13,7 @@ use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use SmsManager;
+use PhpSms;
 
 
 class ApiController extends Controller
@@ -28,6 +29,8 @@ class ApiController extends Controller
 
     public function sendMessage(Request $request)
     {
+        $res = PhpSms::make("Aliyun","SMS_143560259")->to("17323023577")->data(["code" => "1234"])->send();
+        dd($res);
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
 //            'user_password' => 'sometimes|string|max:20|min:6'
