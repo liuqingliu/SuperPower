@@ -20,7 +20,7 @@
     <![endif]-->
 </head>
 <body>
-<input name="mobile" type="text">
+<input name="phone" type="text">
 <button id="sendVerifySmsButton">获取短信验证码</button>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
@@ -34,12 +34,12 @@
         token       : "{{csrf_token()}}",
         //请求间隔时间
         interval    : 60,
-//        requestUrl : "/api/sendMessage",
+        requestUrl : "/api/sendMessage",
         //请求参数
         requestData : {
             //手机号
-            mobile : function () {
-                return $('input[name=mobile]').val();
+            user_phone : function () {
+                return $('input[name=phone]').val();
             },
             //手机号的检测规则
             mobile_rule : 'mobile_required',

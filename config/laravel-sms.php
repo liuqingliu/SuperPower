@@ -25,7 +25,7 @@ return [
     | 单位：秒
     |
     */
-    'interval' => 60,
+    'interval' => 10,
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return [
     |
     */
     'validation' => [
-        'mobile' => [
+        'user_phone' => [
             'isMobile'    => true,
             'enable'      => true,
             'default'     => 'mobile_required',
@@ -133,9 +133,9 @@ return [
         'code' => function ($code) {
             return $code;
         },
-        'minutes' => function ($code, $minutes) {
-            return $minutes;
-        },
+//        'minutes' => function ($code, $minutes) {
+//            return $minutes;
+//        },
     ],
 
     /*

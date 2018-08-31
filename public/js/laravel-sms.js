@@ -25,11 +25,11 @@
                 type    : 'post',
                 data    : requestData,
                 success : function (data) {
-                    if (data.success) {
+                    if (data["errno"]==0) {
                         timer(opts.interval);
                     } else {
                         changeBtn(btnOriginContent, false);
-                        opts.notify.call(null, data.message, data.type);
+                        opts.notify.call(null, data["errmsg"], "");
                     }
                 },
                 error   : function(xhr, type){

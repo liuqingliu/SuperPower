@@ -47,7 +47,7 @@ class UserController extends Controller
                 $userInfoReal = User::where("openid",$wxUser['default']->id)->where("user_status", Common::USER_TYPE_NORMAL)->first();
             }
             $userInfoReal->user_last_login = date("Y-m-d H:i:s");
-            $userInfoReal->api_token = md5($wxUser['default']->id."cxm*#*".time());
+//            $userInfoReal->api_token = md5($wxUser['default']->id."cxm*#*".time());//脚本批量更新
             $res = $userInfoReal->save();
             if(!$res){
                 dd("请刷新重试");
@@ -152,13 +152,13 @@ class UserController extends Controller
 //    创建用户充值订单
     public function createOrder(Request $request)
     {
-        $userInfo = Auth::guard("api")->user();//是否正常登陆过
         $validator = Validator::make($request->all(), [
             'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
+        $userInfo = Auth::guard("api")->user();//是否正常登陆过
         //可以充值了？就需要判断提交上来的是否有效
         $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
         $extends = "";
@@ -200,5 +200,20 @@ class UserController extends Controller
             $orderInfo->save();
             return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
+    }
+
+    public function sendSms(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $userInfo = session(Common::SESSION_KEY_USER);
+        return view('user/bindphone',[
+            "user_info" => Common::getNeedObj(["phone"], $userInfo)
+        ]);
+        return view('center/index');
     }
 }
