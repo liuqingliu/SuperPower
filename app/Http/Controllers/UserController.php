@@ -19,6 +19,7 @@ use App\Models\UserOrder;
 use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -33,7 +34,10 @@ class UserController extends Controller
             dd("请求非法");
         }
         if(empty($userInfo)) {
-            $userInfoReal = User::where("openid",$wxUser['default']->id)->where("user_status", Common::USER_TYPE_NORMAL)->first();
+            $userInfoReal = User::where("openid",$wxUser['default']->id)->first();
+            if($userInfoReal["user_status"]==Common::USER_STATUS_FREEZONE) {
+                dd("非法用户，请联系管理员");
+            }
             if (empty($userInfoReal)) {
                 User::create([
                     'openid'=>$wxUser['default']->id,
@@ -124,6 +128,15 @@ class UserController extends Controller
     //更新用户手机号
     public function updateUserPhone(Request $request)
     {
+        $validator = Validator::make(Input::all(), [
+            'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
+            'captcha' => 'required|captcha'
+//            'user_password' => 'sometimes|string|max:20|min:6'
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        var_dump("13");exit;
         $userInfo = Auth::guard("api")->user();
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],

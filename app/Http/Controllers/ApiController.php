@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use SmsManager;
 use PhpSms;
-
+use Captcha;
 
 class ApiController extends Controller
 {
@@ -44,6 +44,9 @@ class ApiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
+            'captcha' => 'required|captcha:',
+//            'ckey' => 'required',
+//            'captcha' => 'required|captcha:'.$request->ckey
 //            'user_password' => 'sometimes|string|max:20|min:6'
         ]);
         if ($validator->fails()) {

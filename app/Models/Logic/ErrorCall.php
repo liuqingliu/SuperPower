@@ -27,4 +27,5 @@ class ErrorCall
     public static $errWechatPayPre = ["errno" => 14, "errmsg" => "微信接口有误，请刷新重试"];
     public static $errCallSendInvalid = ["errno" => 15, "errmsg" => "请求太频繁,请1分钟后再试"];
     public static $errSendFail = ["errno" => 16, "errmsg" => "短信发送失败，请等会儿再试"];
+    public static $errPhoneAlreadyBind = ["errno" => 16, "errmsg" => "短信发送失败，请等会儿再试"];
 }
