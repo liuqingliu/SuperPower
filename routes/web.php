@@ -63,3 +63,5 @@ Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.logi
     Route::post('/api/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
 });
 
+Route::get("/api/testwu",'ApiController@testwu');
+Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码

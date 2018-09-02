@@ -64,6 +64,15 @@ return [
             'retry_after' => 90,
         ],
 
+        'mns'        => [
+            'driver'       => 'mns',
+            'key'          => env('QUEUE_MNS_ACCESS_KEY'),
+            'secret'       => env('QUEUE_MNS_SECRET_KEY'),
+            'endpoint'     => env('QUEUE_MNS_ENDPOINT'),
+            'queue'        => env('QUEUE_NAME'),
+            'wait_seconds' => 30,
+        ]
+
     ],
 
     /*

@@ -29,7 +29,8 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files":["app/libs/aliyun-openapi-php-sdk-master/aliyun-php-sdk-core/Config.php"]
     },
     "autoload-dev": {
         "psr-4": {

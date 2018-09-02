@@ -179,6 +179,7 @@ return [
         Mews\Captcha\CaptchaServiceProvider::class,
         Toplan\PhpSms\PhpSmsServiceProvider::class,
         Toplan\Sms\SmsManagerServiceProvider::class,
+        Lokielse\LaravelMNS\LaravelMNSServiceProvider::class,
     ],
 
     /*

@@ -6,7 +6,11 @@
  * Time: 16:22
  */
 namespace App\Http\Controllers;
-
+//include_once "../../";
+//use \Iot\Request\V20170420 as Iot;
+use \Iot\Request\V20170420 as Iot;
+use DefaultAcsClient;
+use DefaultProfile;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Rules\ValidatePhoneRule;
@@ -44,7 +48,7 @@ class ApiController extends Controller
 
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
-            'captcha' => 'required|captcha:',
+//            'captcha' => 'required|captcha:',
 //            'ckey' => 'required',
 //            'captcha' => 'required|captcha:'.$request->ckey
 //            'user_password' => 'sometimes|string|max:20|min:6'
@@ -63,5 +67,21 @@ class ApiController extends Controller
             return Common::myJson(ErrorCall::$errSendFail);
         }
         return Common::myJson(ErrorCall::$errSucc);
+    }
+
+    public function testwu()
+    {
+//设置你的AccessKeyId/AccessSecret/ProductKey
+        $accessKeyId = env("QUEUE_MNS_ACCESS_KEY_LIUQING");
+        $accessSecret = env("QUEUE_MNS_SECRET_KEY_LIUQING");
+//        DefaultProfile::addEndpoint("cn-shanghai","cn-shanghai","Iot","iot.cn-shanghai.aliyuncs.com");
+        $iClientProfile = DefaultProfile::getProfile("cn-shanghai", $accessKeyId, $accessSecret);
+        $client = new DefaultAcsClient($iClientProfile);
+        $request = new Iot\PubRequest();
+        $request->setProductKey("a1GBdrPMPst");
+        $request->setMessageContent("aGVsbG93b3JsZA="); //hello world Base64 String.
+        $request->setTopicFullName("/a1GBdrPMPst/869300034342472/serverData"); //消息发送到的Topic全名.
+        $response = $client->getAcsResponse($request);
+        print_r($response);
     }
 }
