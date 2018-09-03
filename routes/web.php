@@ -20,7 +20,7 @@ Route::get('/login', 'UserController@center')->name('login')->middleware('wechat
 Route::any('/wechat', 'WeChatController@serve')->name("wechatserve");
 Route::any('/payment/wechatnotify', 'PaymentController@wechatnotify')->name("wechatnotify");
 
-//Route::get('/user/center', 'UserController@center')->name('user_center')->middleware('wechat.oauth:default,snsapi_userinfo');
+Route::get('/user/center', 'UserController@center')->name('user_center')->middleware('wechat.oauth:default,snsapi_userinfo');
 //Route::get('captcha', function () {
 //    $res = app('captcha')->create('default', true);
 //    return $res;
@@ -34,7 +34,6 @@ Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.logi
     Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
     Route::get('/user/order', 'UserController@order')->name('user_order');
     Route::get('/user/orderanswser', 'UserController@orderanswser')->name('user_orderanswer');
-    Route::get('/user/center', 'UserController@center')->name('user_center');
     Route::get('/user/about', 'UserController@about')->name('user_about');
     //电卡
     Route::get('/electric/cardorderpay', 'ElectricController@cardorderpay')->name('electric_cardorderpay');
