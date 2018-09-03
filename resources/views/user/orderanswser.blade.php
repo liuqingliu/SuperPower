@@ -1,18 +1,12 @@
 @extends('layouts.default')
 
-@section('title', '电卡充值')
+@section('title', '账户充值')
 
 @section('content')
 <section class="header">
-    <!-- title -->
-    <div class="text-center title-container">
-        <a href="javascript:history.back(-1);" class="title-back">
-            <img class="title-back-img" src="{{URL::asset('images/p2_01.png')}}" alt="返回">
-            <span class="title-back-text">返回</span>
-        </a>
-        <span class="title-text">电卡充值</span>
-    </div>
-    <!-- title -->
+    @component('layouts._header')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
 </section>
 @if ($success_flag))
     <section class="body1" style="display: none;">

@@ -28,6 +28,21 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
+
+
+        $userInfo = User::find(1);
+        return view('user/center',[
+            "user_info" => Common::getNeedObj([
+                "phone",
+                "headimgurl",
+                "nickname",
+                "user_money",
+                "user_id",
+                "user_type",
+                "api_token"
+            ], $userInfo),
+        ]);
+
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){

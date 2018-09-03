@@ -30,18 +30,18 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
 
 Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.login']], function () {
     //用户
-    Route::get('/user/detail', 'UserController@detail')->name('user_detail');
-    Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
-    Route::get('/user/order', 'UserController@order')->name('user_order');
-    Route::get('/user/orderanswser', 'UserController@orderanswser')->name('user_orderanswer');
-    Route::get('/user/center', 'UserController@center')->name('user_center');
-    Route::get('/user/about', 'UserController@about')->name('user_about');
+//    Route::get('/user/detail', 'UserController@detail')->name('user_detail');
+//    Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
+//    Route::get('/user/order', 'UserController@order')->name('user_order');
+//    Route::get('/user/orderanswser', 'UserController@orderanswser')->name('user_orderanswer');
+//    Route::get('/user/center', 'UserController@center')->name('user_center');
+//    Route::get('/user/about', 'UserController@about')->name('user_about');
     //电卡
-    Route::get('/electric/cardorderpay', 'ElectricController@cardorderpay')->name('electric_cardorderpay');
-    Route::get('/electric/cardorderpayanswer', 'ElectricController@cardorderpayanswer')->name('electric_cardorderpayanswer');
-    Route::get('/electric/recharge', 'ElectricController@recharge')->name('electric_recharge');
-    Route::get('/electric/choosesocket', 'ElectricController@choosesocket')->name('electric_choosesocket');
-    Route::get('/electric/rechargelog', 'ElectricController@rechargelog')->name('electric_rechargelog');
+//    Route::get('/electric/cardorderpay', 'ElectricController@cardorderpay')->name('electric_cardorderpay');
+//    Route::get('/electric/cardorderpayanswer', 'ElectricController@cardorderpayanswer')->name('electric_cardorderpayanswer');
+//    Route::get('/electric/recharge', 'ElectricController@recharge')->name('electric_recharge');
+//    Route::get('/electric/choosesocket', 'ElectricController@choosesocket')->name('electric_choosesocket');
+//    Route::get('/electric/rechargelog', 'ElectricController@rechargelog')->name('electric_rechargelog');
 
     //经销商
     Route::get('/dealer/electriccardmanage', 'DealerController@electriccardmanage')->name('dealer_electriccardmanage');
@@ -62,4 +62,14 @@ Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.logi
     Route::get('/api/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
     Route::post('/api/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
 });
+Route::get('/user/center', 'UserController@center')->name('user_center');
+Route::get('/user/about', 'UserController@about')->name('user_about'); Route::get('/user/detail', 'UserController@detail')->name('user_detail');
+Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
+Route::get('/user/order', 'UserController@order')->name('user_order');
+Route::get('/user/orderanswser', 'UserController@orderanswser')->name('user_orderanswer');
 
+Route::get('/electric/cardorderpay', 'ElectricController@cardorderpay')->name('electric_cardorderpay');
+Route::get('/electric/cardorderpayanswer', 'ElectricController@cardorderpayanswer')->name('electric_cardorderpayanswer');
+Route::get('/electric/recharge', 'ElectricController@recharge')->name('electric_recharge');
+Route::get('/electric/choosesocket', 'ElectricController@choosesocket')->name('electric_choosesocket');
+Route::get('/electric/rechargelog', 'ElectricController@rechargelog')->name('electric_rechargelog');

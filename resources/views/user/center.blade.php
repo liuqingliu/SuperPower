@@ -4,15 +4,15 @@
 
 @section('content')
 <section class="header">
-    <div>
-        <img class="header_img pull-left img-rounded" src="{{URL::asset($user_info->headimgurl)}}" alt="头像">
+    <div class="user-center-header">
+        <img class="user-header pull-left img-rounded" src="{{URL::asset($user_info->headimgurl)}}" alt="头像">
         <div class="pull-left header-message">
             <span class="user-name">{{$user_info->nickname}}</span><br>
-            <span class="user_account">账号：{{$user_info->user_id}}</span><br>
+            <span class="user-account">账号：{{$user_info->user_id}}</span><br>
             @if (empty($user_info->phone))
-                <span class="user_account">点击这里绑定手机领取优惠</span><br>
+                <span class="user-account">点击这里绑定手机领取优惠</span><br>
             @else
-                <span class="user_account">{{$user_info->phone}}</span>
+                <span class="user-account">{{$user_info->phone}}</span>
             @endif
             
         </div>
