@@ -34,6 +34,9 @@ class Common
     //session_key
     const SESSION_KEY_USER = "user_info";
 
+    //iot状态
+    const STATUS_SEND_SUCCESS = 1;
+
     //mail_exception_wechat_order
     public static $emailOferrorForWechcatOrder = [
         "609163616@qq.com"

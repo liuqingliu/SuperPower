@@ -6,9 +6,6 @@
  * Time: 7:39
  */
 namespace App\Http\Controllers;
-use App\Jobs\SendEmail;
-use App\Mail\WechatOrder;
-use App\Models\Dealer;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
@@ -21,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -59,7 +55,7 @@ class UserController extends Controller
             session([Common::SESSION_KEY_USER => $userInfoReal]);
             $userInfo = $userInfoReal;
         }
-
+        $userInfo = User::find(1);
         return view('user/center',[
             "user_info" => Common::getNeedObj([
                 "phone",
@@ -213,20 +209,5 @@ class UserController extends Controller
             $orderInfo->save();
             return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
-    }
-
-    public function sendSms(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
-        ]);
-        if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
-        }
-        $userInfo = session(Common::SESSION_KEY_USER);
-        return view('user/bindphone',[
-            "user_info" => Common::getNeedObj(["phone"], $userInfo)
-        ]);
-        return view('center/index');
     }
 }

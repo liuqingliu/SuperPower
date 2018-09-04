@@ -63,4 +63,5 @@ Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.logi
 });
 
 Route::get("/api/testwu",'ApiController@testwu');
+Route::get("/api/testGetMessage",'ApiController@testGetMessage');
 Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码

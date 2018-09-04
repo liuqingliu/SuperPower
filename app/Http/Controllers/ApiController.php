@@ -5,9 +5,14 @@
  * Date: 2018/8/30
  * Time: 16:22
  */
+
 namespace App\Http\Controllers;
-//include_once "../../";
-//use \Iot\Request\V20170420 as Iot;
+
+use AliyunMNS\Client;
+use AliyunMNS\Exception\MnsException;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use \Iot\Request\V20170420 as Iot;
 use DefaultAcsClient;
 use DefaultProfile;
@@ -47,8 +52,8 @@ class ApiController extends Controller
 //        PhpSms::queue(true);
 
         $validator = Validator::make($request->all(), [
-            'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
-//            'captcha' => 'required|captcha:',
+            'user_phone' => ['required', new ValidatePhoneRule],//,"exists:users,phone"
+            'captcha' => 'required|captcha',
 //            'ckey' => 'required',
 //            'captcha' => 'required|captcha:'.$request->ckey
 //            'user_password' => 'sometimes|string|max:20|min:6'
@@ -57,7 +62,7 @@ class ApiController extends Controller
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $canSend = SmsManager::validateSendable();
-        if(!$canSend){
+        if (!$canSend) {
             return Common::myJson(ErrorCall::$errCallSendInvalid);
         }
 
@@ -83,5 +88,27 @@ class ApiController extends Controller
         $request->setTopicFullName("/a1GBdrPMPst/869300034342472/serverData"); //消息发送到的Topic全名.
         $response = $client->getAcsResponse($request);
         print_r($response);
+    }
+
+    public function testGetMessage()
+    {
+
+    }
+
+    public function testredis()
+    {
+//        Redis::set('name', 'guwenjie');
+        $values = Redis::get('name');
+        dd($values);
+        //输出："guwenjie"
+        //加一个小例子比如网站首页某个人员或者某条新闻日访问量特别高，可以存储进redis，减轻内存压力
+        $userinfo = User::find(1);
+        Redis::set('user_key',$userinfo);
+        if(Redis::exists('user_key')){
+            $values = Redis::get('user_key');
+        }else{
+            $values = Member::find(1200);//此处为了测试你可以将id=1200改为另一个id
+        }
+        dump($values);
     }
 }

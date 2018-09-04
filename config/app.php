@@ -123,6 +123,7 @@ return [
     'log' => env('APP_LOG', 'single'),
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
+    'log_channel' => env('APP_LOG_CHANNEL', 'superpower'),
 
     /*
     |--------------------------------------------------------------------------
