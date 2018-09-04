@@ -1,10 +1,10 @@
 @extends('layouts.default')
 
 @section('title', '绑定手机号')
-
+@section('system', '个人中心')
 @section('content')
 <section class="header">
-    @component('layouts._header')
+    @component('layouts._userheader')
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
 </section>

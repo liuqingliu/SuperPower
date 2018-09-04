@@ -1,10 +1,10 @@
 @extends('layouts.default')
 
 @section('title', '充小满')
-
+@section('system', '个人中心')
 @section('content')
 <section class="header">
-    @component('layouts._header')
+    @component('layouts._userheader')
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
 </section>
@@ -33,7 +33,7 @@
     </ul>
 </section>
 <section class="footer">
-    <div class="footer">
+    <div class="about-footer">
 				<span class="borad-text-right">
 					 ©2018 朗畅科技.保留所有权限
 				</span>

@@ -6,12 +6,12 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0,user-scalable=0" />
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>@yield('title')</title>
+    <title>@yield('system')</title>
     <!-- Bootstrap -->
 {{--<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">--}}
 <!-- 私有 -->
     {{--<link href="{{URL::asset('css/index.css?v=1.4')}}" rel="stylesheet">--}}
-    <link rel="stylesheet" href="/css/app.css?v=1.5.9.3">
+    <link rel="stylesheet" href="/css/app.css?v=1.6.0.7">
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
     <!--[if lt IE 9]>

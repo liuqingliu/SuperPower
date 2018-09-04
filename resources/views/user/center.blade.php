@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('title', '个人中心')
-
+@section('system', '个人中心')
 @section('content')
 <section class="header">
     <div class="user-center-header">
@@ -66,7 +66,7 @@
     </ul>
     <ul class="board1">
         <li class="borad-heigh">
-            <a href="{{route("dealer_moneymanage")}}">
+            <a href="{{route("dealer_center")}}">
             <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_08.png')}}" alt="运营商管理平台">
             <span class="borad-text-left">运营商管理平台</span>
             </a>

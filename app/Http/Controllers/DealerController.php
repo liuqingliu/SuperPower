@@ -30,43 +30,72 @@ class DealerController extends Controller
         return view('dealer/center');
     }
 
-    public function electriccardmanage(Request $request)
+    public function cardManage(Request $request)
     {
-        //验证数据
-        $validator = Validator::make($request->all(), [
-            'mobile'     => 'required|confirm_mobile_not_change|confirm_rule:mobile_required',
-            'verifyCode' => 'required|verify_code',
-            //more...
-        ]);
-        if ($validator->fails()) {
-            //验证失败后建议清空存储的发送状态，防止用户重复试错
-            SmsManager::forgetState();
-            dd($validator->errors());
-        }
-        dd(1);
-        return view('dealer/electriccardmanage');
+//        //验证数据
+//        $validator = Validator::make($request->all(), [
+//            'mobile'     => 'required|confirm_mobile_not_change|confirm_rule:mobile_required',
+//            'verifyCode' => 'required|verify_code',
+//            //more...
+//        ]);
+//        if ($validator->fails()) {
+//            //验证失败后建议清空存储的发送状态，防止用户重复试错
+//            SmsManager::forgetState();
+//            dd($validator->errors());
+//        }
+//        dd(1);
+        return view('dealer/cardManage');
     }
 
-    public function electricstationmanage()
+    public function powerStationManage()
     {
-        return view('dealer/electricstationmanage');
+        return view('dealer/powerStationManage');
     }
 
-    public function manage()
+    public function dealerManage()
     {
-        return view('dealer/manage');
+        return view('dealer/dealerManage');
     }
 
-    public function moneymanage()
+    public function dealerDetail()
+    {
+        return view('dealer/dealerDetail');
+    }
+
+    public function incomeAndExpense()
+    {
+        return view('dealer/incomeAndExpense');
+    }
+
+    public function moneyManage()
     {
         $dealInfo = Dealer::find(1,["income_withdraw","total_income"]);
         $totalUsers = 133;
         $totalChargeCount = 143234;
-        return view('dealer/moneymanage',[
+        return view('dealer/moneyManage',[
             "income_withdraw" => $dealInfo->income_withdraw,
             "total_income" => $dealInfo->total_income,
             "total_users" => $totalUsers,
             "total_charge_count" => $totalChargeCount,
         ]);
+    }
+    public function powerStationDetail()
+    {
+        return view('dealer/powerStationDetail');
+    }
+
+    public function resetPassword()
+    {
+        return view('dealer/resetPassword');
+    }
+
+    public function revenueSummary()
+    {
+        return view('dealer/revenueSummary');
+    }
+
+    public function takeOutMoney()
+    {
+        return view('dealer/takeOutMoney');
     }
 }

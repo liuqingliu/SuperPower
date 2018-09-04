@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('title', '选择插座')
-
+@section('system', '个人中心')
 @section('content')
 
 <section class="header">

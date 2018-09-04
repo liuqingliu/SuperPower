@@ -28,8 +28,6 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
-
-
         $userInfo = User::find(1);
         return view('user/center',[
             "user_info" => Common::getNeedObj([

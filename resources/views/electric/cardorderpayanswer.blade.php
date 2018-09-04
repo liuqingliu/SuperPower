@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('title', '电卡充值')
-
+@section('system', '个人中心')
 @section('content')
     <section class="header">
         <!-- title -->
