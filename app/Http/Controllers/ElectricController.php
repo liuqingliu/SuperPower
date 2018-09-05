@@ -7,8 +7,10 @@
  */
 namespace App\Http\Controllers;
 
+use App\Models\ChargingEquipment;
 use App\Models\ElectricCard;
 use App\Models\ElectricCardOrder;
+use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
@@ -59,14 +61,53 @@ class ElectricController extends Controller
         ]);
     }
 
-    public function choosesocket()
+    public function choosesocket(Request $request)
     {
-        return view('electric/choosesocket');
+        $validator = Validator::make($request->all(), [
+            'devid' => 'required|int|max:20|min:10',
+        ]);
+        if ($validator->fails()) {
+            return redirect('/prompt')->with(['message'=>ErrorCall::$errParams["errmsg"],'url' =>'/user/center', 'jumpTime'=>3,'status'=>'error']);
+        }
+        //获取当前终端的基本信息
+        $device = ChargingEquipment::where("devid",$request->devid)->first();
+        return view('electric/choosesocket',[
+            "device_info" => Common::getNeedObj([
+                "ebquipment_status ",
+                "net_status",
+                "equipment_id",
+                "province",
+                "city",
+                "area",
+                "street",
+                "address",
+                "manager_phone",
+                "charging_unit_price",
+                "jack_info",//存储board1
+            ], $device),
+            "charge_type_list" => Charge::$chargeTypeList,
+        ]);
     }
 
     public function rechargelog()
     {
-        return view('electric/rechargelog');
+        $userInfo = session("user_info");
+        $rechareList = UserRechargeOrder::where("openid", $userInfo->openid)->get();
+        $res = [];
+        foreach ($rechareList as $recharge) {
+            $tmp = [];
+            $device = $recharge->chargingEquipment;
+            $tmp["device_address"] = $device->address;
+            $tmp["recharge_time"] = $recharge->recharge_time;
+            $tmp["recharge_price"] = $recharge->recharge_price;
+            $tmp["date"] = date("Y-m-d",strtotime($recharge->created_at));
+            $tmp["time_s"] = date("H:i",strtotime($recharge->created_at));
+            $tmp["time_e"] = date("H:i",strtotime($recharge->created_at)+$recharge->recharge_time);
+            $res[] = $tmp;
+        }
+        return view('electric/rechargelog',[
+            "charge_list" => $res,
+        ]);
     }
 
     public function getRechargeLog(Request $request)
@@ -151,7 +192,7 @@ class ElectricController extends Controller
         $result = $app->order->unify([
             'body' => '充小满-充电了',
             'out_trade_no' => $createParams["order_id"],
-            'total_fee' => 1,
+            'total_fee' => $price * 100,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
             'notify_url' => 'http://www.babyang.top/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
@@ -160,7 +201,6 @@ class ElectricController extends Controller
         if(isset($result["prepay_id"])) {
             $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
             Log::info("jssdk:".serialize($jssdk));
-            //todo 调用阿里云接口 开通插座
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
             $orderInfo = ElectricCardOrder::where("order_id",$createParams["order_id"])->first();

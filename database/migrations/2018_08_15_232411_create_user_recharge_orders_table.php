@@ -16,7 +16,7 @@ class CreateUserRechargeOrdersTable extends Migration
     {
         Schema::create('user_recharge_orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id',16)->index()->default("");//用户编号
+            $table->string('openid',34)->index()->default("");//用户编号
             $table->string('equipment_id',16)->index()->default("");//充电设备编号
             $table->string('jack_id',16)->default("");//充电插口编号
             $table->unsignedInteger('recharge_total_time')->default(0);//需充电时长（根据用户选择标准来）
@@ -24,6 +24,7 @@ class CreateUserRechargeOrdersTable extends Migration
             $table->unsignedTinyInteger('recharge_status' )->default(0);//充电状态
             $table->unsignedInteger('recharge_time',false)->default(0);//充电时长
             $table->integer('wat',false,true)->default(0);//充电功率
+            $table->integer('recharge_price',false,true)->default(0);//充电功率
             $table->timestamps();
         });
     }

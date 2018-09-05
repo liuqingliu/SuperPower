@@ -23,6 +23,7 @@ class CreateElectricRechargeOrdersTable extends Migration
             $table->integer('recharge_unit_money',false,true)->default(0);//充电单价
             $table->unsignedTinyInteger('recharge_status' )->default(0);//充电状态
             $table->integer('recharge_time',false,true)->default(0);//充电时长
+            $table->integer('recharge_price',false,true)->default(0);//充电功率
             $table->integer('wat',false,true)->default(0);//充电功率
             $table->timestamps();
         });

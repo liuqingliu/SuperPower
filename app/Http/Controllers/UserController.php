@@ -95,6 +95,7 @@ class UserController extends Controller
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
+            "user_money" => $userInfo->user_money,
         ]);
     }
 
@@ -192,16 +193,15 @@ class UserController extends Controller
         $result = $app->order->unify([
             'body' => '充小满-充电了',
             'out_trade_no' => $createParams["order_id"],
-            'total_fee' => 1,
+            'total_fee' => $price,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
-            'notify_url' => 'http://www.babyang.top/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+            'notify_url' => 'http://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
         ]);
 
         if(isset($result["prepay_id"])) {
             $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
             Log::info("jssdk:".serialize($jssdk));
-            //todo 调用阿里云接口 开通插座
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
             $orderInfo = UserOrder::where("order_id",$createParams["order_id"])->first();

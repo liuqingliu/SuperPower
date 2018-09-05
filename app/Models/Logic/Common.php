@@ -37,10 +37,18 @@ class Common
     //iot状态
     const STATUS_SEND_SUCCESS = 1;
 
+    //domain
+    const DOMAIN = "www.babyang.top";
+
+    //用电终端设备状态
+    const DEVICE_STATUS_STATUS = 0;//正常
+    const DEVICE_STATUS_ERROR = 1;//异常
+
     //mail_exception_wechat_order
     public static $emailOferrorForWechcatOrder = [
         "609163616@qq.com"
     ];
+
 
     public static function getNeedArray($needArr, $org)
     {

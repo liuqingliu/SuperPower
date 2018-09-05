@@ -28,6 +28,7 @@ class CreateChargingEquipmentsTable extends Migration
             $table->integer('charging_cost',false,true)->default(0);//充电成本
             $table->integer('charging_unit_price',false,true)->default(0);//充电单价
             $table->dateTime('active_time');
+            $table->string('manager_phone',22)->index()->default("");
             $table->string('parent_user_id',16)->index();
             $table->timestamps();
         });

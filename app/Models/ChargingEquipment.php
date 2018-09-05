@@ -18,13 +18,14 @@ class ChargingEquipment extends Model
         'area',
         'street',
         'address',
-        'equipment_status',
+        'equipment_status',//设备状态,0,默认，1,已激活,2,禁用
         'jack_info',
         'net_status',
         'charging_cost',
         'charging_unit_price',
         'active_time',
         'parent_user_id',
+        'manager_phone',
     ];
 
     public $timestamps = true;

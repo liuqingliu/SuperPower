@@ -8,10 +8,7 @@
 
 namespace App\Http\Controllers;
 
-use AliyunMNS\Client;
-use AliyunMNS\Exception\MnsException;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use \Iot\Request\V20170420 as Iot;
 use DefaultAcsClient;

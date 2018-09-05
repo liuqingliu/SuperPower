@@ -9,6 +9,7 @@ namespace App\Console\Commands;
 
 use AliyunMNS\Client;
 use AliyunMNS\Exception\MnsException;
+use App\Events\ReceiveMsn;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
 
@@ -53,16 +54,30 @@ class ReceiveMessage extends Command {
                 $queue = $this->client->getQueueRef("aliyun-iot-a1GBdrPMPst");
                 $res = $queue->receiveMessage(30);
                 echo "ReceiveMessage Succeed! \n";
-                $body = $res->getMessageBody();
+                $body = json_decode($res->getMessageBody());
+                $message = base64_decode($body->payload);
+                $realMsg = json_decode($message, true);
+                event(new ReceiveMsn($realMsg));
                 $receiptHandle = $res->getReceiptHandle();
-                Log::debug("msn:receive".serialize($body));
+                Log::info("msn:real_msg".serialize($body).serialize($message).serialize($realMsg));
             } catch (MnsException $e) {
                 echo "ReceiveMessage Failed: " . $e . "\n";
                 echo "MNSErrorCode: " . $e->getMnsErrorCode() . "\n";
-                Log::debug("MNSErrorCode: ".serialize($e->getMessage()));
+                Log::debug("ReceiveMessage-error: ".serialize($e->getMessage()));
                 return;
             }
 
+            try
+            {
+                $delres = $queue->deleteMessage($receiptHandle);
+            }
+            catch (MnsException $e)
+            {
+                echo "deleteMessage Failed: " . $e . "\n";
+                echo "MNSErrorCode: " . $e->getMnsErrorCode() . "\n";
+                Log::debug("deleteMessage-error: ".serialize($e->getMessage()));
+                return;
+            }
         }
     }
 
