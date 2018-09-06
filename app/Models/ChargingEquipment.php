@@ -30,8 +30,8 @@ class ChargingEquipment extends Model
 
     public $timestamps = true;
 
-    public function userrechargeorders()
+    public function rechargeorders()
     {
-        return $this->hasMany(UserRechargeOrder::class, 'equipment_id', 'equipment_id');
+        return $this->hasMany(RechargeOrder::class, 'equipment_id', 'equipment_id');
     }
 }

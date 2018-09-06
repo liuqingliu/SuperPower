@@ -14,7 +14,7 @@ use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
-use App\Models\UserRechargeOrder;
+use App\Models\RechargeOrder;
 use App\Models\Logic\User as UserLogic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +48,7 @@ class ElectricController extends Controller
 
     public function recharge()
     {
-        $rechargeInfo = UserRechargeOrder::find(1);
+        $rechargeInfo = RechargeOrder::find(1);
         $chargingEquipment = $rechargeInfo->chargingEquipment;
 
         $unitMoney = $rechargeInfo->recharge_unit_money;
@@ -92,7 +92,7 @@ class ElectricController extends Controller
     public function rechargelog()
     {
         $userInfo = session("user_info");
-        $rechareList = UserRechargeOrder::where("openid", $userInfo->openid)->get();
+        $rechareList = RechargeOrder::where("recharge_str", $userInfo->openid)->get();
         $res = [];
         foreach ($rechareList as $recharge) {
             $tmp = [];
@@ -120,7 +120,7 @@ class ElectricController extends Controller
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $count = isset($request->count) ? (int)$request->count : 10;
-        $data = UserRechargeOrder::with("chargingEquipment")->where("openid", $userInfo->openid)->orderBy('created_at', 'desc')->paginate($count);
+        $data = RechargeOrder::with("chargingEquipment")->where("recharge_str", $userInfo->openid)->orderBy('created_at', 'desc')->paginate($count);
         return Common::myJson(ErrorCall::$errSucc, $data->toArray());
     }
 
@@ -128,7 +128,7 @@ class ElectricController extends Controller
     public function stopChargingOrder(Request $request)
     {
         $userInfo = Auth::guard("api")->user();
-        $chargingOrderInfo = UserRechargeOrder::where('openid',$userInfo->openid)->first();
+        $chargingOrderInfo = RechargeOrder::where('recharge_str',$userInfo->openid)->first();
         if($chargingOrderInfo["user_id"]!=$request->order_id){
             return Common::myJson(ErrorCall::$errNotSelfUser);
         }

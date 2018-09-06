@@ -40,10 +40,6 @@ class Common
     //domain
     const DOMAIN = "www.babyang.top";
 
-    //用电终端设备状态
-    const DEVICE_STATUS_STATUS = 0;//正常
-    const DEVICE_STATUS_ERROR = 1;//异常
-
     //mail_exception_wechat_order
     public static $emailOferrorForWechcatOrder = [
         "609163616@qq.com"
@@ -85,6 +81,11 @@ class Common
         $timeArr = explode(".", microtime(true));
         $timeStr = rand(1, 9) . rand(0, 9) . date('h') . substr($timeArr[0] . $timeArr[1], 7);
         return $timeStr;
+    }
+
+    public static function getPrexZero($str, $len=5)
+    {
+        return str_pad($str,$len,"0",STR_PAD_LEFT);
     }
 
 }

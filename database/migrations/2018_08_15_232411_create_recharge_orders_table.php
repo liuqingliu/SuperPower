@@ -4,27 +4,28 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateElectricRechargeOrdersTable extends Migration
+class CreateRechargeOrdersTable extends Migration
 {
     /**
      * Run the migrations.
-     * 电卡充电订单表
+     * 用户充电订单表
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('electric_recharge_orders', function (Blueprint $table) {
+        Schema::create('recharge_orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('card_id',16)->index()->default("");//电卡号
+            $table->string('recharge_str',34)->index()->default("");//用户编号
             $table->string('equipment_id',16)->index()->default("");//充电设备编号
-            $table->string('jack_id',16)->default("");//充电插口编号
+            $table->string('port',16)->default("");//充电插口编号
             $table->unsignedInteger('recharge_total_time')->default(0);//需充电时长（根据用户选择标准来）
-            $table->integer('recharge_unit_money',false,true)->default(0);//充电单价
+            $table->unsignedInteger('recharge_unit_money')->default(0);//充电单价
             $table->unsignedTinyInteger('recharge_status' )->default(0);//充电状态
-            $table->integer('recharge_time',false,true)->default(0);//充电时长
-            $table->integer('recharge_price',false,true)->default(0);//充电功率
+            $table->unsignedInteger('recharge_time',false)->default(0);//充电时长
+            $table->unsignedTinyInteger('type' )->default(0);//充电类型（user/card）
             $table->integer('wat',false,true)->default(0);//充电功率
+            $table->integer('recharge_price',false,true)->default(0);//充电功率
             $table->timestamps();
         });
     }
@@ -36,6 +37,6 @@ class CreateElectricRechargeOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('electric_recharge_orders');
+        Schema::dropIfExists('recharge_orders');
     }
 }

@@ -9,9 +9,8 @@ namespace App\Console\Commands;
 
 use AliyunMNS\Client;
 use AliyunMNS\Exception\MnsException;
-use App\Events\ReceiveMsn;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class ReceiveMessage extends Command {
 
@@ -57,9 +56,10 @@ class ReceiveMessage extends Command {
                 $body = json_decode($res->getMessageBody());
                 $message = base64_decode($body->payload);
                 $realMsg = json_decode($message, true);
-                event(new ReceiveMsn($realMsg));
+                $func = "App\Events\Msns\\".$realMsg["func"];
+                event(new $func($realMsg));
                 $receiptHandle = $res->getReceiptHandle();
-                Log::info("msn:real_msg".serialize($body).serialize($message).serialize($realMsg));
+                Log::info("msn:real_msg".serialize($body));
             } catch (MnsException $e) {
                 echo "ReceiveMessage Failed: " . $e . "\n";
                 echo "MNSErrorCode: " . $e->getMnsErrorCode() . "\n";
