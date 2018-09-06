@@ -1,5 +1,7 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/choosesocket.js')}}"></script>
+    @endsection
 @section('title', '选择插座')
 @section('system', '个人中心')
 @section('content')
@@ -17,9 +19,9 @@
 </section>
 <section class="body1">
     <div class="borad-text-left borad-heigh location-title">钢铁领域2号充电站
-        <a href="#" onclick="showHideCode()"><img src="{{URL::asset('images/p17_01.png')}}" class="up-down" /></a>
+        <a href="#" onclick="showHideCode()"><img id="choosesocke_updownimg" src="{{URL::asset('images/p17_01.png')}}" class="up-down" /></a>
     </div>
-    <div class="location-detail" id="detail">
+    <div class="location-detail" id="detail" style="display: none">
         <div class="detail1">
             <img src="{{URL::asset('images/p18_02.png')}}" class="detail-img" />
             <span class="mini-text">成都市成华区龙潭总部经济城成交撸26号</span>

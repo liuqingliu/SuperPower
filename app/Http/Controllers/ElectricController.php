@@ -65,8 +65,43 @@ class ElectricController extends Controller
     }
 
     public function rechargelog()
-    {
-        return view('electric/rechargelog');
+    {$res = [
+        [
+            "device_address" => "地址五所发生的",
+            "recharge_time" => "6小时",
+            "recharge_price" => "1元",
+            "date" => "2018-09-01",
+            "time_s" => "08:09",
+            "time_e" => "14:09",
+        ],
+        [
+            "device_address" => "地址五所发生的",
+            "recharge_time" => "6小时",
+            "recharge_price" => "1元",
+            "date" => "2018-09-01",
+            "time_s" => "08:09",
+            "time_e" => "14:09",
+        ],
+        [
+            "device_address" => "地址五所发生的",
+            "recharge_time" => "6小时",
+            "recharge_price" => "1元",
+            "date" => "2018-09-01",
+            "time_s" => "08:09",
+            "time_e" => "14:09",
+        ],
+        [
+            "device_address" => "地址五所发生的",
+            "recharge_time" => "6小时",
+            "recharge_price" => "1元",
+            "date" => "2018-09-01",
+            "time_s" => "08:09",
+            "time_e" => "14:09",
+        ]
+    ];
+
+        return view('electric/rechargelog', ["charge_list"=> $res,
+        ]);
     }
 
     public function getRechargeLog(Request $request)

@@ -102,7 +102,7 @@
     <ul style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
         <li style="position: relative;height: 6.25rem;">
             <span class="borad-text-left" style="position: absolute;bottom: 1.25rem;left: 1.75rem;">查询结果列表</span>
-            <span class="mini-text-b3" style="position: absolute;bottom: 1.25rem;left: 9.5rem;">（点击该经销商可进行编辑）</span>
+            <span class="mini-text-b3" style="position: absolute;bottom: 1.25rem;right: 1.75rem">（点击该经销商可进行编辑）</span>
             <div class="item-line">
                 <div class="line-dark"></div>
             </div>
