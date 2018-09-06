@@ -35,9 +35,9 @@
         </div>
     </div>
     <div class="div-big">
-        <div style="height: 3.125rem;line-height: 3.125rem;text-align: center;padding-left: 1.75rem;padding-right: 1.75rem;">
-            <span class="middle-text pull-left">充电口状态</span>
-            <a href="#" class="middle-text pull-right">使用方法</a>
+        <div style="height: 2.4rem;position: relative">
+            <span class="middle-text pull-left" style="position: absolute;left: 1.75rem;bottom: 0;">充电口状态</span>
+            <a href="#" class="middle-text pull-right" style="position: absolute;right: 1.75rem;bottom: 0;">使用方法</a>
         </div>
         <div style="height: 13.0625rem;">
             <ul class="choose-block" style="padding-left: 0.599rem; padding-right:0.599rem;height: 13.0625rem;">
@@ -71,31 +71,31 @@
                         <p class="mini-text-red block-text2">充电中</p>
                     </div>
                 </li>
-                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block2">
+                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                     <div class="inner-block-yes">
                         <p class="number-green-text block-text1">6号</p>
                         <p class="mini-text-green block-text2">充电中</p>
                     </div>
                 </li>
-                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block2">
+                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                     <div class="inner-block-no">
                         <p class="number-red-text block-text1">7号</p>
                         <p class="mini-text-red block-text2">充电中</p>
                     </div>
                 </li>
-                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block2">
+                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                     <div class="inner-block-yes">
                         <p class="number-green-text block-text1">8号</p>
                         <p class="mini-text-green block-text2">充电中</p>
                     </div>
                 </li>
-                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block2">
+                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                     <div class="inner-block-no">
                         <p class="number-red-text block-text1">9号</p>
                         <p class="mini-text-red block-text2">充电中</p>
                     </div>
                 </li>
-                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block2">
+                <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                     <div class="inner-block-yes">
                         <p class="number-green-text block-text1">10号</p>
                         <p class="mini-text-green block-text2">充电中</p>

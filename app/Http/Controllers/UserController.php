@@ -88,15 +88,17 @@ class UserController extends Controller
 
     public function detail()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         return view('user/detail',[
-            "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time"],$userInfo)
+            "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time","headimgurl"],$userInfo)
         ]);
     }
 
     public function bindphone()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         return view('user/bindphone',[
             "user_info" => Common::getNeedObj(["phone"], $userInfo)
         ]);
@@ -105,19 +107,22 @@ class UserController extends Controller
 
     public function order(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('user/order',[
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
+            "user_money"=> $userInfo->user_money,
         ]);
     }
 
     public function orderanswser(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|string|max:30|min:16',
         ]);
@@ -243,3 +248,6 @@ class UserController extends Controller
         return view('center/index');
     }
 }
+
+
+

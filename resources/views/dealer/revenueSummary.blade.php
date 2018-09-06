@@ -11,8 +11,8 @@
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->
-        <div style="height:6.25rem;">
-            <div style="height: 6.25rem;padding-bottom: 1.75rem;padding-top: 1.75rem;">
+        <div style="height:5.25rem;">
+            <div style="height: 5.25rem;padding-bottom: 1rem;padding-top: 1rem;">
                 <div class="col-xs-4 col-md-4 col-lg-4" align="center">
                     <p class="mini-text-white-number" style="margin: 0;">2000000.00</p>
                     <p class="mini-text-white">累计收益</p>

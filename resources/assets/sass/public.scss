@@ -65,7 +65,7 @@ input::-ms-input-placeholder {
 }
 
 .title-container {
-  height: 3.75rem;
+  height: 4.75rem;
   background-color: #f15a24;
   position: relative;
 }
@@ -73,7 +73,7 @@ input::-ms-input-placeholder {
 .title-text {
   font-size: 1.65rem;
   color: #ffffff;
-  line-height: 3.75rem;
+  line-height: 4.75rem;
 }
 
 .text-48-white {
@@ -108,21 +108,21 @@ input::-ms-input-placeholder {
 
 .title-back {
   left: 1.75rem;
-  height: 3.75rem;
+  height: 4.75rem;
   position: absolute;
 }
 
 .title-back-text {
   font-size: 1.65rem;
   color: #ffffff;
-  line-height: 3.75rem;
+  line-height: 4.75rem;
   margin-left: 0.4rem;
 }
 
 .title-back-img {
   height: 1.9375rem;
   width: 1.0625rem;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .button-style {
@@ -257,13 +257,6 @@ input::-ms-input-placeholder {
   font-size: 3.3rem;
   color: #ffffff;
 }
-
-.op-img {
-  width: 2.125rem;
-  height: 1.5rem;
-  margin-top: 1.125rem;
-}
-
 .img-getin {
   height: 1.9375rem;
   width: 1.0625rem;
@@ -282,7 +275,7 @@ input::-ms-input-placeholder {
 .op-img {
   width: 2.125rem;
   height: 1.5rem;
-  margin-top: 1.125rem;
+  margin-top: 1.7rem;
 }
 
 .body-container {
@@ -580,4 +573,10 @@ a:hover{
 }
 a:visited{
   text-decoration: none;
+}
+.dealer-option-img{
+  width: 2.0625rem;
+  height: 2.0625rem;
+  margin-right: 1rem;
+  margin-left: 1rem;
 }

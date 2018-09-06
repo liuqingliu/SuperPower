@@ -24,7 +24,7 @@
         <li class="borad-heigh">
             <span class="borad-text-left">手机号</span>
             @if (empty($user_info->phone))
-                <a class="pull-right" href="#"><span class="borad-text-right">未绑定，点击可绑定</span><img src="{{URL::asset('images/p2_03.png')}}" class="img-right"></a>
+                <a class="pull-right" href="{{route('user_bindphone')}}"><span class="borad-text-right">未绑定，点击可绑定</span><img src="{{URL::asset('images/p2_03.png')}}" class="img-right"></a>
             @else
                 <span class="lower-title">{{$user_info->phone}}</span>
             @endif
@@ -50,6 +50,6 @@
 </section>
 
 <section class="footer">
-    <div align="center" style="margin-top:1.75rem;"><button class="button-style">马上充值</button></div>
+    <div align="center" style="margin-top:1.75rem;"><a href="{{route('user_order')}}" class="button-style">马上充值</a></div>
 </section>
 @endsection

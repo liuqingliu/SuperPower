@@ -10,7 +10,7 @@
     <div class="headr-div">
         <div align="center">
             <span class="mini-text-white">您的账户余额(元)</span><br>
-            <span class="big-text-white money"> <span class="yuan">￥</span>18.56</span>
+            <span class="big-text-white money"> <span class="yuan">￥</span>{{$user_money}}</span>
         </div>
     </div>
 
@@ -52,7 +52,7 @@
         <button class="button-style">马上充值</button>
     </div>
     <div align="center" style="margin-top:1.25rem;">
-        <a href="#" onclick="" class="mini-text">为电卡充值，点击这里</a>
+        <a href="{{route('electric_cardorderpay')}}" class="mini-text">为电卡充值，点击这里</a>
     </div>
 </section>
 @endsection

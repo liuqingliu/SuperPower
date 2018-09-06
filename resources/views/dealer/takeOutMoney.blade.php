@@ -11,8 +11,8 @@
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->
-        <div style="height:15rem;">
-            <div style="height: 8.75rem;padding-top: 2.3rem;" align="center">
+        <div style="height:14rem;">
+            <div style="height: 7.75rem;padding-top: 1rem;" align="center">
                 <p class="dealer-money-text" style="margin-bottom: 0.2rem;">88.23</p>
                 <p class="mini-text-white">可提现金额</p>
             </div>

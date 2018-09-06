@@ -87,7 +87,7 @@ Route::get('/dealer/center', 'DealerController@center')->name('dealer_center');
 Route::get('/dealer/dealerDetail', 'DealerController@dealerDetail')->name('dealer_detail');
 Route::get('/dealer/dealerManage', 'DealerController@dealerManage')->name('dealer_manage');
 Route::get('/dealer/incomeAndExpense', 'DealerController@incomeAndExpense')->name('dealer_incomeexpense');
-Route::get('/dealer/moneyManage', 'DealerController@moneyManage')->name('dealer_moneymanage');
+Route::get('/dealer/moneymanage', 'DealerController@moneyManage')->name('dealer_moneymanage');
 Route::get('/dealer/powerStationDetail', 'DealerController@powerStationDetail')->name('dealer_powerStationDetail');
 Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')->name('dealer_powerStationManage');
 Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');

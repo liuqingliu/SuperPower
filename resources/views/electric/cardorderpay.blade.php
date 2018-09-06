@@ -68,7 +68,7 @@
         <button class="button-style">马上充值</button>
     </div>
     <div align="center" style="margin-top:1.25rem;">
-        <a href="#" onclick="" class="mini-text">为账户充值，点击这里</a>
+        <a href="{{route('user_order')}}" onclick="" class="mini-text">为账户充值，点击这里</a>
     </div>
 </section>
 

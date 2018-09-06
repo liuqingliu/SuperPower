@@ -72,7 +72,7 @@ class DealerController extends Controller
         $dealInfo = Dealer::find(1,["income_withdraw","total_income"]);
         $totalUsers = 133;
         $totalChargeCount = 143234;
-        return view('dealer/moneyManage',[
+        return view('dealer/moneymanage',[
             "income_withdraw" => $dealInfo->income_withdraw,
             "total_income" => $dealInfo->total_income,
             "total_users" => $totalUsers,
