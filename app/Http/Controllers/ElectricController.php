@@ -83,7 +83,8 @@ class ElectricController extends Controller
                 "address",
                 "manager_phone",
                 "charging_unit_price",
-                "jack_info",//存储board1
+                "jack_info",
+                "board_info",//存储board1
             ], $device),
             "charge_type_list" => Charge::$chargeTypeList,
         ]);

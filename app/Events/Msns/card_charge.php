@@ -15,8 +15,8 @@ use Illuminate\Queue\SerializesModels;
 //“ret”:”…”,
 // “cardId”:” 11字符”，
 //}
-
-class cardCharge
+//feng哥懒得不想改名，导致代码风格不统一
+class card_charge
 {
     use SerializesModels;
 

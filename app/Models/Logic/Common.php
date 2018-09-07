@@ -30,6 +30,7 @@ class Common
 
     //时间
     const ONE_WEEK_SECONDES = 7 * 24 * 3600;
+    const ONE_HOUR_SECONDES = 3600;
 
     //session_key
     const SESSION_KEY_USER = "user_info";

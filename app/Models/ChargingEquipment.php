@@ -19,6 +19,7 @@ class ChargingEquipment extends Model
         'street',
         'address',
         'equipment_status',//设备状态,0,默认，1,已激活,2,禁用
+        'board_info',//插板信息
         'jack_info',
         'net_status',
         'charging_cost',
@@ -33,5 +34,10 @@ class ChargingEquipment extends Model
     public function rechargeorders()
     {
         return $this->hasMany(RechargeOrder::class, 'equipment_id', 'equipment_id');
+    }
+
+    public function equipmentports()
+    {
+        return $this->hasMany(EquipmentPort::class, 'equipment_id', 'equipment_id');
     }
 }

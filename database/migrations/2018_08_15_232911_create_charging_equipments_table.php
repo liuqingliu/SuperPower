@@ -24,6 +24,7 @@ class CreateChargingEquipmentsTable extends Migration
             $table->string('address',64)->default("");
             $table->tinyInteger('equipment_status',false, true)->default(0);
             $table->string('jack_info')->default("");
+            $table->string('board_info')->default("");
             $table->tinyInteger('net_status',false,true)->default(0);//联网状态
             $table->integer('charging_cost',false,true)->default(0);//充电成本
             $table->integer('charging_unit_price',false,true)->default(0);//充电单价

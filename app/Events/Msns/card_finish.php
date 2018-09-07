@@ -10,19 +10,14 @@
 namespace App\Events\Msns;
 
 use Illuminate\Queue\SerializesModels;
-//“devid”:”15字符”，
-//	“card_id”:”11字符”,
-//	“port”:整型数据
-
-class cardRequest
+//feng哥懒得不想改名，导致代码风格不统一
+class card_finish
 {
     use SerializesModels;
 
+    public $order;
+
     public $devid;
-
-    public $cardId;
-
-    public $port;
 
     /**
      * 创建一个事件实例。
@@ -33,7 +28,6 @@ class cardRequest
     public function __construct($message)
     {
         $this->devid = $message["devid"];
-        $this->cardId = $message["card_id"];
-        $this->port = $message["port"];
+        $this->order = $message["order"];
     }
 }
