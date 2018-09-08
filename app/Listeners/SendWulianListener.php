@@ -36,10 +36,17 @@ class SendWulianListener
         $accessKeyId = env("QUEUE_MNS_ACCESS_KEY_LIUQING");
         $accessSecret = env("QUEUE_MNS_SECRET_KEY_LIUQING");
         $func = $event->message["func"];
-        if ($func == "card_charge") {
+        if ($func == "card_charge" || $func == "open") {
             //查询是否开始计费了，就不需要重发了
             $rechargeOrder = RechargeOrder::where("order_id",$event->message["order"])->first();
             if ($rechargeOrder->recharge_status != Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
+                return;
+            }
+        }
+        if ($func == "cancel") {
+            //查询是否开始计费了，就不需要重发了
+            $rechargeOrder = RechargeOrder::where("order_id",$event->message["order"])->first();
+            if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_END) {
                 return;
             }
         }

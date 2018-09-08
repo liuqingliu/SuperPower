@@ -22,7 +22,7 @@ class CreateRechargeOrdersTable extends Migration
             $table->unsignedInteger('recharge_total_time')->default(0);//需充电时长（根据用户选择标准来）
             $table->unsignedInteger('recharge_unit_money')->default(0);//充电单价
             $table->unsignedTinyInteger('recharge_status' )->default(0);//充电状态
-            $table->unsignedInteger('recharge_time',false)->default(0);//充电时长
+            $table->timestamp('recharge_end_time')->default("0000-00-00 00:00:00");//充电结束时间
             $table->unsignedTinyInteger('type' )->default(0);//充电类型（user/card）
             $table->integer('wat',false,true)->default(0);//充电功率
             $table->integer('recharge_price',false,true)->default(0);//充电功率

@@ -7,17 +7,23 @@
  */
 namespace App\Http\Controllers;
 
+use App\Events\SendWulian;
 use App\Models\ChargingEquipment;
 use App\Models\ElectricCard;
 use App\Models\ElectricCardOrder;
+use App\Models\EquipmentPort;
 use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
+use App\Models\Logic\Eletric;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
+use App\Models\Logic\Snowflake;
 use App\Models\RechargeOrder;
 use App\Models\Logic\User as UserLogic;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ElectricController extends Controller
@@ -52,7 +58,7 @@ class ElectricController extends Controller
         $chargingEquipment = $rechargeInfo->chargingEquipment;
 
         $unitMoney = $rechargeInfo->recharge_unit_money;
-        $costTime = $rechargeInfo->recharge_time;
+        $costTime = $rechargeInfo->recharge_end_time;
         return view('electric/recharge',[
             "charge_price" => $unitMoney,
             "charge_time" => $costTime,
@@ -68,6 +74,11 @@ class ElectricController extends Controller
         ]);
         if ($validator->fails()) {
             return redirect('/prompt')->with(['message'=>ErrorCall::$errParams["errmsg"],'url' =>'/user/center', 'jumpTime'=>3,'status'=>'error']);
+        }
+        $userInfo = session("user_info");
+        $rechargeOrder = RechargeOrder::where("recharge_str",$userInfo->openid)->where("recharge_status",Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
+        if(!empty($rechargeOrder)){
+            return redirect('/electric/recharge');
         }
         //获取当前终端的基本信息
         $device = ChargingEquipment::where("devid",$request->devid)->first();
@@ -99,11 +110,11 @@ class ElectricController extends Controller
             $tmp = [];
             $device = $recharge->chargingEquipment;
             $tmp["device_address"] = $device->address;
-            $tmp["recharge_time"] = $recharge->recharge_time;
+            $tmp["recharge_end_time"] = $recharge->recharge_end_time;
             $tmp["recharge_price"] = $recharge->recharge_price;
             $tmp["date"] = date("Y-m-d",strtotime($recharge->created_at));
             $tmp["time_s"] = date("H:i",strtotime($recharge->created_at));
-            $tmp["time_e"] = date("H:i",strtotime($recharge->created_at)+$recharge->recharge_time);
+            $tmp["time_e"] = date("H:i",strtotime($recharge->created_at)+$recharge->recharge_end_time);
             $res[] = $tmp;
         }
         return view('electric/rechargelog',[
@@ -113,7 +124,7 @@ class ElectricController extends Controller
 
     public function getRechargeLog(Request $request)
     {
-        $userInfo = Auth::guard("api")->user();
+        $userInfo = session("user_info");
         $validator = Validator::make($request->all(), [
             'count' => 'sometimes|int|max:20|min:1',
         ]);
@@ -125,26 +136,7 @@ class ElectricController extends Controller
         return Common::myJson(ErrorCall::$errSucc, $data->toArray());
     }
 
-    //停止充电
-    public function stopChargingOrder(Request $request)
-    {
-        $userInfo = Auth::guard("api")->user();
-        $chargingOrderInfo = RechargeOrder::where('recharge_str',$userInfo->openid)->first();
-        if($chargingOrderInfo["user_id"]!=$request->order_id){
-            return Common::myJson(ErrorCall::$errNotSelfUser);
-        }
-        if($chargingOrderInfo["recharge_status"]!=Common::CHARGING_STATUS_DEFAULT){
-            return Common::myJson(ErrorCall::$errChargingStatus);
-        }
-        $chargingOrderInfo->recharge_status = Common::CHARGING_STATUS_STOP;//停止充电
-        $chargingOrderInfo->recharge_time = time()-strtotime($chargingOrderInfo->created_at);//单位秒
-        $res = $chargingOrderInfo->save();
-        if(!$res){
-            return Common::myJson(ErrorCall::$errNet);
-        }
-        //todo 调用阿里云接口
-        return Common::myJson(ErrorCall::$errSucc);
-    }
+
     //获取电卡信息
     public function getElectricCardInfo(Request $request)
     {
@@ -164,7 +156,7 @@ class ElectricController extends Controller
     //创建电卡充值订单
     public function createOrder(Request $request)
     {
-        $userInfo = Auth::guard("api")->user();//是否正常登陆过
+        $userInfo = session("user_info");//是否正常登陆过
         $validator = Validator::make($request->all(), [
             'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
             'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
@@ -208,5 +200,102 @@ class ElectricController extends Controller
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
             return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
+    }
+    //开插座
+    public function openSocket(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'equipment_id' => 'required|string|min:15',
+            'port' => 'required|int|max:40|min:10',
+            'recharge_type' => 'required|int|in:'.implode(",",array_keys(Charge::$chargeTypeList)),
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $userInfo = session("user_info");//是否正常登陆过 todo 选择的类型和余额不匹配
+        if ($userInfo->user_money < 200) {
+            return Common::myJson(ErrorCall::$errUserMoneyNotEnough);
+        }
+        $portInfo = EquipmentPort::where("equipment_id",$request->equipment_id)->where("port",$request->port)->first();
+        if(empty($portInfo)){
+            return Common::myJson(ErrorCall::$errPortInvalid);
+        }
+        if($portInfo->status==Eletric::PORT_STATUS_USE){
+            return Common::myJson(ErrorCall::$errPortUserd);
+        }
+        $deviceInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
+        //生成订单
+        $orderInfo = [
+            "order_id" => Snowflake::nextId(),
+            "recharge_str" => $userInfo->openid,
+            "equipment_id" => $request->equipment_id,
+            "port" => $request->port,
+            "recharge_total_time" => Charge::$chargeTypeList[$request->recharge_type]["total_time"],
+            "recharge_unit_money" => $deviceInfo->recharge_unit_money,
+            "recharge_price" => $deviceInfo->recharge_unit_money * Charge::$chargeTypeList[$request->recharge_type]["total_time"],
+            "type" => Charge::ORDER_RECHARGE_TYPE_USER,
+        ];
+
+        try {
+            DB::transaction(function () use ($orderInfo, $portInfo) {
+                RechargeOrder::insert($orderInfo);
+                $portInfo->status = Eletric::PORT_STATUS_USE;
+                $portInfo->save();
+            }, 5);
+        } catch (\Exception $e) {
+            Log::debug(__FUNCTION__.":" . serialize($request->all()));
+            return Common::myJson(ErrorCall::$errSys);
+        }
+
+        $callArr = [
+            "func" => "open",
+            "order" => $orderInfo["order_id"],
+            "port" => $request->port,
+            "left_time" => $orderInfo["recharge_total_time"]
+        ];
+        //通知下位机
+        Charge::sendWulianThree($request->equipment_id, $callArr);
+        return Common::myJson(ErrorCall::$errSucc);
+    }
+
+    //关闭插座
+    public function closeSocket(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|exists:recharge_order',
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $userInfo = session("user_info");
+        $rechargeOrder = RechargeOrder::where("order_id", $request->order_id)->first();
+        if(empty($rechargeOrder)){
+            return Common::myJson(ErrorCall::$errOrderNotExist, $validator->errors());
+        }
+        if($rechargeOrder->recharge_str!=$userInfo->openid){
+            return Common::myJson(ErrorCall::$errNotSelfUser, $validator->errors());
+        }
+        if($rechargeOrder->recharge_status!=Charge::ORDER_RECHARGE_STATUS_CHARGING){
+            return Common::myJson(ErrorCall::$errOrderStatus, $validator->errors());
+        }
+        $portInfo = EquipmentPort::where("equipment_id",$rechargeOrder->equipment_id)->where("port",$rechargeOrder->port)->first();
+        try {
+            DB::transaction(function () use ($rechargeOrder, $portInfo) {
+                $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_ENDING;
+                $rechargeOrder->save();
+                $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
+                $portInfo->save();
+            }, 5);
+        } catch (\Exception $e) {
+            Log::debug(__FUNCTION__.":" . serialize($request->all()));
+            return Common::myJson(ErrorCall::$errSys);
+        }
+        $callArr = [
+            "func" => "cancel",
+            "order" => $rechargeOrder->order_id,
+        ];
+        //通知下位机
+        Charge::sendWulianThree($rechargeOrder->equipment_id, $callArr);
+        return Common::myJson(ErrorCall::$errSucc);
     }
 }

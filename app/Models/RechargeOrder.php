@@ -18,8 +18,9 @@ class RechargeOrder extends Model
         'port',
         'recharge_total_time',
         'recharge_unit_money',
-        'recharge_time',
+        'recharge_end_time',
         'recharge_price',
+        'recharge_status',
         'type',
         'wat',
     ];
