@@ -1,18 +1,12 @@
 @extends('layouts.default')
 
 @section('title', '我的账户')
-
+@section('system', '个人中心')
 @section('content')
 <section class="header">
-    <!-- title -->
-    <div class="text-center title-container">
-        <a href="javascript:history.back(-1);" class="title-back">
-            <img class="title-back-img" src="{{URL::asset('images/p2_01.png')}}" alt="返回">
-            <span  class="title-back-text">返回</span>
-        </a>
-        <span class="title-text">我的账户</span>
-    </div>
-    <!-- title -->
+    @component('layouts._userheader')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
 </section>
 
 <section class="body">
@@ -30,7 +24,7 @@
         <li class="borad-heigh">
             <span class="borad-text-left">手机号</span>
             @if (empty($user_info->phone))
-                <a class="pull-right" href="#"><span class="borad-text-right">未绑定，点击可绑定</span><img src="{{URL::asset('images/p2_03.png')}}" class="img-right"></a>
+                <a class="pull-right" href="{{route('user_bindphone')}}"><span class="borad-text-right">未绑定，点击可绑定</span><img src="{{URL::asset('images/p2_03.png')}}" class="img-right"></a>
             @else
                 <span class="lower-title">{{$user_info->phone}}</span>
             @endif
@@ -56,6 +50,6 @@
 </section>
 
 <section class="footer">
-    <div align="center" style="margin-top:1.75rem;"><button class="button-style">马上充值</button></div>
+    <div align="center" style="margin-top:1.75rem;"><a href="{{route('user_order')}}" class="button-style">马上充值</a></div>
 </section>
 @endsection

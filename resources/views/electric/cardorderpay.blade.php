@@ -1,7 +1,9 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/orderpay.js')}}"></script>
+@endsection
 @section('title', '电卡充值')
-
+@section('system', '个人中心')
 @section('content')
 
 <section class="header">
@@ -68,7 +70,7 @@
         <button class="button-style">马上充值</button>
     </div>
     <div align="center" style="margin-top:1.25rem;">
-        <a href="#" onclick="" class="mini-text">为账户充值，点击这里</a>
+        <a href="{{route('user_order')}}" onclick="" class="mini-text">为账户充值，点击这里</a>
     </div>
 </section>
 

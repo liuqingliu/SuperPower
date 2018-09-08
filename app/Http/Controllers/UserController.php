@@ -24,6 +24,19 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
+        $userInfo = User::find(1);
+        return view('user/center',[
+            "user_info" => Common::getNeedObj([
+                "phone",
+                "headimgurl",
+                "nickname",
+                "user_money",
+                "user_id",
+                "user_type",
+                "api_token"
+            ], $userInfo),
+        ]);
+
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
@@ -71,15 +84,17 @@ class UserController extends Controller
 
     public function detail()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         return view('user/detail',[
-            "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time"],$userInfo)
+            "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time","headimgurl"],$userInfo)
         ]);
     }
 
     public function bindphone()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         return view('user/bindphone',[
             "user_info" => Common::getNeedObj(["phone"], $userInfo)
         ]);
@@ -88,7 +103,8 @@ class UserController extends Controller
 
     public function order(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('user/order',[
@@ -101,7 +117,8 @@ class UserController extends Controller
 
     public function orderanswser(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+//        $userInfo = session(Common::SESSION_KEY_USER);
+        $userInfo = User::find(1);
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|string|max:30|min:16',
         ]);
@@ -211,3 +228,6 @@ class UserController extends Controller
         }
     }
 }
+
+
+

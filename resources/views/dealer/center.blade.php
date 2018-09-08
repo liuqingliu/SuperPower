@@ -1,50 +1,92 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0,user-scalable=0" />
-    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>测试</title>
-    <!-- Bootstrap -->
-{{--<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">--}}
-<!-- 私有 -->
-    {{--<link href="{{URL::asset('css/index.css?v=1.4')}}" rel="stylesheet">--}}
-    <link rel="stylesheet" href="/css/app.css?v=1.5">
-    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
-    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
-    <!--[if lt IE 9]>
-    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
-<body>
-<input name="phone" type="text">
-<button id="sendVerifySmsButton">获取短信验证码</button>
-</body>
-<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{ URL::asset('js/laravel-sms.js') }}"></script>
-<script>
-    $('#sendVerifySmsButton').sms({
-        //laravel csrf token
-        token       : "{{csrf_token()}}",
-        //请求间隔时间
-        interval    : 60,
-        requestUrl : "/api/sendMessage",
-        //请求参数
-        requestData : {
-            //手机号
-            user_phone : function () {
-                return $('input[name=phone]').val();
-            },
-            //手机号的检测规则
-            mobile_rule : 'mobile_required',
-            api_token:123456,
-        }
-    });
-</script>
-</html>
+@extends('layouts.default')
+
+@section('title', '首页')
+@section('system', '运营商管理系统')
+@section('content')
+
+<section class="header">
+    <div style="height:18.75rem;background: #F15A24;">
+        @component('layouts._dealerheader')
+            <strong>Whoops!</strong> Something went wrong!
+        @endcomponent
+        <!-- title -->
+        <div style="height:14rem;">
+            <div style="height: 7.75rem;padding-top: 1rem;" align="center">
+                <p class="dealer-money-text" style="margin-bottom: 0.2rem;">168.23</p>
+                <p class="mini-text-white">今日收益</p>
+            </div>
+            <div style="height: 1px; padding-left: 1.75rem;padding-right: 1.75rem;">
+                <div class="line-white"></div>
+            </div>
+            <div style="height: 6.25rem;padding-bottom: 1.75rem;padding-top: 1.75rem;">
+                <div class="col-xs-4 col-md-4 col-lg-4" align="center">
+                    <p class="mini-text-white-number" style="margin: 0;">2000000.00</p>
+                    <p class="mini-text-white">累计收益</p>
+                </div>
+                <div class="col-xs-4 col-md-4 col-lg-4 hasline" align="center">
+                    <div class="line-vertical-white vertical"></div>
+                    <p class="mini-text-white-number" style="margin: 0;">10010</p>
+                    <p class="mini-text-white">累计用户</p>
+                </div>
+                <div class="col-xs-4 col-md-4 col-lg-4 hasline" align="center">
+                    <div class="line-vertical-white vertical"></div>
+                    <p class="mini-text-white-number" style="margin: 0;">2125552</p>
+                    <p class="mini-text-white">累计充电次数</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<section class="body">
+    <div class="body-container">
+        <div class="s-title borad-text-right">
+            <img src="{{URL::asset('images/pm1_04.png')}}" />常用功能
+        </div>
+        <div class="nav row">
+            <div class="col-xs-4 col-md-4 col-lg-4">
+                <a href="{{route('dealer_moneymanage')}}">
+                    <img src="{{URL::asset('images/pm1_05.png')}}" class="img-responsive center-block nav-img">
+                    <span class="borad-text-left text-center center-block nav-text">资金管理</span>
+                </a>
+            </div>
+            <div class="col-xs-4 col-md-4 col-lg-4">
+                <a href="{{route('dealer_electriccardmanage')}}">
+                    <img src="{{URL::asset('images/pm1_06.png')}}" class="img-responsive center-block nav-img">
+                    <span class="borad-text-left text-center center-block nav-text">电卡管理</span>
+                </a>
+            </div>
+            <div class="col-xs-4 col-md-4 col-lg-4">
+                <a href="{{route('dealer_powerStationManage')}}">
+                    <img src="{{URL::asset('images/pm1_07.png')}}" class="img-responsive center-block nav-img">
+                    <span class="borad-text-left text-center center-block nav-text">电站管理</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="footer">
+    <div class="footer-container">
+        <div class="s-title borad-text-right">
+            <img src="{{URL::asset('images/pm1_04.png')}}" />通知公告
+        </div>
+    </div>
+    <ul style="padding: 0;background: #FFFFFF;">
+        <li class="message-item">
+            <span class="text-40-77 item-content pull-left">关于系统升级</span>
+            <span class="text-40-b3 pull-right item-date">2018-08-06</span>
+            <div class="line-positong"><div class="line"></div></div>
+        </li>
+        <li class="message-item">
+            <span class="text-40-77 item-content pull-left">关于系统升级</span>
+            <span class="text-40-b3 pull-right item-date">2018-08-06</span>
+            <div class="line-positong"><div class="line"></div></div>
+        </li>
+        <li class="message-item">
+            <span class="text-40-77 item-content pull-left">关于系统升级</span>
+            <span class="text-40-b3 pull-right item-date">2018-08-06</span>
+            <div class="line-positong"><div class="line"></div></div>
+        </li>
+    </ul>
+</section>
+@endsection

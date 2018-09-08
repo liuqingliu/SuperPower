@@ -1,18 +1,12 @@
 @extends('layouts.default')
 
 @section('title', '充小满')
-
+@section('system', '个人中心')
 @section('content')
 <section class="header">
-    <!-- title -->
-    <div class="text-center title-container">
-        <a href="javascript:history.back(-1);" class="title-back">
-            <img class="title-back-img" src="{{URL::asset('images/p2_01.png')}}" alt="返回">
-            <span class="title-back-text">返回</span>
-        </a>
-        <span class="title-text">充小满</span>
-    </div>
-    <!-- title -->
+    @component('layouts._userheader')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
 </section>
 <section class="body">
     <div class="container">
@@ -39,7 +33,7 @@
     </ul>
 </section>
 <section class="footer">
-    <div class="footer">
+    <div class="about-footer">
 				<span class="borad-text-right">
 					 ©2018 朗畅科技.保留所有权限
 				</span>

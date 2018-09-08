@@ -34,11 +34,11 @@
      color: #B3B3B3
 }
  .mini-text2 {
-     font-size: 1rem;
+     font-size: 1.12rem;
      color: #777777;
 }
  .mini-text-green {
-     font-size: 1rem;
+     font-size: 1.12rem;
      color: #46ba4b;
 }
  .number-red-text {
@@ -64,11 +64,9 @@
 
 .socket-block {
 	list-style: none;
-}
-.socket-block2 {
-	list-style: none;
 	margin-top: 1.125rem;
 }
+
 .col-xs-1-5 {
 	width: 20%;
 	float: left;
@@ -93,6 +91,12 @@
 		width: 20%;
 		float: left;
 	}
+}
+.inner-block-select{
+	background-color: #46BA4B;
+}
+.text-select{
+	color: #ffffff;
 }
 .inner-block-no{
 	border: 1px solid #000;

@@ -15,7 +15,9 @@ Route::get('/', function () {
     return 1;
 });
 
-Route::get('/login', 'UserController@center')->name('login');//这里是登录
+Route::get('/login', 'UserController@center')->name('login')
+//    ->middleware('wechat.oauth:default,snsapi_userinfo')
+;//这里是登录
 
 Route::any('/wechat', 'WeChatController@serve')->name("wechatserve");
 Route::any('/payment/wechatnotify', 'PaymentController@wechatnotify')->name("wechatnotify");
@@ -34,6 +36,7 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
     Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
     Route::get('/user/order', 'UserController@order')->name('user_order');
     Route::get('/user/orderanswser', 'UserController@orderanswser')->name('user_orderanswer');
+    Route::get('/user/center', 'UserController@center')->name('user_center');
     Route::get('/user/about', 'UserController@about')->name('user_about');
     //电卡
     Route::get('/electric/cardorderpay', 'ElectricController@cardorderpay')->name('electric_cardorderpay');
@@ -43,12 +46,17 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
     Route::get('/electric/rechargelog', 'ElectricController@rechargelog')->name('electric_rechargelog');
 
     //经销商
-//    Route::get('/dealer/electriccardmanage', 'DealerController@electriccardmanage')->name('dealer_electriccardmanage');
-//    Route::get('/dealer/electricstationmanage', 'DealerController@electricstationmanage')->name('dealer_electricstationmanage');
-//    Route::get('/dealer/manage', 'DealerController@manage')->name('dealer_manage');
-//    Route::get('/dealer/moneymanage', 'DealerController@moneymanage')->name('dealer_moneymanage');
-//    Route::get('/dealer/center', 'DealerController@center')->name('dealer_center');
-//    Route::get('/dealer/electriccardmanage', 'DealerController@electriccardmanage')->name('dealer_electriccardmanage');
+    Route::get('/dealer/cardManage', 'DealerController@electriccardmanage')->name('dealer_electriccardmanage');
+    Route::get('/dealer/center', 'DealerController@center')->name('dealer_center');
+    Route::get('/dealer/dealerDetail', 'DealerController@dealerDetail')->name('dealer_detail');
+    Route::get('/dealer/dealerManage', 'DealerController@dealerManage')->name('dealer_manage');
+    Route::get('/dealer/incomeAndExpense', 'DealerController@incomeAndExpense')->name('dealer_incomeexpense');
+    Route::get('/dealer/moneyManage', 'DealerController@moneyManage')->name('dealer_moneymanage');
+    Route::get('/dealer/powerStationDetail', 'DealerController@powerStationDetail')->name('dealer_powerStationDetail');
+    Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')->name('dealer_powerStationManage');
+    Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');
+    Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
+    Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');
 
     //api/
     Route::get('/api/getCaptcha', 'ApiController@getCaptcha')->name('getcaptcha');//获取图片验证码
@@ -68,15 +76,3 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
 Route::get("/api/testwu",'ApiController@testwu');
 Route::get("/api/testGetMessage",'ApiController@testGetMessage');
 Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
-
-Route::get('/dealer/cardManage', 'DealerController@cardManage')->name('dealer_electriccardmanage');
-Route::get('/dealer/center', 'DealerController@center')->name('dealer_center');
-Route::get('/dealer/dealerDetail', 'DealerController@dealerDetail')->name('dealer_detail');
-Route::get('/dealer/dealerManage', 'DealerController@dealerManage')->name('dealer_manage');
-Route::get('/dealer/incomeAndExpense', 'DealerController@incomeAndExpense')->name('dealer_incomeexpense');
-Route::get('/dealer/moneyManage', 'DealerController@moneyManage')->name('dealer_moneymanage');
-Route::get('/dealer/powerStationDetail', 'DealerController@powerStationDetail')->name('dealer_powerStationDetail');
-Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')->name('dealer_powerStationManage');
-Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');
-Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
-Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');
