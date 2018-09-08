@@ -6,9 +6,6 @@
  * Time: 7:39
  */
 namespace App\Http\Controllers;
-use App\Jobs\SendEmail;
-use App\Mail\WechatOrder;
-use App\Models\Dealer;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
@@ -21,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -72,7 +68,7 @@ class UserController extends Controller
             session([Common::SESSION_KEY_USER => $userInfoReal]);
             $userInfo = $userInfoReal;
         }
-
+        $userInfo = User::find(1);
         return view('user/center',[
             "user_info" => Common::getNeedObj([
                 "phone",
@@ -115,7 +111,7 @@ class UserController extends Controller
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
-            "user_money"=> $userInfo->user_money,
+            "user_money" => $userInfo->user_money,
         ]);
     }
 
@@ -214,16 +210,15 @@ class UserController extends Controller
         $result = $app->order->unify([
             'body' => '充小满-充电了',
             'out_trade_no' => $createParams["order_id"],
-            'total_fee' => 1,
+            'total_fee' => $price,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
-            'notify_url' => 'http://www.babyang.top/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+            'notify_url' => 'http://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
         ]);
 
         if(isset($result["prepay_id"])) {
             $jssdk = $app->jssdk->bridgeConfig($result["prepay_id"], false);
             Log::info("jssdk:".serialize($jssdk));
-            //todo 调用阿里云接口 开通插座
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
             $orderInfo = UserOrder::where("order_id",$createParams["order_id"])->first();
@@ -231,21 +226,6 @@ class UserController extends Controller
             $orderInfo->save();
             return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
-    }
-
-    public function sendSms(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'pay_money_type' => 'required|int|in:'.implode(",",array_keys(Order::$payMoneyList)),
-        ]);
-        if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
-        }
-        $userInfo = session(Common::SESSION_KEY_USER);
-        return view('user/bindphone',[
-            "user_info" => Common::getNeedObj(["phone"], $userInfo)
-        ]);
-        return view('center/index');
     }
 }
 

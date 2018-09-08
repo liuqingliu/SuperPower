@@ -15,7 +15,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\Event' => [
 //            'App\Listeners\EventListener',
-            'App\Listeners\CreateUserListener',//生成用户监听事件
+        ],
+        'App\Events\SendWulian' => [
+            'App\Listeners\SendWulianListener',//发送物联信息
         ],
     ];
 
@@ -30,4 +32,13 @@ class EventServiceProvider extends ServiceProvider
 
         //
     }
+
+    /**
+     * 要注册的订阅者类.
+     *
+     * @var array
+     */
+    protected $subscribe = [
+        'App\Listeners\MsnEventSubscriber',
+    ];
 }

@@ -120,9 +120,10 @@ return [
     |
     */
 
-    'log' => env('APP_LOG', 'single'),
+    'log' => env('APP_LOG', 'daily'),
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
+    'log_channel' => env('APP_LOG_CHANNEL', 'superpower'),
 
     /*
     |--------------------------------------------------------------------------
@@ -179,6 +180,7 @@ return [
         Mews\Captcha\CaptchaServiceProvider::class,
         Toplan\PhpSms\PhpSmsServiceProvider::class,
         Toplan\Sms\SmsManagerServiceProvider::class,
+        Lokielse\LaravelMNS\LaravelMNSServiceProvider::class,
     ],
 
     /*

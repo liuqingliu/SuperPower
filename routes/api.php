@@ -24,3 +24,5 @@ Route::group(['middleware' => ['auth:api']], function () {
 //    Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
 //    Route::post('/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
 });
+
+Route::get('/testredis', 'ApiController@testredis')->name('testredis');

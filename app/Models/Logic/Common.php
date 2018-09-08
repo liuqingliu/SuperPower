@@ -30,14 +30,22 @@ class Common
 
     //时间
     const ONE_WEEK_SECONDES = 7 * 24 * 3600;
+    const ONE_HOUR_SECONDES = 3600;
 
     //session_key
     const SESSION_KEY_USER = "user_info";
+
+    //iot状态
+    const STATUS_SEND_SUCCESS = 1;
+
+    //domain
+    const DOMAIN = "www.babyang.top";
 
     //mail_exception_wechat_order
     public static $emailOferrorForWechcatOrder = [
         "609163616@qq.com"
     ];
+
 
     public static function getNeedArray($needArr, $org)
     {
@@ -74,6 +82,11 @@ class Common
         $timeArr = explode(".", microtime(true));
         $timeStr = rand(1, 9) . rand(0, 9) . date('h') . substr($timeArr[0] . $timeArr[1], 7);
         return $timeStr;
+    }
+
+    public static function getPrexZero($str, $len=5)
+    {
+        return str_pad($str,$len,"0",STR_PAD_LEFT);
     }
 
 }
