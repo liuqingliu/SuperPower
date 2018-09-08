@@ -44,10 +44,10 @@
             <ul class="recharge-ul">
                 @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div id="order_block" class="money-block">
-                        <div id="order_tag" class="recharge-block_title mini-text-white">新客户专享</div>
-                        <p id ="real_price" class="text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
-                        <p id ="given_price" class="mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
+                    <div  class="money-block">
+                        <div class="order_tag recharge-block_title mini-text-white">新客户专享</div>
+                        <p class="real_price text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
+                        <p class="given_price mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>
                 </li>
                 @endforeach
