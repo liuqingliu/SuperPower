@@ -39,14 +39,17 @@ margin-bottom: 0rem;
    	margin-top: 1.4375rem;
 }
 .money-block{
-	 height: 5.625rem;
-	border: 2px solid #000;
-     border-color: #f15a24;
-     border-radius: 0.3125rem;
-     text-align: center;
-     margin-left: 0.71875rem;
-     margin-right: 0.71875rem;
- }
+    height: 5.625rem;
+    border: 2px solid #000;
+    border-color: #f15a24;
+    border-radius: 0.3125rem;
+    text-align: center;
+    margin-left: 0.71875rem;
+    margin-right: 0.71875rem;
+  }
+.money-block-select{
+ background: #F15A24;
+}
  .money-block-on{
 	 height: 5.625rem;
 	 border: 2px solid #000;

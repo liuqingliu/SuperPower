@@ -204,6 +204,3 @@ class ElectricController extends Controller
         }
     }
 }
-
-
-

@@ -10,15 +10,16 @@ function showHideCode() {
 
 $(document).ready(function () {
     $("ul li").click(function () {
-        // if (($(this.getElementsByTagName("div")).className).toString().match(/inner-block-yes/)) {
+        if ($(this.getElementsByTagName("div")).hasClass('inner-block-yes')) {
             $(this.getElementsByTagName("div")).addClass("inner-block-select");
             $(this.getElementsByTagName("div")).children().addClass("text-select");
             for (var i = 0; i < $(this).siblings().length; i++) {
                 var arry = $(this).siblings();
                 $(arry[i].getElementsByTagName("div")).removeClass("inner-block-select");
                 $(arry[i].getElementsByTagName("div")).children().removeClass("text-select")
-            // }
+            }
+        }else {
+            Toast("这个插头有大哥在用！",2000)
         }
-
     });
 });
