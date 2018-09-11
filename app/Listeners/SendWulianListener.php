@@ -33,33 +33,23 @@ class SendWulianListener
     public function handle(SendWulian $event)
     {
         Log::info("send_wulian:" . serialize($event) );
-        $accessKeyId = env("QUEUE_MNS_ACCESS_KEY_LIUQING");
-        $accessSecret = env("QUEUE_MNS_SECRET_KEY_LIUQING");
-        $func = $event->message["func"];
-        if ($func == "card_charge" || $func == "open") {
-            //查询是否开始计费了，就不需要重发了
-            $rechargeOrder = RechargeOrder::where("order_id",$event->message["order"])->first();
-            if ($rechargeOrder->recharge_status != Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
-                return;
-            }
-        }
-        if ($func == "cancel") {
-            //查询是否开始计费了，就不需要重发了
-            $rechargeOrder = RechargeOrder::where("order_id",$event->message["order"])->first();
-            if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_END) {
-                return;
-            }
-        }
+        try{
+            $accessKeyId = env("QUEUE_MNS_ACCESS_KEY_LIUQING");
+            $accessSecret = env("QUEUE_MNS_SECRET_KEY_LIUQING");
 //        DefaultProfile::addEndpoint("cn-shanghai","cn-shanghai","Iot","iot.cn-shanghai.aliyuncs.com");
-        $iClientProfile = DefaultProfile::getProfile("cn-shanghai", $accessKeyId, $accessSecret);
-        $client = new DefaultAcsClient($iClientProfile);
-        $request = new Iot\PubRequest();
-        $request->setProductKey("a1GBdrPMPst");
-        $request->setMessageContent(base64_encode(json_encode($event->message))); //Base64 String.
-        $devid = $event->devid;
-        $request->setTopicFullName("/a1GBdrPMPst/{$devid}/serverData"); //消息发送到的Topic全名.
-        $response = $client->getAcsResponse($request);
-        Log::info("send_wulian_res:" . serialize($response) . ",message:" . json_encode($event->message));
+            $iClientProfile = DefaultProfile::getProfile("cn-shanghai", $accessKeyId, $accessSecret);
+            $client = new DefaultAcsClient($iClientProfile);
+            $request = new Iot\PubRequest();
+            $request->setProductKey("a1GBdrPMPst");
+            $request->setMessageContent(base64_encode(json_encode($event->message))); //Base64 String.
+            $devid = $event->devid;
+            $request->setTopicFullName("/a1GBdrPMPst/{$devid}/serverData"); //消息发送到的Topic全名.
+            $response = $client->getAcsResponse($request);
+            Log::info("send_wulian_res:" . serialize($response) . ",message:" . json_encode($event->message));
+        }catch (\Exception $e){
+            Log::info("send_wulian_error:" . serialize($e->getMessage()));
+        }
+
     }
 
     /**

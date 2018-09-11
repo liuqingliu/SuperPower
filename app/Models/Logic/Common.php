@@ -31,6 +31,7 @@ class Common
     //时间
     const ONE_WEEK_SECONDES = 7 * 24 * 3600;
     const ONE_HOUR_SECONDES = 3600;
+    const ONE_MINUTE_SECONDES = 60;
 
     //session_key
     const SESSION_KEY_USER = "user_info";
@@ -87,6 +88,13 @@ class Common
     public static function getPrexZero($str, $len=5)
     {
         return str_pad($str,$len,"0",STR_PAD_LEFT);
+    }
+
+    public static function getLeftTime($totalTime, $createTime)
+    {
+        $leftTime = $totalTime - (time()-strtotime($createTime));
+        $leftTime = max($leftTime, 0);
+        return self::getPrexZero($leftTime);
     }
 
 }

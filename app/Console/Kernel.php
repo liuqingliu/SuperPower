@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         //
         \App\Console\Commands\ReceiveMessage::class,
+        \App\Console\Commands\AutoCloseChargeOrder::class,
     ];
 
     /**
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command("ReceiveMessage:receive")->everyMinute()->withoutOverlapping();
+        $schedule->command("AutoCloseChargeOrder:close")->everyMinute()->withoutOverlapping();
     }
 
     /**

@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Logic\Charge;
+use App\Models\RechargeOrder;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
 
@@ -84,5 +86,14 @@ class ApiController extends Controller
             $values = Member::find(1200);//此处为了测试你可以将id=1200改为另一个id
         }
         dump($values);
+    }
+
+    public function test()
+    {
+        $rechargeOrderList = RechargeOrder::whereIn("recharge_status",
+            [Charge::ORDER_RECHARGE_STATUS_DEFAULT, Charge::ORDER_RECHARGE_STATUS_CHARGING])
+            ->where("updated_at", ">", date("Y-m-d H:i:s", strtotime("-12 hours")))
+            ->toSql();
+        dd($rechargeOrderList,date("Y-m-d H:i:s", strtotime("-12 hours")));
     }
 }

@@ -10,19 +10,14 @@
 namespace App\Events\Msns;
 
 use Illuminate\Queue\SerializesModels;
-//{
-//
-//“ret”:”…”,
-// “cardId”:” 11字符”，
-//}
 //feng哥懒得不想改名，导致代码风格不统一
-class card_charge
+class charge_finish
 {
     use SerializesModels;
 
     public $order;
 
-    public $ret;
+    public $devid;
 
     /**
      * 创建一个事件实例。
@@ -32,7 +27,7 @@ class card_charge
      */
     public function __construct($message)
     {
-        $this->order = isset($message["order"]) ? $message["order"] : "";
-        $this->ret = isset($message["ret"]) ? $message["ret"] : "";
+        $this->devid = $message["devid"];
+        $this->order = $message["order"];
     }
 }

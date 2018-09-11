@@ -18,6 +18,7 @@ use App\Models\Logic\Common;
 use App\Models\Logic\Eletric;
 use App\Models\Logic\Snowflake;
 use App\Models\RechargeOrder;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -73,23 +74,20 @@ class MsnEventSubscriber
     {
         $orderList = RechargeOrder::where("equipment_id", $event->devid)
             ->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)
-            ->where("created_at", ">", date("Y-m-d", strtotime("-12 hours")))
+            ->where("updated_at", ">", date("Y-m-d", strtotime("-12 hours")))
             ->get();
         $answer = [
             "ret" => "ok",
             "func" => "sync",
-            "data" => [],
+            "data" => "",
         ];
         //订单号16B+端口号2B(不足2B补齐)+可用时间5B ==23B
         //如20180829000000010110010,表示订单2018082900000001在1号端口，可以时间10010秒。
         //如果以后订单超过16b限制，则这里也需要修改，慎重！！
         foreach ($orderList as $order) {
             $tmp = $order->order_id . Common::getPrexZero($order->port,
-                    2) . Common::getPrexZero(($order->recharge_total_time - $order->recharge_end_time), 5);
-            Log::info("tmp:" . $tmp . ",port:" . Common::getPrexZero($order->port,
-                    2) . ",time:" . Common::getPrexZero(($order->recharge_total_time - $order->recharge_end_time),
-                    5) . ",total_time:" . $order->recharge_total_time . ",recharge_end_time:" . $order->recharge_end_time);
-            $answer["data"][] = $tmp;
+                    2) . Common::getLeftTime($order->recharge_total_time, $order->created_at);
+            $answer["data"] .= $tmp;
         }
         event(new SendWulian($event->devid, $answer));
     }
@@ -101,13 +99,13 @@ class MsnEventSubscriber
     {
         //如果有端口没加进来
         $deviceInfo = ChargingEquipment::where("equipment_id", $event->devid)->first();
-        if (!empty($deviceInfo) || empty($deviceInfo->equipmentports)) {
+        if (empty($deviceInfo) || empty($deviceInfo->equipmentports)) {
             Log::info("card_request:" . serialize($event));
             return;
         }
         $cardInfo = ElectricCard::where("card_id", $event->cardId)->first();
         $answer = [
-            "func" => " card_charge",
+            "func" => "card_charge",
             "order" => "",
             "cmd" => "open",// open或refuse
             "port" => $event->port,
@@ -118,6 +116,8 @@ class MsnEventSubscriber
         if (empty($cardInfo) || $cardInfo->card_status == Eletric::CARD_STATUS_FROZEN) {
             $answer["cause"] = "block";
             $answer["cmd"] = "refuse";
+            event(new SendWulian($event->devid, $answer));//下发3次，直到有回复过来
+            return;
         }
 
         if ($cardInfo->money < 200) {//小于2元
@@ -130,17 +130,21 @@ class MsnEventSubscriber
             $answer["cause"] = "porterr";
             $answer["cmd"] = "refuse";
         }
+        $orderId = Snowflake::nextId();
         if ($answer["cmd"] == "open") {
             //创建订单,设置port为不可用
+            $minTime = min(10 * Common::ONE_HOUR_SECONDES, floor($cardInfo->money / $deviceInfo->charging_unit_price));
             $orderInfo = [
-                "order_id" => Snowflake::nextId(),
+                "order_id" => $orderId,
                 "recharge_str" => $event->cardId,
                 "equipment_id" => $event->devid,
                 "port" => $event->port,
                 "recharge_unit_money" => $deviceInfo->charging_unit_price,
                 "type" => Charge::ORDER_RECHARGE_TYPE_CARD,
+                "created_at" => date("Y-m-d H:i:s"),
+                "recharge_total_time" => $minTime,
             ];
-            $answer["left_time"] = 8 * Common::ONE_HOUR_SECONDES;//todo 时间修改
+            $answer["left_time"] = $minTime;
             try {
                 DB::transaction(function () use ($event, $orderInfo, $portInfo) {
                     RechargeOrder::insert($orderInfo);
@@ -152,10 +156,11 @@ class MsnEventSubscriber
                 return;
             }
         }
-        $answer["order"] = $orderInfo["order_id"];
+        $answer["order"] = "{$orderId}";
         $answer["cash"] = $cardInfo->money;
-
-        Charge::sendWulianThree($event->devid, $answer);
+        event(new SendWulian($event->devid, $answer));//下发3次，直到有回复过来
+//        return;
+//        Charge::sendWulianThree($event->devid, $answer);
     }
 
     /**
@@ -164,41 +169,83 @@ class MsnEventSubscriber
     public function card_charge($event)
     {
         if ($event->ret == "ok") {
-            $rechargeOrder = RechargeOrder::where("recharge_str", $event->cardId)->where("recharge_status",
+            $rechargeOrder = RechargeOrder::where("order_id", $event->order)->where("recharge_status",
                 Charge::ORDER_RECHARGE_STATUS_DEFAULT)->first();
             if (!empty($rechargeOrder)) {
                 $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_CHARGING;
                 $res = $rechargeOrder->save();
-                if(!$res){
-                    Log::info(__FUNCTION__."-event:".serialize($event));
+                if (!$res) {
+                    Log::info(__FUNCTION__ . "-event:" . serialize($event));
                 }
             }
-        }else if($event->ret == "failed"){//关闭订单
-             //todo
+        } else {
+            if ($event->ret == "failed") {//关闭订单
+                $rechargeOrder = RechargeOrder::where("order_id", $event->order)->where("recharge_status",
+                    Charge::ORDER_RECHARGE_STATUS_DEFAULT)->first();
+                Log::info(__FUNCTION__ . "-order:" . serialize($rechargeOrder) . ",order1111:" . $event->order);
+                if (!empty($rechargeOrder)) {
+                    try {
+                        DB::transaction(function () use ($rechargeOrder) {
+                            $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_FAILED;
+                            $rechargeOrder->save();
+                            $portInfo = EquipmentPort::where("equipment_id",
+                                $rechargeOrder->equipment_id)->where("port", $rechargeOrder->port)->first();
+                            $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
+                            $portInfo->save();
+                        }, 5);
+                    } catch (\Exception $e) {
+                        Log::info(__FUNCTION__ . "-event:" . serialize($event) . ",error:" . $e->getMessage());
+                    }
+                }
+            }
         }
     }
 
     /**
      * 充电结束
+     * 推消息
      */
+    //todo 推微信消息
     public function charge_finish($event)
     {
         $answer = [
-            "func" => "card_finish",
+            "func" => "charge_finish",
             "order" => $event->order,
             "ret" => "ok",
         ];
-        $rechargeOrder = RechargeOrder::where("order_id",$event->order)->first();
-        if(!empty($rechargeOrder)){
-            if($rechargeOrder->recharge_status!=Charge::ORDER_RECHARGE_STATUS_END){
-                $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
-                $res = $rechargeOrder->save();
-                if(!$res){
-                    Log::info(__FUNCTION__."-event:".serialize($event));
-                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机请求关闭订单，服务器处理失败！！！"));
-                }
-                else{
+        $rechargeOrder = RechargeOrder::where("order_id", $event->order)->first();
+//        Log::info(__FUNCTION__."-event1:".serialize($event).",order=".$rechargeOrder);
+        if (!empty($rechargeOrder)) {
+            if ($rechargeOrder->recharge_status != Charge::ORDER_RECHARGE_STATUS_END) {
+                try {
+                    DB::transaction(function () use ($rechargeOrder) {
+                        $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
+                        $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
+                        $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * min((time() - strtotime($rechargeOrder->updated_at)),
+                                $rechargeOrder->recharge_total_time);
+                        Log::info("money_".(time() - strtotime($rechargeOrder->updated_at)).",total:".$rechargeOrder->recharge_total_time.",min_".min((time() - strtotime($rechargeOrder->updated_at)),
+                                $rechargeOrder->recharge_total_time));
+                        $rechargeOrder->save();
+                        $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
+                            $rechargeOrder->port)->first();
+                        $portInfo->status = 0;
+                        $portInfo->save();
+                        if ($rechargeOrder->type == Charge::ORDER_RECHARGE_TYPE_USER) {
+                            $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();
+                            $userInfo->user_money = $userInfo->user_money - $rechargeOrder->recharge_price;
+                            $userInfo->save();
+                        } else {
+                            $cardInfo = ElectricCard::where("card_id", $rechargeOrder->recharge_str)->first();
+                            $cardInfo->money = $cardInfo->money - $rechargeOrder->recharge_price;
+                            Log::info("card_money_res:".$cardInfo->money.",min_res:".min($rechargeOrder->recharge_price,
+                                    $rechargeOrder->recharge_total_time));
+                            $cardInfo->save();
+                        }
+                    }, 5);
                     event(new SendWulian($event->devid, $answer));
+                } catch (\Exception $e) {
+                    Log::info(__FUNCTION__ . "-event:" . serialize($event));
+                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机请求关闭订单，服务器处理失败！！！"));
                 }
             }
         }
@@ -210,20 +257,20 @@ class MsnEventSubscriber
     public function power($event)
     {
         $rechargeOrder = RechargeOrder::where("order_id", $event->order)->first();
-        if(empty($rechargeOrder)){
+        if (empty($rechargeOrder)) {
             return;
         }
         $rechargeOrder->power = $event->power;
         $res = $rechargeOrder->save();
-        if($res){
+        if ($res) {
             $answer = [
-                "func" =>"power",
+                "func" => "power",
                 "ret" => "ok",
-                "order"	=> $event->order,
+                "order" => $event->order,
             ];
             event(new SendWulian($event->devid, $answer));
-        }else{
-            Log::info(__FUNCTION__."-event:".serialize($event));
+        } else {
+            Log::info(__FUNCTION__ . "-event:" . serialize($event));
         }
     }
 
@@ -232,19 +279,38 @@ class MsnEventSubscriber
      */
     public function open($event)
     {
-        $rechargeOrder = RechargeOrder::where("order_id",$event->order)->first();
-        if($event->ret=="fail"){
-            $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_FAILED;
-            $res = $rechargeOrder->save();
-            if(!$res){
-                Log::info(__FUNCTION__."-event:".serialize($event));
+        $rechargeOrder = RechargeOrder::where("order_id", $event->order)->first();
+        Log::info(__FUNCTION__ . "-event:" . serialize($event) . ",order:" . serialize($rechargeOrder));
+        if (empty($rechargeOrder)) {
+            return;
+        }
+        if ($event->ret == "failed") {
+            try {
+                DB::transaction(function () use ($rechargeOrder) {
+                    $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_FAILED;
+                    $rechargeOrder->save();
+                    $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
+                        $rechargeOrder->port)->first();
+                    $portInfo->status = 0;
+                    $portInfo->save();
+                }, 5);
+            } catch (\Exception $e) {
+                Log::debug(__FUNCTION__ . "-failed:" . serialize($rechargeOrder));
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机开插座失败，但服务器订单关闭失败！！！"));
             }
-        }else{
-            if($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_DEFAULT){
-                $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_CHARGING;
-                $res = $rechargeOrder->save();
-                if(!$res){
-                    Log::info(__FUNCTION__."-event:".serialize($event));
+        } else {
+            if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
+                try {
+                    DB::transaction(function () use ($rechargeOrder) {
+                        $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_CHARGING;
+                        $rechargeOrder->save();
+                        $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
+                            $rechargeOrder->port)->first();
+                        $portInfo->status = Eletric::PORT_STATUS_USE;
+                        $portInfo->save();
+                    }, 5);
+                } catch (\Exception $e) {
+                    Log::debug(__FUNCTION__ . "-failed:" . serialize($rechargeOrder));
                     Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机开插座成功，但服务器订单开启失败！！！"));
                 }
             }
@@ -256,15 +322,28 @@ class MsnEventSubscriber
      */
     public function cancel($event)
     {
-        $rechargeOrder = RechargeOrder::where("order_id",$event->order)->first();
-        if($event->ret=="ok"){
-            if($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_ENDING){
+        $rechargeOrder = RechargeOrder::where("order_id", $event->order)->first();
+        if ($event->ret == "ok" && !empty($rechargeOrder)) {
+            if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_ENDING) {
                 $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
                 $res = $rechargeOrder->save();
-                if(!$res){
-                    Log::info(__FUNCTION__."-event:".serialize($event));
+                if (!$res) {
+                    Log::info(__FUNCTION__ . "-event:" . serialize($event));
                     Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机关闭订单成功，但服务器订单关闭失败！！！"));
                 }
+            }
+        }
+    }
+
+    public function changeNet($event)
+    {
+        $deviceInfo = ChargingEquipment::where("equipment_id", $event->devid)->first();
+        if (!empty($deviceInfo)) {
+            $deviceInfo["net_status"] = $event->netStatus == "online" ? 0 : "1";
+            $res = $deviceInfo->save();
+            if (!$res) {
+                Log::info(__FUNCTION__ . "-event:" . serialize($event));
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("更改网络状态失败！！！" . serialize($event)));
             }
         }
     }
@@ -314,6 +393,11 @@ class MsnEventSubscriber
         $events->listen(
             'App\Events\Msns\cancel',
             'App\Listeners\MsnEventSubscriber@cancel'
+        );
+
+        $events->listen(
+            'App\Events\Msns\changeNet',
+            'App\Listeners\MsnEventSubscriber@changeNet'
         );
     }
 }

@@ -44,6 +44,8 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
     Route::get('/electric/recharge', 'ElectricController@recharge')->name('electric_recharge');
     Route::get('/electric/choosesocket', 'ElectricController@choosesocket')->name('electric_choosesocket');
     Route::get('/electric/rechargelog', 'ElectricController@rechargelog')->name('electric_rechargelog');
+    Route::get('/electric/opensocket', 'ElectricController@openSocket')->name('electric_opensocket');
+    Route::get('/electric/closesocket', 'ElectricController@closeSocket')->name('electric_closesocket');
 
     //经销商
     Route::get('/dealer/cardManage', 'DealerController@electriccardmanage')->name('dealer_electriccardmanage');
@@ -71,8 +73,10 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
 
     //errors
     Route::get('/prompt','PromptController@index')->name("prompt");
+    Route::get('/api/testmsn','ApiController@testmsn');
 //});
 
 Route::get("/api/testwu",'ApiController@testwu');
 Route::get("/api/testGetMessage",'ApiController@testGetMessage');
 Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
+Route::get("/api/test","ApiController@test");
