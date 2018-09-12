@@ -84,7 +84,7 @@ class ElectricController extends Controller
         $device = ChargingEquipment::where("devid",$request->devid)->first();
         return view('electric/choosesocket',[
             "device_info" => Common::getNeedObj([
-                "ebquipment_status ",
+                "ebquipment_status",
                 "net_status",
                 "equipment_id",
                 "province",

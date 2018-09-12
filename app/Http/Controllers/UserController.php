@@ -32,7 +32,7 @@ class UserController extends Controller
                 "nickname",
                 "user_money",
                 "user_id",
-                "user_type",
+                "user_type",//0 普通， 1普通經銷商， 2超級經銷商， 3廠商
                 "api_token"
             ], $userInfo),
         ]);

@@ -19,7 +19,9 @@
     <div class="big-div">
         <div class="borad-heigh">
             <span class="pull-left borad-text-left">选择充值金额</span>
+            @if($new_user)
             <span class=" pull-right mini-text-red">新客服专享优惠活动注册7天后结束<img src="{{URL::asset('images/p6_01.png')}}" class="img1"></span>
+                @endif
         </div>
         <div class="line"></div>
         <div>
@@ -27,7 +29,11 @@
                 @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
                     <div class="money-block">
+                        @if($new_user)
                         <div class="recharge-block_title mini-text-white">新客户专享</div>
+                        @else
+                            <div class="recharge-block_title mini-text-white" style="visibility: hidden">新客户专享</div>
+                        @endif
                         <p class="text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
                         <p class="mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>

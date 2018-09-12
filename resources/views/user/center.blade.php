@@ -65,6 +65,7 @@
             </a>
         </ul>
         <ul class="board1">
+            @if(($user_info->user_type)>0)
             <a href="{{route("dealer_center")}}">
                 <li class="borad-heigh">
                     <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_08.png')}}" alt="运营商管理平台">
@@ -72,6 +73,7 @@
                 </li>
             </a>
             <li class="line"></li>
+            @endif
             <a href="#">
                 <li class="borad-heigh">
                     <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_09.png')}}" alt="诚邀合伙人加盟">
