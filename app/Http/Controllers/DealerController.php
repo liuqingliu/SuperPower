@@ -7,7 +7,11 @@
  */
 namespace App\Http\Controllers;
 
+use App\Models\ChargingEquipment;
 use App\Models\Dealer;
+use App\Models\ElectricCard;
+use App\Models\Logic\Common;
+use App\Models\Logic\ErrorCall;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use SmsManager;
@@ -97,5 +101,49 @@ class DealerController extends Controller
     public function takeOutMoney()
     {
         return view('dealer/takeOutMoney');
+    }
+
+    //激活电卡
+    public function activeCard(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => "required|exists:orders"
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+
+        return Common::myJson(ErrorCall::$errSucc);
+    }
+
+    public function getCardInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'card_id' => "sometimes|exists:electric_cards",
+            'bind_phone' => "sometimes|exists:electric_cards",
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        if(!empty($request->card_id)){
+            $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
+        }elseif(!empty($request->bind_phone)){
+            $cardInfo = ElectricCard::where("bind_phone", $request->bind_phone)->first();
+        }
+        return Common::myJson(ErrorCall::$errSucc, $cardInfo);
+    }
+
+    public function getEquipmentInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'equipment_id' => "required|exists:charging_equipments",
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+
+        $equipmentInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
+
+        return Common::myJson(ErrorCall::$errSucc, $equipmentInfo);
     }
 }

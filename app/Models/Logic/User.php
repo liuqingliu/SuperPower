@@ -7,7 +7,7 @@
  */
 namespace App\Models\Logic;
 
-use App\Models\UserOrder;
+use App\Models\Order as ChargeOrder;
 
 class User
 {
@@ -15,7 +15,7 @@ class User
     public static function isNewUser($openid, $createTime)
     {
         $flag = (time()-strtotime($createTime)) < Common::ONE_WEEK_SECONDES;
-        $orderCount = UserOrder::where("openid",$openid)->count();
+        $orderCount = ChargeOrder::where("openid",$openid)->count();
         return $flag && !$orderCount;
     }
 }

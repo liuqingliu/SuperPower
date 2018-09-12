@@ -12,13 +12,14 @@ use App\Models\Logic\Order;
 use App\Models\Logic\User as UserLogic;
 use App\Models\Logic\Snowflake;
 use App\Models\User;
-use App\Models\UserOrder;
+use App\Models\Order as ChargeOrder;
 use App\Rules\ValidatePhoneRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+
 
 class UserController extends Controller
 {
@@ -125,7 +126,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             redirect("user/center");
         }
-        $orderInfo = UserOrder::where("openid", $userInfo["openid"])
+        $orderInfo = ChargeOrder::where("openid", $userInfo["openid"])
             ->where("order_id", $request->order_id)
             ->first();
         if (empty($orderInfo)) {
@@ -142,7 +143,7 @@ class UserController extends Controller
     //更新用户手机号
     public function updateUserPhone(Request $request)
     {
-        $validator = Validator::make(Input::all(), [
+        $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
             'captcha' => 'required|captcha'
 //            'user_password' => 'sometimes|string|max:20|min:6'
@@ -201,7 +202,7 @@ class UserController extends Controller
             "openid" => $userInfo->openid,
             "order_type" => Order::PAY_METHOD_WECHAT,
         ];
-        $res = UserOrder::create($createParams);
+        $res = ChargeOrder::create($createParams);
         if(!$res){
             return Common::myJson(ErrorCall::$errCreateOrderFail);
         }
@@ -221,11 +222,26 @@ class UserController extends Controller
             Log::info("jssdk:".serialize($jssdk));
             return Common::myJson(ErrorCall::$errSucc,$jssdk);
         }else{
-            $orderInfo = UserOrder::where("order_id",$createParams["order_id"])->first();
+            $orderInfo = ChargeOrder::where("order_id",$createParams["order_id"])->first();
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
             $orderInfo->save();
             return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
         }
+    }
+
+    public function getOrderStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => "required|exists:orders"
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $orderInfo = ChargeOrder::where("order_id",$request->order_id)->first();
+        if(empty($orderInfo)){
+            return Common::myJson(ErrorCall::$errOrderNotExist, $validator->errors());
+        }
+        return Common::myJson(ErrorCall::$errSucc, ["order_status" => $orderInfo->order_status]);
     }
 }
 

@@ -8,9 +8,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WechatOrder;
 use App\Models\Logic\Charge;
 use App\Models\RechargeOrder;
 use App\Models\User;
+use EasyWeChat\Kernel\Messages\Text;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
 use App\Models\Logic\Common;
@@ -79,10 +82,10 @@ class ApiController extends Controller
         //输出："guwenjie"
         //加一个小例子比如网站首页某个人员或者某条新闻日访问量特别高，可以存储进redis，减轻内存压力
         $userinfo = User::find(1);
-        Redis::set('user_key',$userinfo);
-        if(Redis::exists('user_key')){
+        Redis::set('user_key', $userinfo);
+        if (Redis::exists('user_key')) {
             $values = Redis::get('user_key');
-        }else{
+        } else {
             $values = Member::find(1200);//此处为了测试你可以将id=1200改为另一个id
         }
         dump($values);
@@ -90,10 +93,16 @@ class ApiController extends Controller
 
     public function test()
     {
-        $rechargeOrderList = RechargeOrder::whereIn("recharge_status",
-            [Charge::ORDER_RECHARGE_STATUS_DEFAULT, Charge::ORDER_RECHARGE_STATUS_CHARGING])
-            ->where("updated_at", ">", date("Y-m-d H:i:s", strtotime("-12 hours")))
-            ->toSql();
-        dd($rechargeOrderList,date("Y-m-d H:i:s", strtotime("-12 hours")));
+        $app = app('wechat.official_account');
+        $app->template_message->send([
+            'touser' => 'user-openid',
+            'template_id' => 'template-id',
+            'url' => 'https://easywechat.org',
+            'data' => [
+                'key1' => 'VALUE',
+                'key2' => 'VALUE2',
+            ],
+        ]);
+        echo "ok！";
     }
 }

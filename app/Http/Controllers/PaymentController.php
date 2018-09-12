@@ -11,7 +11,7 @@ use App\Mail\WechatOrder;
 use App\Models\Logic\Common;
 use App\Models\Logic\Order;
 use App\Models\User;
-use App\Models\UserOrder;
+use App\Models\Order as ChargeOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -30,7 +30,7 @@ class PaymentController extends Controller
         $response = $app->handlePaidNotify(function ($message, $fail) {
             Log::info("notfiy:message:".serialize($message));
             // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
-            $order = UserOrder::where("order_id",$message['out_trade_no'])->where("openid",$message["openid"])->first();
+            $order = ChargeOrder::where("order_id",$message['out_trade_no'])->where("openid",$message["openid"])->first();
             if (empty($order) || $order->order_status==Order::ORDER_STATUS_SUCCESS) { // 如果订单不存在 或者 订单已经支付过了
                 return true; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
             }

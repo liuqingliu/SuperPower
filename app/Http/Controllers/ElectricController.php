@@ -12,7 +12,7 @@ use App\Events\SendWulian;
 use App\Jobs\SendWulianQue;
 use App\Models\ChargingEquipment;
 use App\Models\ElectricCard;
-use App\Models\ElectricCardOrder;
+use App\Models\Order as ChargeOrder;
 use App\Models\EquipmentPort;
 use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
@@ -44,14 +44,14 @@ class ElectricController extends Controller
     public function cardorderpayanswer(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
+            'card_id' => 'required|string|max:11|min:11|exist:orders'
         ]);
         if ($validator->fails()) {
             return redirect("/user/center");
         }
-        $electricCardOrders = ElectricCardOrder::where("card_id", $request->card_id)->select(["order_status"])->first();
+        $orders = ChargeOrder::where("card_id", $request->card_id)->select(["order_status"])->first();
         return view('electric/cardorderpayanswer', [
-            "order_status" => $electricCardOrders->order_status
+            "order_status" => $orders->order_status
         ]);
     }
 
@@ -188,7 +188,7 @@ class ElectricController extends Controller
             "openid" => $userInfo->openid,
             "order_type" => Order::PAY_METHOD_WECHAT,
         ];
-        $res = ElectricCardOrder::create($createParams);
+        $res = ChargeOrder::create($createParams);
         if (!$res) {
             return Common::myJson(ErrorCall::$errCreateOrderFail);
         }
@@ -208,7 +208,7 @@ class ElectricController extends Controller
             Log::info("jssdk:" . serialize($jssdk));
             return Common::myJson(ErrorCall::$errSucc, $jssdk);
         } else {
-            $orderInfo = ElectricCardOrder::where("order_id", $createParams["order_id"])->first();
+            $orderInfo = order::where("order_id", $createParams["order_id"])->first();
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
             return Common::myJson(ErrorCall::$errWechatPayPre, $result["err_code_des"]);
         }
@@ -225,7 +225,7 @@ class ElectricController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-//        $userInfo = session("user_info");//是否正常登陆过 todo 选择的类型和余额不匹配
+//        $userInfo = session("user_info");//是否正常登陆过
         $deviceInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
         $userInfo = User::find(1);
         if ($userInfo->user_money < 200 || $userInfo->user_money < $deviceInfo->charging_unit_price * Charge::$chargeTypeList[$request->recharge_type]["total_time"]) {
@@ -320,5 +320,20 @@ class ElectricController extends Controller
         //通知下位机
         dispatch(new SendWulianQue($request->equipment_id, $callArr));//下发3次，直到有回复过来
         return Common::myJson(ErrorCall::$errSucc);
+    }
+
+    public function getOrderStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => "required|exists:recharge_orders"
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $orderInfo = RechargeOrder::where("order_id",$request->order_id)->first();
+        if(empty($orderInfo)){
+            return Common::myJson(ErrorCall::$errOrderNotExist, $validator->errors());
+        }
+        return Common::myJson(ErrorCall::$errSucc, ["order_status" => $orderInfo->order_status]);
     }
 }
