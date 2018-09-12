@@ -47,6 +47,13 @@ class Common
         "609163616@qq.com"
     ];
 
+    //经销商数据
+    public static $dealers = [
+        self::USER_TYPE_JXS,
+        self::USER_TYPE_SJXS,
+        self::USER_TYPE_ADMIN
+    ];
+
 
     public static function getNeedArray($needArr, $org)
     {

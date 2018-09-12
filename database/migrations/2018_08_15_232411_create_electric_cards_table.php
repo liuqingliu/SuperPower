@@ -19,7 +19,7 @@ class CreateElectricCardsTable extends Migration
             $table->string('card_id',16)->unique()->default("");
             $table->string('bind_phone',16)->default("");
             $table->tinyInteger('card_status',false,true)->default(0);
-            $table->string('parent_user_id',16)->index()->default("");
+            $table->string('openid',34)->index()->default("");
             $table->dateTime('active_time');
 
             $table->integer('money',false,true)->default(0);//电卡余额

@@ -7,6 +7,8 @@
  */
 
 namespace App\Http\Controllers;
+
+use App\Jobs\SendTemplateMsg;
 use App\Mail\WechatOrder;
 use App\Models\Logic\Common;
 use App\Models\Logic\Order;
@@ -25,13 +27,14 @@ class PaymentController extends Controller
     //你应该更新你的订单为支付失败，但是要告诉微信处理完成。
     public function wechatnotify(Request $request)
     {
-        Log::info("payment_notify_request:start111-".__FUNCTION__.",request:".serialize($request->toArray()));
+        Log::info("payment_notify_request:start111-" . __FUNCTION__ . ",request:" . serialize($request->toArray()));
         $app = app('wechat.payment');
         $response = $app->handlePaidNotify(function ($message, $fail) {
-            Log::info("notfiy:message:".serialize($message));
+            Log::info("notfiy:message:" . serialize($message));
             // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
-            $order = ChargeOrder::where("order_id",$message['out_trade_no'])->where("openid",$message["openid"])->first();
-            if (empty($order) || $order->order_status==Order::ORDER_STATUS_SUCCESS) { // 如果订单不存在 或者 订单已经支付过了
+            $order = ChargeOrder::where("order_id", $message['out_trade_no'])->where("openid",
+                $message["openid"])->first();
+            if (empty($order) || $order->order_status == Order::ORDER_STATUS_SUCCESS) { // 如果订单不存在 或者 订单已经支付过了
                 return true; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
             }
 
@@ -47,8 +50,8 @@ class PaymentController extends Controller
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }
-            if($wxOrder["total_fee"]!=$order->price){
-                $msg = "查询到微信订单信息异常:".serialize($wxOrder);
+            if ($wxOrder["total_fee"] != $order->price) {
+                $msg = "查询到微信订单信息异常:" . serialize($wxOrder);
                 Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder($msg));
             }
 
@@ -67,16 +70,23 @@ class PaymentController extends Controller
             //记录日志
             //如果保存失败，会出现什么情况？
             $res = $order->save(); // 保存订单
-            Log::info("payment_notfiy_res:".$res."，order_info:".serialize($order->toArray()));
-            if($res){
+            Log::info("payment_notfiy_res:" . $res . "，order_info:" . serialize($order->toArray()));
+            if ($res) {
                 //给用户余额价钱
-                $user = User::where("openid",$message["openid"])->first();
+                $user = User::where("openid", $message["openid"])->first();
                 $user->user_money = $user->user_money + $wxOrder["total_fee"];
                 $res2 = $user->save();
-                Log::info("save_money_user:".$res2."，order_info:".serialize($order->toArray()));
+                Log::info("save_money_user:" . $res2 . "，order_info:" . serialize($order->toArray()));
             }
-            if(!$res || !$res2){
+            if (!$res || !$res2) {
                 Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("微信通知，入库失败，用户冲了钱，但是更新信息失败！！！"));
+            } else {
+                dispatch(new SendTemplateMsg($user->openid, "oGikchlZLTCLf3aR7ar58DqGywd1nCUBTkDY4WkKO40", [
+                    "first" => "您好，账户充值成功",
+                    "keyword1" => ($order->price * 1.0 / 100.00) . "元",
+                    "keyword2" => $order->created_at,
+                    "remark" => "感谢您的使用"
+                ]));//充值成功
             }
             return true; // 返回处理完成
         });

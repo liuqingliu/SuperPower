@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\SendWulian;
+use App\Jobs\SendTemplateMsg;
 use App\Jobs\SendWulianQue;
 use App\Models\ChargingEquipment;
 use App\Models\ElectricCard;
@@ -271,6 +272,15 @@ class ElectricController extends Controller
         ];
         //通知下位机
         dispatch(new SendWulianQue($request->equipment_id, $callArr));
+        dispatch(new SendTemplateMsg($userInfo->openid, "jDcmC6spBaUxKVHtnoVtJxRjb9dZEAAw13R2yokl5No",[
+            "first" => "您好，充电已开始",
+            "keyword1" => $orderInfo["created_at"],
+            "keyword2" => $deviceInfo->province.$deviceInfo->city.$deviceInfo->area.$deviceInfo->street.$deviceInfo->address,
+            "keyword3" => Common::getPrexZero($request->equipment_id).",第".intval($request->port)."号插座",
+            "keyword4" => date("Y年m月d日 H:i"),
+            "keyword5" => $deviceInfo->charging_unit_price,
+            "remark" => "欢迎使用智能充电设备，当前余额".$userInfo->user_money,
+        ]));//充电开始
         return Common::myJson(ErrorCall::$errSucc);
     }
 

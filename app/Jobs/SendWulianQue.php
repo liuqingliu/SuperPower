@@ -91,7 +91,7 @@ class SendWulianQue implements ShouldQueue
             dispatch(new SendWulianQue($this->devid, $this->message, $this->times+1));//下发3次，直到有回复过来
 
         }catch (\Exception $exception){
-            dd($exception->getMessage());
+            Log::error("send_wulian_que_error:".$exception->getMessage());
         }
 
     }

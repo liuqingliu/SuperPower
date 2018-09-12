@@ -10,6 +10,7 @@ namespace App\Listeners;
 
 
 use App\Events\SendWulian;
+use App\Jobs\SendTemplateMsg;
 use App\Models\ChargingEquipment;
 use App\Models\ElectricCard;
 use App\Models\EquipmentPort;
@@ -205,7 +206,7 @@ class MsnEventSubscriber
      * 充电结束
      * 推消息
      */
-    //todo 推微信消息
+
     public function charge_finish($event)
     {
         $answer = [
@@ -223,7 +224,7 @@ class MsnEventSubscriber
                         $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
                         $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * min((time() - strtotime($rechargeOrder->updated_at)),
                                 $rechargeOrder->recharge_total_time);
-                        Log::info("money_".(time() - strtotime($rechargeOrder->updated_at)).",total:".$rechargeOrder->recharge_total_time.",min_".min((time() - strtotime($rechargeOrder->updated_at)),
+                        Log::info("money_" . (time() - strtotime($rechargeOrder->updated_at)) . ",total:" . $rechargeOrder->recharge_total_time . ",min_" . min((time() - strtotime($rechargeOrder->updated_at)),
                                 $rechargeOrder->recharge_total_time));
                         $rechargeOrder->save();
                         $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
@@ -237,12 +238,25 @@ class MsnEventSubscriber
                         } else {
                             $cardInfo = ElectricCard::where("card_id", $rechargeOrder->recharge_str)->first();
                             $cardInfo->money = $cardInfo->money - $rechargeOrder->recharge_price;
-                            Log::info("card_money_res:".$cardInfo->money.",min_res:".min($rechargeOrder->recharge_price,
+                            Log::info("card_money_res:" . $cardInfo->money . ",min_res:" . min($rechargeOrder->recharge_price,
                                     $rechargeOrder->recharge_total_time));
                             $cardInfo->save();
                         }
                     }, 5);
                     event(new SendWulian($event->devid, $answer));
+                    if ($rechargeOrder->type == Charge::ORDER_RECHARGE_TYPE_USER) {
+                        $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();
+                        dispatch(new SendTemplateMsg($rechargeOrder->recharge_str,
+                            "tK-cDfIBNxHi1Iw539U0XM-LL5bH3vCUei_KgkZeZHI", [
+                                "first" => "尊敬的用户，您的充电已经完成！",
+                                "keyword1" => $rechargeOrder->created_at,
+                                "keyword2" => $rechargeOrder->recharge_end_time,
+                                "keyword3" => (strtotime($rechargeOrder->recharge_end_time) - strtotime($rechargeOrder->created_time)) . "秒",
+                                "keyword4" => ($userInfo->user_money * 1.0 / 100.00) . "元",
+                                "keyword5" => $rechargeOrder->chargingEquipment->province . $rechargeOrder->chargingEquipment->city . $rechargeOrder->chargingEquipment->area . $rechargeOrder->chargingEquipment->street,
+                                "remark" => "我们期待与您的下一次邂逅！",
+                            ]));//充电结束
+                    }
                 } catch (\Exception $e) {
                     Log::info(__FUNCTION__ . "-event:" . serialize($event));
                     Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机请求关闭订单，服务器处理失败！！！"));
@@ -275,7 +289,7 @@ class MsnEventSubscriber
     }
 
     /**
-     * 打开某插座,如果返回打开失败，服务器会重新发送请求么。
+     * 打开某插座
      */
     public function open($event)
     {
@@ -344,6 +358,13 @@ class MsnEventSubscriber
             if (!$res) {
                 Log::info(__FUNCTION__ . "-event:" . serialize($event));
                 Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("更改网络状态失败！！！" . serialize($event)));
+            } else {
+                dispatch(new SendTemplateMsg($deviceInfo->openid, "0dY3EdM8mmLMbJHIgWma0ZHQn8a7xzD1aJHN4obuK8M", [
+                    "first" => Common::getPrexZero($event->devid),
+                    "keyword1" => $event->netStatus == "online" ? "上线" : "断线",
+                    "keyword2" => date("Y年m月d日 H:i"),
+                    "remark" => $deviceInfo->province . $deviceInfo->city . $deviceInfo->area . $deviceInfo->street . $deviceInfo->address,
+                ]));//网络更改
             }
         }
     }
@@ -357,47 +378,47 @@ class MsnEventSubscriber
     {
         $events->listen(
             'App\Events\Msns\register',
-            'App\Listeners\MsnEventSubscriber@register'
+            'App\Listeners\MsnEventSubscriber@register'//注册
         );
 
         $events->listen(
             'App\Events\Msns\sync',
-            'App\Listeners\MsnEventSubscriber@sync'
+            'App\Listeners\MsnEventSubscriber@sync'//同步订单
         );
 
         $events->listen(
             'App\Events\Msns\card_request',
-            'App\Listeners\MsnEventSubscriber@card_request'
+            'App\Listeners\MsnEventSubscriber@card_request'//电卡刷卡
         );
 
         $events->listen(
             'App\Events\Msns\card_charge',
-            'App\Listeners\MsnEventSubscriber@card_charge'
+            'App\Listeners\MsnEventSubscriber@card_charge'//电卡充电回复
         );
 
         $events->listen(
             'App\Events\Msns\charge_finish',
-            'App\Listeners\MsnEventSubscriber@charge_finish'
+            'App\Listeners\MsnEventSubscriber@charge_finish'//充电结束（电卡和用户）
         );
 
         $events->listen(
             'App\Events\Msns\power',
-            'App\Listeners\MsnEventSubscriber@power'
+            'App\Listeners\MsnEventSubscriber@power'//功率
         );
 
         $events->listen(
             'App\Events\Msns\open',
-            'App\Listeners\MsnEventSubscriber@open'
+            'App\Listeners\MsnEventSubscriber@open'//扫码充电回复
         );
 
         $events->listen(
             'App\Events\Msns\cancel',
-            'App\Listeners\MsnEventSubscriber@cancel'
+            'App\Listeners\MsnEventSubscriber@cancel'//结束充电回复
         );
 
         $events->listen(
             'App\Events\Msns\changeNet',
-            'App\Listeners\MsnEventSubscriber@changeNet'
+            'App\Listeners\MsnEventSubscriber@changeNet'//网络状态
         );
     }
 }

@@ -15,7 +15,7 @@ class ElectricCard extends Model
         'card_id',
         'bind_phone',
         'card_status',
-        'parent_user_id',
+        'openid',
         'active_time',
         'money',
     ];

@@ -25,7 +25,7 @@ class ChargingEquipment extends Model
         'charging_cost',
         'charging_unit_price',
         'active_time',
-        'parent_user_id',
+        'openid',//经销商openid
         'manager_phone',
     ];
 
