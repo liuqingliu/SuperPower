@@ -1,5 +1,7 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/psManage.js')}}"></script>
+@endsection
 @section('title', '电站管理')
 @section('system', '运营商管理系统')
 @section('content')
@@ -32,7 +34,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站区域</span>
-            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="点击选择电站安装区域 ">
+            <input id="myAddrs" class="my-input5 borad-text-left" type="text" readonly name="addr" placeholder="点击选择电站安装区域 ">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -52,7 +54,6 @@
     <div align="center" style="margin-top:2rem;">
         <a class="button-style-green">下一步</a>
     </div>
-
 </section>
 <section class="body1-step2">
     <ul class="board1">
@@ -167,4 +168,8 @@
         <a class="button-style-green">加载更多</a>
     </div>
 </section>
+
+<script type="text/javascript" src="{{asset('/js/jquery.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection

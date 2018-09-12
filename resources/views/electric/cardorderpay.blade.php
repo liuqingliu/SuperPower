@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/orderpay.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/orderpay.js')}}?v=2.0"></script>
 @endsection
 @section('title', '电卡充值')
 @section('system', '个人中心')
