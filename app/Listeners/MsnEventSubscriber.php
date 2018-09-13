@@ -75,7 +75,7 @@ class MsnEventSubscriber
     {
         $orderList = RechargeOrder::where("equipment_id", $event->devid)
             ->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)
-            ->where("updated_at", ">", date("Y-m-d", strtotime("-12 hours")))
+            ->where("created_at", ">", date("Y-m-d", strtotime("-12 hours")))
             ->get();
         $answer = [
             "ret" => "ok",
@@ -222,9 +222,9 @@ class MsnEventSubscriber
                     DB::transaction(function () use ($rechargeOrder) {
                         $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
                         $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                        $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * min((time() - strtotime($rechargeOrder->updated_at)),
+                        $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * min((time() - strtotime($rechargeOrder->created_at)),
                                 $rechargeOrder->recharge_total_time);
-                        Log::info("money_" . (time() - strtotime($rechargeOrder->updated_at)) . ",total:" . $rechargeOrder->recharge_total_time . ",min_" . min((time() - strtotime($rechargeOrder->updated_at)),
+                        Log::info("money_" . (time() - strtotime($rechargeOrder->created_at)) . ",total:" . $rechargeOrder->recharge_total_time . ",min_" . min((time() - strtotime($rechargeOrder->created_at)),
                                 $rechargeOrder->recharge_total_time));
                         $rechargeOrder->save();
                         $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",

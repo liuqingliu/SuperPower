@@ -64,7 +64,7 @@ class AutoCloseChargeOrder extends Command
     {
         $rechargeOrderList = RechargeOrder::whereIn("recharge_status",
             [Charge::ORDER_RECHARGE_STATUS_DEFAULT, Charge::ORDER_RECHARGE_STATUS_CHARGING])
-            ->where("updated_at", ">", date("Y-m-d", strtotime("-12 hours")))
+            ->where("created_at", ">", date("Y-m-d", strtotime("-12 hours")))
             ->get();
         //1.超时未关闭
         // a. 还未开始，关闭
@@ -73,7 +73,7 @@ class AutoCloseChargeOrder extends Command
         foreach ($rechargeOrderList as $rechargeOrder) {
             Log::info("fuck_order:".serialize($rechargeOrder));
             if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
-                if (time() - strtotime($rechargeOrder->updated_at) >= 5 * Common::ONE_MINUTE_SECONDES) {
+                if (time() - strtotime($rechargeOrder->created_at) >= 5 * Common::ONE_MINUTE_SECONDES) {
                     try {
                         DB::transaction(function () use ($rechargeOrder) {
                             $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_ORVERTIME;
@@ -91,7 +91,7 @@ class AutoCloseChargeOrder extends Command
                 }
             }
             if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_CHARGING) {
-                if (time() > strtotime($rechargeOrder->updated_at) + $rechargeOrder->recharge_total_time) {
+                if (time() > strtotime($rechargeOrder->created_at) + $rechargeOrder->recharge_total_time) {
                     try {
                         DB::transaction(function () use ($rechargeOrder) {
                             $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;

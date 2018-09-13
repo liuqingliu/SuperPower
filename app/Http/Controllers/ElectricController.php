@@ -311,7 +311,7 @@ class ElectricController extends Controller
             DB::transaction(function () use ($rechargeOrder, $portInfo) {
                 $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_ENDING;
                 $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * (time() - strtotime($rechargeOrder->updated_at));
+                $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * (time() - strtotime($rechargeOrder->created_at));
                 $rechargeOrder->save();
                 $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
                 $portInfo->save();

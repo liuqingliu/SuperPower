@@ -186,7 +186,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = Auth::guard("api")->user();//是否正常登陆过
+        $userInfo = User::find(1);
         //可以充值了？就需要判断提交上来的是否有效
         $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
         $extends = "";
