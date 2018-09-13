@@ -1,5 +1,6 @@
 @extends('layouts.default')
-
+@section('dialogMsg',"您已成功绑定手机号")
+@section('buttonText',"知道了")
 @section('title', '绑定手机号')
 @section('system', '个人中心')
 @section('content')
@@ -24,8 +25,11 @@
     <div style="margin-top:0.5rem;">
         <span class="info mini-text">绑定手机号后，可享受更多优惠政策，充电更便宜</span>
     </div>
-    <div align="center" style="margin-top:1.5rem;"><button class="button-style">提交</button></div>
+    <div align="center" style="margin-top:1.5rem;"><button class="button-style" data-toggle="modal" data-target="#myNormalDialog">提交</button></div>
 </section>
+@component('layouts._normaldialog')
+    <strong>Whoops!</strong> Something went wrong!
+@endcomponent
 <section class="body2">
     <div style="margin-top: 2.5rem;">
         <span class="info borad-text-left">为确保资金安全，请验证您的提现密码</span>

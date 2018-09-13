@@ -1,5 +1,7 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/order.js')}}"></script>
+@endsection
 @section('title', '账户充值')
 @section('system', '个人中心')
 @section('content')
@@ -19,7 +21,9 @@
     <div class="big-div">
         <div class="borad-heigh">
             <span class="pull-left borad-text-left">选择充值金额</span>
-            <span class=" pull-right mini-text-red">新客服专享优惠活动注册7天后结束<img src="{{URL::asset('images/p6_01.png')}}" class="img1"></span>
+            {{--@if($new_user)--}}
+            <span class=" pull-right mini-text-red" data-toggle="modal" data-target="#newUserDialog">新客服专享优惠活动注册7天后结束<img src="{{URL::asset('images/p6_01.png')}}" class="img1"></span>
+                {{--@endif--}}
         </div>
         <div class="line"></div>
         <div>
@@ -27,7 +31,11 @@
                 @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
                     <div class="money-block">
+                        @if($new_user)
                         <div class="recharge-block_title mini-text-white">新客户专享</div>
+                        @else
+                            <div class="recharge-block_title mini-text-white" style="visibility: hidden">新客户专享</div>
+                        @endif
                         <p class="text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
                         <p class="mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>
@@ -47,40 +55,25 @@
 
     </div>
 </section>
+{{--dialog--}}
+<div class="modal fade" id="newUserDialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div style="min-height: 15.625rem;" class="center-dialog">
+        <div style="min-height:12.125rem;width: 100%;padding: 1.5rem;margin-bottom: 3.5rem;" >
+            <div style="text-align: center;"><p class="text-48-red">新用户优惠专享说明</p></div>
+            <p class="text-36" >1.仅新用户有资格参与</p>
+            <p class="text-36" >2.一个账号只能享受一次优惠</p>
+            <p class="text-36" style="margin-bottom: 0;" >3.新用户专享优惠注册7天内有效。注册7天后优惠将自动消失。</p>
+        </div>
+        <div class="line-dialog"></div>
+        <div class="dialog-single-button" data-dismiss="modal">知道了</div>
+    </div>
+</div>
 <section class="footer">
     <div align="center" style="margin-top:1.5rem;">
-        <button class="button-style">马上充值</button>
+        <button class="button-style" onclick="creatOrder()">马上充值</button>
     </div>
     <div align="center" style="margin-top:1.25rem;">
         <a href="{{route('electric_cardorderpay')}}" class="mini-text">为电卡充值，点击这里</a>
     </div>
 </section>
 @endsection
-{{--onclick="callpay()"--}}
-{{--<script type="text/javascript">--}}
-    {{--//调用微信JS api 支付--}}
-    {{--function jsApiCall()--}}
-    {{--{--}}
-        {{--WeixinJSBridge.invoke(--}}
-            {{--'getBrandWCPayRequest',{"appId":"wx604f85d199ae04c9","timeStamp":"1535206291","nonceStr":"5b816393b54cc","package":"prepay_id=wx2522113121896933df54b5b91814180647","signType":"MD5","paySign":"B1B1BAE3C83619FC261D44D94F18BA63"},--}}
-            {{--function(res){--}}
-                {{--WeixinJSBridge.log(res.err_msg);--}}
-                {{--alert(res.err_code+res.err_desc+res.err_msg);--}}
-            {{--}--}}
-        {{--);--}}
-    {{--}--}}
-
-    {{--function callpay()--}}
-    {{--{--}}
-        {{--if (typeof WeixinJSBridge == "undefined"){--}}
-            {{--if( document.addEventListener ){--}}
-                {{--document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);--}}
-            {{--}else if (document.attachEvent){--}}
-                {{--document.attachEvent('WeixinJSBridgeReady', jsApiCall);--}}
-                {{--document.attachEvent('onWeixinJSBridgeReady', jsApiCall);--}}
-            {{--}--}}
-        {{--}else{--}}
-            {{--jsApiCall();--}}
-        {{--}--}}
-    {{--}--}}
-{{--</script>--}}

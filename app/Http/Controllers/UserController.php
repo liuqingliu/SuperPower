@@ -33,7 +33,7 @@ class UserController extends Controller
                 "nickname",
                 "user_money",
                 "user_id",
-                "user_type",
+                "user_type",//0 普通， 1普通經銷商， 2超級經銷商， 3廠商
                 "api_token"
             ], $userInfo),
         ]);
@@ -225,7 +225,7 @@ class UserController extends Controller
             $orderInfo = ChargeOrder::where("order_id",$createParams["order_id"])->first();
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
             $orderInfo->save();
-            return Common::myJson(ErrorCall::$errWechatPayPre,$result["err_code_des"]);
+            return Common::myJson(ErrorCall::$errWechatPayPre,$result);
         }
     }
 

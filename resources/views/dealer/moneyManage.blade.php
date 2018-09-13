@@ -10,7 +10,7 @@
         @endcomponent
         <div style="height:14rem;">
             <div style="height: 7.75rem;padding-top: 1rem;" align="center">
-                <p class="dealer-money-text" style="margin-bottom: 0.2rem;">88.23</p>
+                <p class="dealer-money-text" style="margin-bottom: 0.2rem;">{{$income_withdraw}}</p>
                 <p class="mini-text-white">可提现金额</p>
             </div>
             <div style="height: 1px; padding-left: 1.75rem;padding-right: 1.75rem;">
@@ -18,17 +18,17 @@
             </div>
             <div style="height: 6.25rem;padding-bottom: 1.75rem;padding-top: 1.75rem;">
                 <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                    <p class="mini-text-white-number" style="margin: 0;">2000000.00</p>
+                    <p class="mini-text-white-number" style="margin: 0;">{{$total_income}}</p>
                     <p class="mini-text-white">累计收益</p>
                 </div>
                 <div class="col-xs-4 col-md-4 col-lg-4 hasline" align="center">
                     <div class="line-vertical-white vertical"></div>
-                    <p class="mini-text-white-number" style="margin: 0;">10010</p>
+                    <p class="mini-text-white-number" style="margin: 0;">{{$total_users}}</p>
                     <p class="mini-text-white">累计用户</p>
                 </div>
                 <div class="col-xs-4 col-md-4 col-lg-4 hasline" align="center">
                     <div class="line-vertical-white vertical"></div>
-                    <p class="mini-text-white-number" style="margin: 0;">2125552</p>
+                    <p class="mini-text-white-number" style="margin: 0;">{{$total_charge_count}}</p>
                     <p class="mini-text-white">累计充电次数</p>
                 </div>
             </div>
