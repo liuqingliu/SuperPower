@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/orderpay.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/orderpay.js')}}?v=2.0"></script>
 @endsection
 @section('title', '电卡充值')
 @section('system', '个人中心')
@@ -44,10 +44,10 @@
             <ul class="recharge-ul">
                 @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
-                        <div class="recharge-block_title mini-text-white">新客户专享</div>
-                        <p class="text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
-                        <p class="mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
+                    <div  class="money-block">
+                        <div class="order_tag recharge-block_title mini-text-white">新客户专享</div>
+                        <p class="real_price text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
+                        <p class="given_price mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>
                 </li>
                 @endforeach

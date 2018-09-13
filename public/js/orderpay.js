@@ -1,18 +1,12 @@
 $(document).ready(function () {
-    $("div ul li").click(function () {
-            $("div ul li div").addClass("money-block-select");
-        //     // $(this.getElementsByTagName("div")).children().addClass("text-select");
-        // $(this.getElementsByTagName("div")).children().style.visibility="hidden";
-        //     $("ul li div p").addClass("text-select");
-        //     if ($("ul li div p").hasClass("mini-text-red")){
-        //         $("ul li div p").style.visibility='hidden';
-        //     }
+    $(".money-block").click(function () {
+        $("ul li div").removeClass("money-block-select");
+        $("ul li div div").css({'visibility':'visible'});
+        $("li div p.real_price").addClass("text-48-grey").removeClass("text-48-white");
 
-
-            // for (var i = 0; i < $(this).siblings().length; i++) {
-            //     var arry = $(this).siblings();
-            //     $(arry[i].getElementsByTagName("div")).removeClass("money-block-select");
-            //     $(arry[i].getElementsByTagName("div")).children().removeClass("text-select")
-            // }
+        $(this).addClass("money-block-select");
+        this.getElementsByClassName('order_tag')[0].style.visibility  ="hidden";
+        $(this.getElementsByClassName('real_price')[0]).addClass("text-48-white").removeClass("text-48-grey");
+        // $(".given_price").style.visibility = "hidden";
     });
 });
