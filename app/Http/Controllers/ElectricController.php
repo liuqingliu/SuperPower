@@ -285,7 +285,6 @@ class ElectricController extends Controller
     }
 
     //关闭插座
-    //todo 微信推消息
     public function closeSocket(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -329,6 +328,16 @@ class ElectricController extends Controller
         ];
         //通知下位机
         dispatch(new SendWulianQue($request->equipment_id, $callArr));//下发3次，直到有回复过来
+        dispatch(new SendTemplateMsg($rechargeOrder->recharge_str,
+            "tK-cDfIBNxHi1Iw539U0XM-LL5bH3vCUei_KgkZeZHI", [
+                "first" => "尊敬的用户，您的充电已经完成！",
+                "keyword1" => $rechargeOrder->created_at,
+                "keyword2" => $rechargeOrder->recharge_end_time,
+                "keyword3" => (strtotime($rechargeOrder->recharge_end_time) - strtotime($rechargeOrder->created_time)) . "秒",
+                "keyword4" => ($userInfo->user_money * 1.0 / 100.00) . "元",
+                "keyword5" => $rechargeOrder->chargingEquipment->province . $rechargeOrder->chargingEquipment->city . $rechargeOrder->chargingEquipment->area . $rechargeOrder->chargingEquipment->street,
+                "remark" => "我们期待与您的下一次邂逅！",
+            ]));//充电结束
         return Common::myJson(ErrorCall::$errSucc);
     }
 

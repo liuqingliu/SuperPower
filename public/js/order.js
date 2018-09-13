@@ -19,7 +19,8 @@ function creatOrder() {
         data: {"pay_money_type":"2"},
         dataType: "json",
         success: function(data){
-            console.log(data.errno)
+            console.log(data.errno);
+            callpay(data.result);
         },
     });
 
@@ -27,27 +28,32 @@ function creatOrder() {
 }
 
 // //调用微信JS api 支付
-// function jsApiCall()
-// {
-//     WeixinJSBridge.invoke(
-//         'getBrandWCPayRequest',{"appId":"wx604f85d199ae04c9","timeStamp":"1535206291","nonceStr":"5b816393b54cc","package":"prepay_id=wx2522113121896933df54b5b91814180647","signType":"MD5","paySign":"B1B1BAE3C83619FC261D44D94F18BA63"},
-//         function(res){
-//             WeixinJSBridge.log(res.err_msg);
-//             alert(res.err_code+res.err_desc+res.err_msg);
-//         }
-//     );
-// }
-//
-// function callpay()
-// {
-//     if (typeof WeixinJSBridge == "undefined"){
-//         if( document.addEventListener ){
-//             document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
-//         }else if (document.attachEvent){
-//             document.attachEvent('WeixinJSBridgeReady', jsApiCall);
-//             document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
-//         }
-//     }else{
-//         jsApiCall();
-//     }
-// }
+function jsApiCall($res)
+{
+    console.log(4);
+    console.log($res);
+    WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',$res,
+        function(answer){
+            WeixinJSBridge.log(answer.err_msg);
+            // alert(answer.err_code+answer.err_desc+answer.err_msg);
+        }
+    );
+}
+
+function callpay($res)
+{
+    if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+            console.log(2);
+            document.addEventListener('WeixinJSBridgeReady', jsApiCall($res), false);
+        }else if (document.attachEvent){
+            console.log(3);
+            document.attachEvent('WeixinJSBridgeReady', jsApiCall($res));
+            document.attachEvent('onWeixinJSBridgeReady', jsApiCall($res));
+        }
+    }else{
+        console.log(1);
+        jsApiCall($res);
+    }
+}
