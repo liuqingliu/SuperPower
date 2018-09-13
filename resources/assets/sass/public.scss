@@ -85,7 +85,10 @@ input::-ms-input-placeholder {
   font-size: 1.65rem;
   color: #777777;
 }
-
+.text-48-red {
+  font-size: 1.65rem;
+  color: #F15A24;
+}
 .text-40-77 {
   font-size: 1.25rem;
   color: #777777;
@@ -239,7 +242,6 @@ input::-ms-input-placeholder {
   margin-left: 1.75rem;
   background-color: #FFFFFF;
 }
-
 .line-dark {
   background: url('/images/p16_05.png');
   height: 2px;
@@ -579,4 +581,32 @@ a:visited{
   height: 2.0625rem;
   margin-right: 1rem;
   margin-left: 1rem;
+}
+/*dialogs*/
+.line-dialog{
+  background: #777777;
+  height: 1px;
+  position: absolute;
+  width: 80%;
+  bottom: 3.4375rem;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.center-dialog{
+  width: 60%;
+  background: #ffffff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+.dialog-single-button{
+  height:3.4375rem;
+  width: 100%;
+  line-height: 3.4375rem;
+  text-align: center;
+  color: #F15A24;
+  position:absolute;
+  bottom: 0;
+  font-size: 1.6rem;
 }

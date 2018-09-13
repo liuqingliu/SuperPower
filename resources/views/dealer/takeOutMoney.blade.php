@@ -13,7 +13,7 @@
         <!-- title -->
         <div style="height:14rem;">
             <div style="height: 7.75rem;padding-top: 1rem;" align="center">
-                <p class="dealer-money-text" style="margin-bottom: 0.2rem;">88.23</p>
+                <p class="dealer-money-text" style="margin-bottom: 0.2rem;">{{$income_withdraw}}</p>
                 <p class="mini-text-white">可提现金额</p>
             </div>
         </div>

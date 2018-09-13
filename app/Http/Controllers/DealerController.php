@@ -96,6 +96,7 @@ class DealerController extends Controller
 
     public function takeOutMoney()
     {
-        return view('dealer/takeOutMoney');
+        $dealerInfo = Dealer::find(1);
+        return view('dealer/takeOutMoney',["income_withdraw" => $dealerInfo->income_withdraw]);
     }
 }
