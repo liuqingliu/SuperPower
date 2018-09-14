@@ -109,6 +109,9 @@ class ElectricController extends Controller
                 $portInfoRes[$port->port] = $port->status;
             }
         }
+        $app = app('wechat.official_account');
+        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
+
         return view('electric/choosesocket', [
             "device_info" => Common::getNeedObj([
                 "ebquipment_status",
@@ -126,6 +129,7 @@ class ElectricController extends Controller
             ], $device),
             "charge_type_list" => Charge::$chargeTypeList,
             "portInfo" => $portInfoRes,
+            "wxjssdk" => $wxJssdkconfig,
         ]);
     }
 
