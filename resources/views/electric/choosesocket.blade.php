@@ -11,7 +11,7 @@
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
     </section>
-    @if(($ebquipment_status==1)&&($net_status==0))
+    {{--@if(($device_info->ebquipment_status==1)&&($device_info->net_status==0))--}}
     <section class="body1">
         <div class="borad-text-left borad-heigh location-title">{{$device_info->address}}
             <a href="#" onclick="showHideCode()"><img id="choosesocke_updownimg" src="{{URL::asset('images/p17_01.png')}}" class="up-down"/></a>
@@ -40,7 +40,7 @@
 
                 <ul class="choose-block " style="padding-left: 0.599rem; padding-right:0.599rem;height: 13.0625rem;">
                    @foreach($portInfo as $key => $value)
-                    <li class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
+                    <li data-toggle="modal" class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                         <div @if($value==1) class="inner-block-no" @elseif($value==0) class="inner-block-yes" @endif>
                             <p class="number-red-text block-text1">{{$key}}号</p>
                             @if($value==1)
@@ -69,13 +69,13 @@
                 </p>
                 <div style="height: 3rem;">
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{$charging_unit_price}}元</span>/4小时</p>
+                        <p class="middle-text2"><span class="big-red-text">{{$device_info->charging_unit_price}}元</span>/4小时</p>
                     </div>
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{$charging_unit_price}}*2元</span>/8小时</p>
+                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_price)*2}}元</span>/8小时</p>
                     </div>
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{$charging_unit_price}}*3元</span>/12小时</p>
+                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_price)*3}}元</span>/12小时</p>
                     </div>
                 </div>
             </div>
@@ -97,10 +97,40 @@
                     </p>
                 </div>
             </div>
-
         </div>
+        {{--dialog1--}}
+        <div class="modal" id="chooseDialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div style="height:30.625rem;width: 100%; position: absolute;bottom: 0;background: #ffffff">
+                <div style="height:6.5rem;width: 100%;padding-top: 3rem" >
+                   <img data-dismiss="modal" style="width: 1.875rem;height: 1.875rem;position: absolute;top: 1.5rem;left: 1.5rem;" src="{{URL::asset('images/p19_01.png')}}">
+                   <div class="borad-text-left" style="text-align: center;">
+                       您已选择<span class="text-45-red">2号</span>插座
+                   </div>
+                </div>
+                <div class="line-dark"></div>
+                <section class="part1">
+                    <P class="borad-text-left" style="text-align: center;margin-top: 1rem;">请确认充电器与插座及车辆已插好</P>
+                    <div align="center">
+                        <img style="margin: auto;height:8.5rem;width:25.375rem;" src="{{URL::asset('images/p19_02.png')}}" >
+                    </div>
+                    <div>
+                        <span class="borad-text-left" style="position: absolute;left: 3.5rem">插座</span>
+                        <span class="borad-text-left" style="position: absolute;left: 9.5rem">充电器</span>
+                        <span class="borad-text-left" style="position: absolute;left: 20rem">电动车</span>
+                    </div>
+                    <div class="line-dark" style="margin-top: 3rem"></div>
+                    <button class="button-style" style="margin-left: 10%;margin-top: 2rem;">插好了</button>
+                </section>
+                <section class="part2">
+
+                </section>
+
+            </div>
+        </div>
+
+
     </section>
-@else
+{{--@else--}}
     <section class="body2">
         <div class="container1">
             <img class="img-faile" src="{{URL::asset('images/p16_1_01.png')}}"/>
@@ -108,5 +138,5 @@
         </div>
         <div class="faile-text">获取联网设备状态</div>
     </section>
-@endif
+{{--@endif--}}
 @endsection

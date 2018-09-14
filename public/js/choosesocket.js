@@ -18,8 +18,7 @@ $(document).ready(function () {
                 $(arry[i].getElementsByTagName("div")).removeClass("inner-block-select");
                 $(arry[i].getElementsByTagName("div")).children().removeClass("text-select")
             }
-        }else {
-            Toast("这个插头有大哥在用！",2000)
+            $('#chooseDialog').modal('show')
         }
     });
 });
