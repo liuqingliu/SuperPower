@@ -58,7 +58,7 @@ class UserController extends Controller
                     'user_last_login' => date("Y-m-d H:i:s"),
                     'api_token' => md5($wxUser['default']->id."cxm*#*".time()),
                 ]);
-                $userInfoReal = User::where("openid",$wxUser['default']->id)->where("user_status", Common::USER_TYPE_NORMAL)->first();
+                $userInfoReal = User::where("openid",$wxUser['default']->id)->first();
             }
             $userInfoReal->user_last_login = date("Y-m-d H:i:s");
 //            $userInfoReal->api_token = md5($wxUser['default']->id."cxm*#*".time());//脚本批量更新
@@ -70,6 +70,8 @@ class UserController extends Controller
             $userInfo = $userInfoReal;
         }
         $userInfo = User::find(1);
+
+
         return view('user/center',[
             "user_info" => Common::getNeedObj([
                 "phone",

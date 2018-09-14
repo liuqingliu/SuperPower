@@ -59,7 +59,7 @@ class AutoCloseChargeOrder extends Command
      *
      * @return mixed
      */
-    //todo 4,5,6
+    //todo 4,5
     public function handle()
     {
         $rechargeOrderList = RechargeOrder::whereIn("recharge_status",

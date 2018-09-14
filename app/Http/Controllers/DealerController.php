@@ -11,7 +11,9 @@ use App\Models\ChargingEquipment;
 use App\Models\Dealer;
 use App\Models\ElectricCard;
 use App\Models\Logic\Common;
+use App\Models\Logic\Eletric;
 use App\Models\Logic\ErrorCall;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use SmsManager;
@@ -104,14 +106,18 @@ class DealerController extends Controller
         return view('dealer/takeOutMoney',["income_withdraw" => $dealerInfo->income_withdraw]);
     }
 
-    //激活电卡
-    public function activeCard(Request $request)
+    //修改电卡状态
+    public function changeCardStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'order_id' => "required|exists:orders"
+            'card_id' => "required|exists:electric_cards"
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
+        if(empty($cardInfo)){
+            return Common::myJson(ErrorCall::$errCardNotExist);
         }
 
         return Common::myJson(ErrorCall::$errSucc);
@@ -142,9 +148,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-
         $equipmentInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
-
         return Common::myJson(ErrorCall::$errSucc, $equipmentInfo);
     }
 }
