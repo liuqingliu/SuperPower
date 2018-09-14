@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Mockery\Exception;
 
@@ -48,7 +49,7 @@ class SendEmail implements ShouldQueue
             Mail::to($this->emailUser)->send(new $mailTypeClass($this->content));
             echo "ok\n";
         }catch (\Exception $exception){
-            dd($exception->getMessage());
+            Log::info("sendmail_error:".$exception->getMessage());
         }
 
     }

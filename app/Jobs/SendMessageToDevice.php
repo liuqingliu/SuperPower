@@ -7,6 +7,7 @@
  */
 namespace App\Jobs;
 
+use App\Mail\CommonError;
 use App\Models\Logic\Common;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -51,11 +52,21 @@ class SendMessageToDevice extends Job implements ShouldQueue
             $request->setTopicFullName("/a1GBdrPMPst/869300034342472/serverData"); //消息发送到的Topic全名.
             $response = $client->getAcsResponse($request);
             if ($response->Success != Common::STATUS_SEND_SUCCESS) {
-                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder(serialize($response)));
+                $errmsg = [
+                    "adr" => __METHOD__.",".__FUNCTION__,
+                    "desc" => "给下位机发消息失败",
+                    "detail" => serialize($response),
+                ];
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
             }
             Log::info("call_device_info:".serialize($response));
         }catch (\Exception $e){
-            Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder(serialize($e->getMessage())));
+            $errmsg = [
+                "adr" => __METHOD__.",".__FUNCTION__,
+                "desc" => "给下位机发消息异常",
+                "detail" => serialize($response),
+            ];
+            Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
         }
     }
 }

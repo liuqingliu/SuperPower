@@ -9,7 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendTemplateMsg;
-use App\Mail\WechatOrder;
+use App\Mail\CommonError;
 use App\Models\Logic\Common;
 use App\Models\Logic\Order;
 use App\Models\User;
@@ -51,8 +51,12 @@ class PaymentController extends Controller
                 return $fail('通信失败，请稍后再通知我');
             }
             if ($wxOrder["total_fee"] != $order->price) {
-                $msg = "查询到微信订单信息异常:" . serialize($wxOrder);
-                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder($msg));
+                $errmsg = [
+                    "adr" => __METHOD__.",".__FUNCTION__,
+                    "desc" => "查询到微信订单信息异常,价格不统一",
+                    "detail" =>"订单order_id：".$order->order_id. "微信反馈金额：".$wxOrder["total_fee"].",我方金额：".$order->price,
+                ];
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
             }
 
             if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
@@ -69,17 +73,21 @@ class PaymentController extends Controller
             }
             //记录日志
             //如果保存失败，会出现什么情况？
+            $user = User::where("openid", $message["openid"])->first();
+            Log::info("payment_notfiy_first:order-org:".serialize($order->toArray()).",user-org:".serialize($user->toArray()));
             $res = $order->save(); // 保存订单
-            Log::info("payment_notfiy_res:" . $res . "，order_info:" . serialize($order->toArray()));
             if ($res) {
                 //给用户余额价钱
-                $user = User::where("openid", $message["openid"])->first();
                 $user->user_money = $user->user_money + $wxOrder["total_fee"];
                 $res2 = $user->save();
-                Log::info("save_money_user:" . $res2 . "，order_info:" . serialize($order->toArray()));
             }
             if (!$res || !$res2) {
-                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("微信通知，入库失败，用户冲了钱，但是更新信息失败！！！"));
+                $errmsg = [
+                    "adr" => __METHOD__.",".__FUNCTION__,
+                    "desc" => "微信订单信息异常",
+                    "detail" =>"微信通知，入库失败，用户充了钱，但是更新信息失败！！！微信方：".serialize($message)."我方订单id：".$order->order_id.",res={$res}(保存订单为支付成功失败),res2={$res2}（更新用户账户失败）",
+                ];
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
             } else {
                 dispatch(new SendTemplateMsg($user->openid, "oGikchlZLTCLf3aR7ar58DqGywd1nCUBTkDY4WkKO40", [
                     "first" => "您好，账户充值成功",
