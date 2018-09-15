@@ -32,13 +32,16 @@ use Illuminate\Support\Facades\Validator;
 
 class ElectricController extends Controller
 {
-    public function cardorderpay()
+    public function cardorderpay(Request $request)
     {
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
+        $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
         return view('electric/cardorderpay', [
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
+            "card_id" => $request->card_id,
+            "money" => ($cardInfo->money * 1.0 / 100.00),
         ]);
     }
 
