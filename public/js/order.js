@@ -15,7 +15,7 @@ $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('conten
 function creatOrder() {
     $.ajax({
         type: 'POST',
-        url: "/api/user/createOrder",
+        url: "/user/createOrder",
         data: {"pay_money_type":"2"},
         dataType: "json",
         success: function(data){

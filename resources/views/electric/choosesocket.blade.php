@@ -4,6 +4,7 @@
 @endsection
 @section('title', '选择插座')
 @section('system', '个人中心')
+@section('dialogMsg','')
 @section('content')
 
     <section class="header">
@@ -11,7 +12,7 @@
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
     </section>
-    {{--@if(($device_info->ebquipment_status==1)&&($device_info->net_status==0))--}}
+    @if(($device_info->equipment_status==0)&&($device_info->net_status==0))
     <section class="body1">
         <div class="borad-text-left borad-heigh location-title">{{$device_info->address}}
             <a href="#" onclick="showHideCode()"><img id="choosesocke_updownimg" src="{{URL::asset('images/p17_01.png')}}" class="up-down"/></a>
@@ -40,7 +41,7 @@
 
                 <ul class="choose-block " style="padding-left: 0.599rem; padding-right:0.599rem;height: 13.0625rem;">
                    @foreach($portInfo as $key => $value)
-                    <li data-toggle="modal" class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
+                    <li data-toggle="modal" data-port="{{$key}}" class="col-xs-1-5 col-md-1-5 col-lg-1-5 socket-block">
                         <div @if($value==1) class="inner-block-no" @elseif($value==0) class="inner-block-yes" @endif>
                             <p class="number-red-text block-text1">{{$key}}号</p>
                             @if($value==1)
@@ -119,7 +120,7 @@
                         <span class="borad-text-left" style="position: absolute;left: 20rem">电动车</span>
                     </div>
                     <div class="line-dark" style="margin-top: 3rem"></div>
-                    <button class="button-style" style="margin-left: 10%;margin-top: 2rem;">插好了</button>
+                    <button class="button-style" onclick="opensocket({{$device_info->equipment_id}})" style="margin-left: 10%;margin-top: 2rem;">插好了</button>
                 </section>
                 <section class="part2">
 
@@ -130,7 +131,7 @@
 
 
     </section>
-{{--@else--}}
+@else
     <section class="body2">
         <div class="container1">
             <img class="img-faile" src="{{URL::asset('images/p16_1_01.png')}}"/>
@@ -138,5 +139,9 @@
         </div>
         <div class="faile-text">获取联网设备状态</div>
     </section>
-{{--@endif--}}
+    @component('layouts._normaldialog')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
+
+@endif
 @endsection

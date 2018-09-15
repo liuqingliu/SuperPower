@@ -1,5 +1,7 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/recharge.js')}}"></script>
+@endsection
 @section('title', '正在充电')
 @section('system', '个人中心')
 @section('content')
@@ -37,7 +39,7 @@
         <div class="line-dark"></div>
     </section>
     <section class="footer">
-        <div class="recharge-container3">
+        <div id="close_button" class="recharge-container3" onclick="closesocket({{$order_id}})">
             <img src="{{URL::asset('images/p16_07.png')}}" class="img-status"/>
         </div>
         <p class="mini-text fooet-des" style="margin-top: 2rem;">正在充电，点击上方按钮可停止充电</p>

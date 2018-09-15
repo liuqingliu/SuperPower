@@ -1,5 +1,11 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/usercenter.js?v=1.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js')}}" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        wx.config(<?php echo $wxjssdk; ?>);
+    </script>
+@endsection
 @section('title', '个人中心')
 @section('system', '个人中心')
 @section('content')
@@ -100,7 +106,7 @@
                         <span class="bottom-text text-center center-block">正在充电</span>
                     </a>
                 </div>
-                <div class="col-xs-4 col-md-4 col-lg-4">
+                <div class="col-xs-4 col-md-4 col-lg-4" onclick="scanPower()">
                     <a href="#">
                         <img src="{{URL::asset('images/p1_12_off.png')}}"
                              class="img-responsive center-block bottom-img">
