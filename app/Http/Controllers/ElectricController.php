@@ -32,13 +32,16 @@ use Illuminate\Support\Facades\Validator;
 
 class ElectricController extends Controller
 {
-    public function cardorderpay()
+    public function cardorderpay(Request $request)
     {
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
+        $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
         return view('electric/cardorderpay', [
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
+            "card_id" => $request->card_id,
+            "money" => ($cardInfo->money * 1.0 / 100.00),
         ]);
     }
 
@@ -74,7 +77,7 @@ class ElectricController extends Controller
     public function choosesocket(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'devid' => 'required|int|max:20|min:10',
+            'devid' => 'required|string|max:20|min:10',
         ]);
         if ($validator->fails()) {
             return redirect('/prompt')->with([
@@ -84,14 +87,34 @@ class ElectricController extends Controller
                 'status' => 'error'
             ]);
         }
-        $userInfo = session("user_info");
+//        $userInfo = session("user_info");
+        $userInfo = User::find(1);
         $rechargeOrder = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status",
             Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if (!empty($rechargeOrder)) {
             return redirect('/electric/recharge');
         }
         //获取当前终端的基本信息
-        $device = ChargingEquipment::where("devid", $request->devid)->first();
+        $device = ChargingEquipment::where("equipment_id", $request->devid)->first();
+        $portInfo = EquipmentPort::where("equipment_id", $request->devid)->get();
+        $boardInfo = json_decode($device->board_info, true);
+        $cnt = 0;
+        $portInfoRes = [];
+        foreach ($portInfo as $key => $port) {
+            $cnt++;
+            if ($boardInfo["board1"] == "Y" && $cnt <= 10) {
+                $portInfoRes[$port->port] = $port->status;
+            }
+            if ($boardInfo["board2"] == "Y" && $cnt < 10 && $cnt <= 20) {
+                $portInfoRes[$port->port] = $port->status;
+            }
+            if ($boardInfo["board3"] == "Y" && $cnt < 20 && $cnt <= 30) {
+                $portInfoRes[$port->port] = $port->status;
+            }
+        }
+        $app = app('wechat.official_account');
+        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
+
         return view('electric/choosesocket', [
             "device_info" => Common::getNeedObj([
                 "ebquipment_status",
@@ -108,6 +131,8 @@ class ElectricController extends Controller
                 "board_info",//存储board1
             ], $device),
             "charge_type_list" => Charge::$chargeTypeList,
+            "portInfo" => $portInfoRes,
+            "wxjssdk" => $wxJssdkconfig,
         ]);
     }
 
@@ -272,14 +297,14 @@ class ElectricController extends Controller
         ];
         //通知下位机
         dispatch(new SendWulianQue($request->equipment_id, $callArr));
-        dispatch(new SendTemplateMsg($userInfo->openid, "jDcmC6spBaUxKVHtnoVtJxRjb9dZEAAw13R2yokl5No",[
+        dispatch(new SendTemplateMsg($userInfo->openid, "jDcmC6spBaUxKVHtnoVtJxRjb9dZEAAw13R2yokl5No", [
             "first" => "您好，充电已开始",
             "keyword1" => $orderInfo["created_at"],
-            "keyword2" => $deviceInfo->province.$deviceInfo->city.$deviceInfo->area.$deviceInfo->street.$deviceInfo->address,
-            "keyword3" => Common::getPrexZero($request->equipment_id).",第".intval($request->port)."号插座",
+            "keyword2" => $deviceInfo->province . $deviceInfo->city . $deviceInfo->area . $deviceInfo->street . $deviceInfo->address,
+            "keyword3" => Common::getPrexZero($request->equipment_id) . ",第" . intval($request->port) . "号插座",
             "keyword4" => date("Y年m月d日 H:i"),
             "keyword5" => $deviceInfo->charging_unit_price,
-            "remark" => "欢迎使用智能充电设备，当前余额".$userInfo->user_money,
+            "remark" => "欢迎使用智能充电设备，当前余额" . $userInfo->user_money,
         ]));//充电开始
         return Common::myJson(ErrorCall::$errSucc);
     }
@@ -349,8 +374,8 @@ class ElectricController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $orderInfo = RechargeOrder::where("order_id",$request->order_id)->first();
-        if(empty($orderInfo)){
+        $orderInfo = RechargeOrder::where("order_id", $request->order_id)->first();
+        if (empty($orderInfo)) {
             return Common::myJson(ErrorCall::$errOrderNotExist, $validator->errors());
         }
         return Common::myJson(ErrorCall::$errSucc, ["order_status" => $orderInfo->order_status]);

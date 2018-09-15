@@ -23,6 +23,7 @@ class RechargeOrder extends Model
         'recharge_status',
         'type',
         'wat',
+        'in_come_flag',
     ];
 
     public function chargingEquipment()

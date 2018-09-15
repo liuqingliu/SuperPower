@@ -44,4 +44,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Dealer::class, 'user_id', 'user_id');
     }
+
+    public function electricCards()
+    {
+        return $this->hasMany(ElectricCard::class, 'openid', 'openid');
+    }
 }

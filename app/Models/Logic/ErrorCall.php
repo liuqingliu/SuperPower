@@ -23,7 +23,7 @@ class ErrorCall
     public static $errElectricCardEmpaty = ["errno" => 10, "errmsg" => "卡号不存在或未激活"];
     public static $errInvalidRequest = ["errno" => 11, "errmsg" => "非法请求"];
     public static $errCreateOrderFail = ["errno" => 12, "errmsg" => "创建订单失败"];
-    public static $errNotLogin = ["errno" => 13, "errmsg" => "请刷新重新登陆"];
+    public static $errNotLogin = ["errno" => 13, "errmsg" => "用户信息有误，请刷新重新登陆"];
     public static $errWechatPayPre = ["errno" => 14, "errmsg" => "微信接口有误，请刷新重试"];
     public static $errCallSendInvalid = ["errno" => 15, "errmsg" => "请求太频繁,请1分钟后再试"];
     public static $errSendFail = ["errno" => 16, "errmsg" => "短信发送失败，请等会儿再试"];
@@ -32,4 +32,7 @@ class ErrorCall
     public static $errPortUserd = ["errno" => 19, "errmsg" => "端口已被占用"];
     public static $errPortInvalid = ["errno" => 20, "errmsg" => "无效端口"];
     public static $errOrderStatus = ["errno" => 21, "errmsg" => "订单状态有误"];
+
+    //dealer
+    public static $errCardNotExist = ["errno" => 22, "errmsg" => "电卡不存在"];
 }

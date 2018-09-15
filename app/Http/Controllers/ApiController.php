@@ -8,12 +8,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\WechatOrder;
-use App\Models\Logic\Charge;
-use App\Models\RechargeOrder;
 use App\Models\User;
-use EasyWeChat\Kernel\Messages\Text;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
 use App\Models\Logic\Common;

@@ -11,6 +11,7 @@ namespace App\Listeners;
 
 use App\Events\SendWulian;
 use App\Jobs\SendTemplateMsg;
+use App\Mail\CommonError;
 use App\Models\ChargingEquipment;
 use App\Models\ElectricCard;
 use App\Models\EquipmentPort;
@@ -62,7 +63,12 @@ class MsnEventSubscriber
 
         //如果有设备三块板子都有问题，则报警
         if ($event->board1 == "N" && $event->board2 == "N" && $event->board3 == "N") {
-            Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("有设备三个板子都坏了！！！设备编号：" . $event->devid));
+            $errmsg = [
+                "adr" => __METHOD__.",".__FUNCTION__,
+                "desc" => "有设备三个板子都坏了！！！设备编号：" . $event->devid,
+                "detail" => serialize($event),
+            ];
+            Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
         }
 
         event(new SendWulian($event->devid, $answer));
@@ -259,7 +265,12 @@ class MsnEventSubscriber
                     }
                 } catch (\Exception $e) {
                     Log::info(__FUNCTION__ . "-event:" . serialize($event));
-                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机请求关闭订单，服务器处理失败！！！"));
+                    $errmsg = [
+                        "adr" => __METHOD__.",".__FUNCTION__,
+                        "desc" => "下位机请求关闭订单，服务器处理失败！！！",
+                        "detail" => serialize($event),
+                    ];
+                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
                 }
             }
         }
@@ -310,7 +321,12 @@ class MsnEventSubscriber
                 }, 5);
             } catch (\Exception $e) {
                 Log::debug(__FUNCTION__ . "-failed:" . serialize($rechargeOrder));
-                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机开插座失败，但服务器订单关闭失败！！！"));
+                $errmsg = [
+                    "adr" => __METHOD__.",".__FUNCTION__,
+                    "desc" => "下位机开插座失败，但服务器订单关闭失败！！！",
+                    "detail" => serialize($event),
+                ];
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
             }
         } else {
             if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
@@ -325,7 +341,12 @@ class MsnEventSubscriber
                     }, 5);
                 } catch (\Exception $e) {
                     Log::debug(__FUNCTION__ . "-failed:" . serialize($rechargeOrder));
-                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机开插座成功，但服务器订单开启失败！！！"));
+                    $errmsg = [
+                        "adr" => __METHOD__.",".__FUNCTION__,
+                        "desc" => "下位机开插座成功，但服务器订单开启失败！！！",
+                        "detail" => serialize($event),
+                    ];
+                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
                 }
             }
         }
@@ -343,7 +364,12 @@ class MsnEventSubscriber
                 $res = $rechargeOrder->save();
                 if (!$res) {
                     Log::info(__FUNCTION__ . "-event:" . serialize($event));
-                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("下位机关闭订单成功，但服务器订单关闭失败！！！"));
+                    $errmsg = [
+                        "adr" => __METHOD__.",".__FUNCTION__,
+                        "desc" => "下位机关闭订单成功，但服务器订单关闭失败！！！",
+                        "detail" => serialize($event),
+                    ];
+                    Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
                 }
             }
         }
@@ -356,8 +382,12 @@ class MsnEventSubscriber
             $deviceInfo["net_status"] = $event->netStatus == "online" ? 0 : "1";
             $res = $deviceInfo->save();
             if (!$res) {
-                Log::info(__FUNCTION__ . "-event:" . serialize($event));
-                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("更改网络状态失败！！！" . serialize($event)));
+                $errmsg = [
+                    "adr" => __METHOD__.",".__FUNCTION__,
+                    "desc" => "更改网络状态失败！！！",
+                    "detail" => serialize($event),
+                ];
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
             } else {
                 dispatch(new SendTemplateMsg($deviceInfo->openid, "0dY3EdM8mmLMbJHIgWma0ZHQn8a7xzD1aJHN4obuK8M", [
                     "first" => Common::getPrexZero($event->devid),

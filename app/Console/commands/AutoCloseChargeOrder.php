@@ -8,7 +8,7 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\WechatOrder;
+use App\Mail\CommonError;
 use App\Models\ElectricCard;
 use App\Models\EquipmentPort;
 use App\Models\Logic\Charge;
@@ -59,7 +59,7 @@ class AutoCloseChargeOrder extends Command
      *
      * @return mixed
      */
-    //todo 4,5,6
+    //todo 4,5
     public function handle()
     {
         $rechargeOrderList = RechargeOrder::whereIn("recharge_status",
@@ -115,9 +115,27 @@ class AutoCloseChargeOrder extends Command
                                 $cardInfo->save();
                             }
                         }, 5);
+                        if ($rechargeOrder->type == Charge::ORDER_RECHARGE_TYPE_USER) {
+                            $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();
+                            dispatch(new SendTemplateMsg($rechargeOrder->recharge_str,
+                                "tK-cDfIBNxHi1Iw539U0XM-LL5bH3vCUei_KgkZeZHI", [
+                                    "first" => "尊敬的用户，您的充电已经完成！",
+                                    "keyword1" => $rechargeOrder->created_at,
+                                    "keyword2" => $rechargeOrder->recharge_end_time,
+                                    "keyword3" => (strtotime($rechargeOrder->recharge_end_time) - strtotime($rechargeOrder->created_time)) . "秒",
+                                    "keyword4" => ($userInfo->user_money * 1.0 / 100.00) . "元",
+                                    "keyword5" => $rechargeOrder->chargingEquipment->province . $rechargeOrder->chargingEquipment->city . $rechargeOrder->chargingEquipment->area . $rechargeOrder->chargingEquipment->street,
+                                    "remark" => "我们期待与您的下一次邂逅！",
+                                ]));//充电结束
+                        }
                     } catch (\Exception $e) {
                         Log::debug("auto_close_error2:" . serialize($e->getMessage()));
-                        Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new WechatOrder("自动关闭订单失败！！！" . $e->getMessage()));
+                        $errmsg = [
+                            "adr" => __METHOD__.",".__FUNCTION__,
+                            "desc" => "自动关闭订单失败",
+                            "detail" => $e->getMessage(),
+                        ];
+                        Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
                     }
                 }
             }
