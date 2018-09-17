@@ -1,10 +1,18 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/choosesocket.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/choosesocket.js?1.2')}}"></script>
+    @if(!(($device_info->equipment_status==0)&&($device_info->net_status==0)))
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#myNormalDialog').modal('show');
+        });
+        @endif
+    </script>
 @endsection
 @section('title', '选择插座')
 @section('system', '个人中心')
-@section('dialogMsg','')
+@section('dialogMsg','设备离线，请选择其他设备')
+@section('buttonText','知道了')
 @section('content')
 
     <section class="header">
@@ -103,9 +111,9 @@
         <div class="modal" id="chooseDialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div style="height:30.625rem;width: 100%; position: absolute;bottom: 0;background: #ffffff">
                 <div style="height:6.5rem;width: 100%;padding-top: 3rem" >
-                   <img data-dismiss="modal" style="width: 1.875rem;height: 1.875rem;position: absolute;top: 1.5rem;left: 1.5rem;" src="{{URL::asset('images/p19_01.png')}}">
+                   <img data-dismiss="modal" style="width: 1.875rem;height: 1.875rem;position: absolute;top: 1.5rem;left: 1.5rem;" src="{{URL::asset('images/p19_01.png')}}" onclick="hidePart2()">
                    <div class="borad-text-left" style="text-align: center;">
-                       您已选择<span class="text-45-red">2号</span>插座
+                       您已选择<span class="text-45-red" id="selected_port">2号</span>插座
                    </div>
                 </div>
                 <div class="line-dark"></div>
@@ -115,15 +123,30 @@
                         <img style="margin: auto;height:8.5rem;width:25.375rem;" src="{{URL::asset('images/p19_02.png')}}" >
                     </div>
                     <div>
-                        <span class="borad-text-left" style="position: absolute;left: 3.5rem">插座</span>
-                        <span class="borad-text-left" style="position: absolute;left: 9.5rem">充电器</span>
+                        <span class="borad-text-left" style="position: absolute;left: 5.7rem">插座</span>
+                        <span class="borad-text-left" style="position: absolute;left: 11.4rem">充电器</span>
                         <span class="borad-text-left" style="position: absolute;left: 20rem">电动车</span>
                     </div>
                     <div class="line-dark" style="margin-top: 3rem"></div>
-                    <button class="button-style" onclick="opensocket({{$device_info->equipment_id}})" style="margin-left: 10%;margin-top: 2rem;">插好了</button>
+                    <button class="button-style" onclick="showPart2()" style="margin-left: 10%;margin-top: 2rem;">插好了</button>
                 </section>
-                <section class="part2">
-
+                <section class="part2" style="display: none">
+                    <ul style="height:8.6rem;padding-left:0.71875rem;padding-right: 0.71875rem;">
+                        @foreach($charge_type_list as $hour => $seconds)
+                        <li class="col-xs-4 col-md-4 col-lg-4 recharge-way-block">
+                            <div  class="recharge-time @if($hour==0) money-block-select @endif" data-time = "{{$hour}}">
+                                <p class="real_price @if($hour==0) text-36-white @else text-36 @endif" style="text-align:center;line-height:2.8rem;  margin-bottom: 0;">@if($hour==0)充满自动停@else充{{$hour}}小時@endif</p>
+                            </div>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <div class="line-dark" style="margin-top: 1.5rem"></div>
+                    <div style="height: 3.125rem;line-height: 3.125;padding-left: 1.75rem;padding-right: 1.75rem;">
+                        <div class="pull-left text-36" ><img src="{{URL::asset('images/p20_02.png')}}" style="height: 1.2rem;width: 1.2rem;">账户余额</div>
+                        <span  class="pull-right text-36">{{$user_money}}元</span>
+                    </div>
+                    <div class="text-36-red" style="height: 1.5rem;display: none" align="center">账户余额不足，请充值</div>
+                    <button class="button-style" onclick="opensocket({{$device_info->equipment_id}})" style="margin-left: 10%;margin-top: 1rem;">开始充电</button>
                 </section>
 
             </div>
@@ -142,6 +165,5 @@
     @component('layouts._normaldialog')
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
-
 @endif
 @endsection

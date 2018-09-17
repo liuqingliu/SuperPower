@@ -1,11 +1,14 @@
+var recharge_money=0;
 $(document).ready(function () {
     $(".money-block").click(function () {
+        recharge_money = $(this).data("real_price");
         $("ul li div").removeClass("money-block-select");
-        $("ul li div div").css({'visibility':'visible'});
         $("li div p.real_price").addClass("text-48-grey").removeClass("text-48-white");
-
+        if ($(this.getElementsByClassName('recharge-block_title')[0]).data("new_user")){
+            $("ul li div div").css({'visibility':'visible'});
+            this.getElementsByClassName('recharge-block_title')[0].style.visibility  ="hidden";
+        }
         $(this).addClass("money-block-select");
-        this.getElementsByClassName('order_tag')[0].style.visibility  ="hidden";
         $(this.getElementsByClassName('real_price')[0]).addClass("text-48-white").removeClass("text-48-grey");
         // $(".given_price").style.visibility = "hidden";
     });
@@ -13,18 +16,20 @@ $(document).ready(function () {
 
 $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
 function creatOrder() {
-    $.ajax({
-        type: 'POST',
-        url: "/user/createOrder",
-        data: {"pay_money_type":"2"},
-        dataType: "json",
-        success: function(data){
-            console.log(data.errno);
-            callpay(data.result);
-        },
-    });
-
-
+    if (recharge_money!=0){
+        $.ajax({
+            type: 'POST',
+            url: "/user/createOrder",
+            data: {"pay_money_type":recharge_money},
+            dataType: "json",
+            success: function(data){
+                console.log(data.errno);
+                callpay(data.result);
+            },
+        });
+    }else {
+     Toast("请选择充值金额",2000);
+    }
 }
 
 // //调用微信JS api 支付
@@ -36,7 +41,7 @@ function jsApiCall($res)
         'getBrandWCPayRequest',$res,
         function(answer){
             WeixinJSBridge.log(answer.err_msg);
-            // alert(answer.err_code+answer.err_desc+answer.err_msg);
+            alert(answer.err_code+answer.err_desc+answer.err_msg);
         }
     );
 }
