@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?v=1.4')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js?')}}" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         wx.config(<?php echo $wxjssdk; ?>);

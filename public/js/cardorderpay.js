@@ -1,4 +1,4 @@
-var rechage_money = 0;
+var recharge_money = 0;
 var recharge_cardNum = 0;
 $(document).ready(function () {
     $(".money-block").click(function () {
@@ -9,7 +9,7 @@ $(document).ready(function () {
         $(this.getElementsByClassName('real_price')[0]).addClass("text-48-white").removeClass("text-48-grey");
         // $(".given_price").style.visibility = "hidden";
         var text = $(this.getElementsByClassName('real_price')[0]).text();
-        rechage_money = parseInt(text.substring(1,text.length-1)) ;
+        recharge_money = parseInt(text.substring(1,text.length-1)) ;
     });
 });
 
@@ -27,16 +27,17 @@ function confirmInfo() {
       Toast('请输入电卡号',2000);
       return;
     }
-    if (rechage_money==0){
+    if (recharge_money==0){
         Toast('请选择充值金额',2000)
         return;
     }
-    $('#cardInfo').text('电卡卡号：'+recharge_cardNum);
-    $('#moneyInfo').text('充值金额：'+parseFloat(rechage_money).toFixed(2)+'元')
+    $('#cardInfo').text('电卡卡号：'+$('#cardNum').val());
+    $('#moneyInfo').text('充值金额：'+parseFloat(recharge_money).toFixed(2)+'元')
     $('#confirmDialog').modal('show')
 }
 function confirmedRecharge() {
     $('#confirmDialog').modal('hide')
+    creatCardOrder();
 }
 
 // wx.config(<?php echo $wxjssdk; ?>);
@@ -50,11 +51,12 @@ function scanCard(){
         }
     });
 }
-function creatOrder() {
+$.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+function creatCardOrder() {
     if (recharge_money!=0){
         $.ajax({
             type: 'POST',
-            url: "/user/createOrder",
+            url: "/electric/createOrder",
             data: {"pay_money_type":recharge_money,"card_id":recharge_cardNum},
             dataType: "json",
             success: function(data){

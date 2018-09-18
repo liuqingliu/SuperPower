@@ -34,7 +34,11 @@ function opensocket(equipment_id) {
         data: {"equipment_id":equipment_id,"port":key,"recharge_type":recharge_type},
         dataType: "json",
         success: function(data){
-           alert(data.errno+data.errmsg);
+            if(data.errno==0){
+                $('#myNormalDialog').modal('show');
+            }
+           console.log(data.errno+data.errmsg);
+
         },
     });
 }

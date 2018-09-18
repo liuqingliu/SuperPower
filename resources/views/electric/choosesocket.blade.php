@@ -1,17 +1,20 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/choosesocket.js?1.2')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/choosesocket.js?1.3')}}"></script>
     @if(!(($device_info->equipment_status==0)&&($device_info->net_status==0)))
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#myNormalDialog').modal('show');
-        });
-        @endif
-    </script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#myNormalDialog').modal('show');
+            });
+        </script>
+@section('dialogMsg','设备离线，请选择其他设备')
+@else
+    @section('dialogMsg','已开始为爱车充电')
+@endif
 @endsection
 @section('title', '选择插座')
 @section('system', '个人中心')
-@section('dialogMsg','设备离线，请选择其他设备')
+
 @section('buttonText','知道了')
 @section('content')
 
