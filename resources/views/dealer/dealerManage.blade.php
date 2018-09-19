@@ -1,5 +1,7 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/dealerManage.js?v=1.0')}}"></script>
+@endsection
 @section('title', '经销商管理')
 @section('system', '运营商管理系统')
 @section('content')
@@ -9,10 +11,10 @@
     @endcomponent
     <div class="swich-container" align="center">
         <div class="swich-bar1">
-            <div class="col-xs-6 col-md-6 col-lg-6 text-45-white swich-text-container" align="center">
+            <div class="col-xs-6 col-md-6 col-lg-6 text-45-white swich-text-container" id="adddealer" align="center">
                 添加经销商
             </div>
-            <div class="col-xs-6 col-md-6 col-lg-6 text-45-b3 swich-text-container" align="center">
+            <div class="col-xs-6 col-md-6 col-lg-6 text-45-b3 swich-text-container" id="querydealer" align="center">
                 查询经销商
             </div>
         </div>
@@ -65,7 +67,7 @@
         <a class="button-style-blue">确定</a>
     </div>
 </section>
-<section class="body2-step1">
+<section class="body2-step1" style="display: none">
     <ul class="board1">
         <li class="li-tips borad-text-left">
             输入以下任意一项进行查询
@@ -98,7 +100,7 @@
     </div>
 </section>
 
-<section class="body2-step2">
+<section class="body2-step2" style="display: none">
     <ul style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
         <li style="position: relative;height: 6.25rem;">
             <span class="borad-text-left" style="position: absolute;bottom: 1.25rem;left: 1.75rem;">查询结果列表</span>

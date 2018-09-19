@@ -34,7 +34,7 @@
         <li class="borad-heigh">
             <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p9_05.png')}}" alt="电卡余额">
             <span class="borad-text-left">电卡余额</span>
-            <span class="borad-text-right" style="margin-left: 1.15rem;">{{$money or 0.00}}元</span>
+            <span class="borad-text-right" style="margin-left: 1.85rem;">{{$money or 0.00}}</span>
         </li>
     </ul>
     {{--dialog--}}
