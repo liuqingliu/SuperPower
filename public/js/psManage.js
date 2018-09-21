@@ -39,7 +39,7 @@ $(function() {
     }
 
     //bind the click event for 'input' element
-    $("#myAddrs").click(function() {
+    $("#input2").click(function() {
         var PROVINCES = [],
             startCities = [],
             startDists = [];
@@ -117,3 +117,85 @@ $(function() {
         });
     });
 });
+//点击激活电站
+function activePS() {
+    $('.swich-bar2').css("background-image","url(/images/pm5_01_l.png)");
+    $('#queryPS').addClass('text-45-b3').removeClass('text-45-white');
+    $('#activePS').addClass('text-45-white').removeClass('text-45-b3');
+    $('.body2-step1').hide();
+    $('.body2-step2').hide();
+    $('.body2-step3').hide();
+    $('.body1-step1').show();
+    $('.body1-step2').hide();
+}
+// 点击电站查询
+function queryPS() {
+    $('.swich-bar2').css("background-image","url(/images/pm5_01_r.png)");
+    $('#queryPS').addClass('text-45-white').removeClass('text-45-b3');
+    $('#activePS').addClass('text-45-b3').removeClass('text-45-white');
+    $('.body2-step1').hide();
+    $('.body2-step2').show();
+    $('.body2-step3').hide();
+    $('.body1-step1').hide();
+    $('.body1-step2').hide();
+}
+//跳到激活电站第二步
+$('#activePS1').click(function () {
+    if ($('#input1').val().length<11){
+        Toast('请输入正确的机箱编码', 2000);
+        return;
+    }
+    if ($('#input2').val().length==0){
+        Toast('请选择设备所在区域', 2000);
+        return;
+    }
+    if ($('#input3').val().length==0){
+        Toast('请输入设备所在街道', 2000);
+        return;
+    }
+    if ($('#input4').val().length==0){
+        Toast('请输入设备具体地址', 2000);
+        return;
+    }
+    $('.body1-step1').hide();
+    $('.body1-step2').show();
+    changeVcode();
+});
+//回到激活电站第一步
+$('#activePrevious').click(function () {
+    $('.body1-step2').hide();
+    $('.body1-step1').show();
+});
+//获取图片验证码
+function changeVcode() {
+    $.ajax({
+        type: 'GET',
+        url: "/api/getCaptcha",
+        data: {},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                $('.identifying-img').attr("src",data.result);
+            }
+        },
+    });
+}
+//提交电站激活数据
+$('#activeFinish').click(function () {
+    if ($('#input5').val().length==0){
+        Toast('请输入电价成本', 2000);
+        return;
+    }
+    if ($('#input6').val().length==0){
+        Toast('请输入计费标准', 2000);
+        return;
+    }
+    if ($('#input7').val().length<4){
+        Toast('请输入完整验证码', 2000);
+        return;
+    }
+
+
+
+});
+

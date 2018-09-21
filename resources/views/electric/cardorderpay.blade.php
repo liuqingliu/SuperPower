@@ -1,9 +1,10 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/cardorderpay.js')}}"></script>
-@endsection
-@section('scanjs')
-    <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js')}}" charset="utf-8"></script>
+    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?v=1.4')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js?')}}" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        wx.config(<?php echo $wxjssdk; ?>);
+    </script>
 @endsection
 @section('title', '电卡充值')
 @section('system', '个人中心')
@@ -26,14 +27,14 @@
         <li class="borad-heigh">
             <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_05.png')}}" alt="电卡卡号">
             <span class="borad-text-left">电卡卡号</span>
-            <input id="cardNum" class="my-input1 borad-text-right" readonly placeholder="点击输入卡号" data-toggle="modal" data-target="#cardNumInput" >
+            <input id="cardNum" class="my-input1 borad-text-right" readonly @isset($card_id) value="{{$card_id}}" @endisset placeholder="点击输入卡号" data-toggle="modal" data-target="#cardNumInput" >
             <img class="borad-img-right pull-right img-rounded" onclick="scanCard()" src="{{URL::asset('images/p9_02.png')}}">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p9_05.png')}}" alt="电卡余额">
             <span class="borad-text-left">电卡余额</span>
-            <span class="borad-text-right" style="margin-left: 1.15rem;">202.2</span>
+            <span class="borad-text-right" style="margin-left: 1.85rem;">{{$money or 0.00}}</span>
         </li>
     </ul>
     {{--dialog--}}
@@ -106,20 +107,9 @@
         </div>
     </div>
 
-    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-        wx.config(<?php $app = app('wechat.official_account');echo $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false)?>);
-        function scanCard(){
-            wx.scanQRCode({
-                needResult : 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-                scanType : [ "qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
-                success : function(res) {
-                    var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-                    window.location.href = result;//因为我这边是扫描后有个链接，然后跳转到该页面
-                }
-            });
-        }
-    </script>
+
+
+
 </section>
 
 @endsection

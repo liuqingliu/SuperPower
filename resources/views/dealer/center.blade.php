@@ -51,9 +51,9 @@
                 </a>
             </div>
             <div class="col-xs-4 col-md-4 col-lg-4">
-                <a href="{{route('dealer_electriccardmanage')}}">
+                <a href="{{route('dealer_manage')}}">
                     <img src="{{URL::asset('images/pm1_06.png')}}" class="img-responsive center-block nav-img">
-                    <span class="borad-text-left text-center center-block nav-text">电卡管理</span>
+                    <span class="borad-text-left text-center center-block nav-text">经销商管理</span>
                 </a>
             </div>
             <div class="col-xs-4 col-md-4 col-lg-4">

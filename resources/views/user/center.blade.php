@@ -1,5 +1,11 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/usercenter.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js')}}" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        wx.config(<?php echo $wxjssdk; ?>);
+    </script>
+@endsection
 @section('title', '个人中心')
 @section('system', '个人中心')
 @section('content')
@@ -13,7 +19,7 @@
                 @if (empty($user_info->phone))
                     <span class="user-account">点击这里绑定手机领取优惠</span><br>
                 @else
-                    <span class="user-account">{{$user_info->phone}}</span>
+                    <span class="user-account">电话：{{$user_info->phone}}</span>
                 @endif
 
             </div>
@@ -30,7 +36,9 @@
                     <span class="borad-text-left">账户充值(</span>
                     <span class="borad-text-right">余额{{$user_info->user_money}}元</span>
                     <span class="borad-text-left">)</span>
+                    @if($new_user)
                     <span class="borad-text-right pull-right">充值优惠<img class="red-dot pull-right" src="{{URL::asset('images/p1_03.png')}}"></span>
+                    @endif
                 </li>
             </a>
             <li class="line"></li>
@@ -46,7 +54,9 @@
                 <li class="borad-heigh">
                     <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_05.png')}}" alt="充值电卡">
                     <span class="borad-text-left">电卡充值</span>
+                    @if($new_user)
                     <span class="borad-text-right pull-right">多充多送<img class="red-dot pull-right" src="{{URL::asset('images/p1_03.png')}}"></span>
+                    @endif
                 </li>
             </a>
             <li class="line"></li>
@@ -96,11 +106,11 @@
             <div class="row my-footer">
                 <div class="col-xs-4 col-md-4 col-lg-4">
                     <a href="{{route('electric_recharge')}}">
-                        <img src="{{URL::asset('images/p1_11_on.png')}}" class="img-responsive center-block bottom-img">
+                        <img src="{{URL::asset('images/p1_11_off.png')}}" class="img-responsive center-block bottom-img">
                         <span class="bottom-text text-center center-block">正在充电</span>
                     </a>
                 </div>
-                <div class="col-xs-4 col-md-4 col-lg-4">
+                <div class="col-xs-4 col-md-4 col-lg-4" onclick="scanPower()">
                     <a href="#">
                         <img src="{{URL::asset('images/p1_12_off.png')}}"
                              class="img-responsive center-block bottom-img">
@@ -110,7 +120,7 @@
                 <div class="col-xs-4 col-md-4 col-lg-4">
                     <a href="#">
                         <img src="{{URL::asset('images/p1_13_on.png')}}" class="img-responsive center-block bottom-img">
-                        <span class="bottom-text text-center center-block">个人中心</span>
+                        <span class="bottom-text-red text-center center-block">个人中心</span>
                     </a>
                 </div>
             </div>

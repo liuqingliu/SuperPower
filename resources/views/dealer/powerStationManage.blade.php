@@ -1,6 +1,9 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psManage.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.2')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
 @section('title', '电站管理')
 @section('system', '运营商管理系统')
@@ -12,16 +15,16 @@
     @endcomponent
     <div class="swich-container" align="center">
         <div class="swich-bar2">
-            <div class="col-xs-6 col-md-6 col-lg-6 text-45-white swich-text-container" align="center">
+            <div class="col-xs-6 col-md-6 col-lg-6 text-45-white swich-text-container" align="center" id="activePS" onclick="activePS()">
                 电站激活
             </div>
-            <div class="col-xs-6 col-md-6 col-lg-6 text-45-b3 swich-text-container" align="center">
+            <div class="col-xs-6 col-md-6 col-lg-6 text-45-b3 swich-text-container" align="center" id="queryPS" onclick="queryPS()">
                 电站查询
             </div>
         </div>
     </div>
 </section>
-<section class="body1-step1">
+<section class="body1-step1" >
     <ul class="board1">
         <li class="li-tips borad-text-left">
             1、填写电站基本信息
@@ -29,22 +32,22 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站编号</span>
-            <input class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="请输入电站机箱内11位编码" oninput="if(value.length>11)value=value.slice(0,11)">
+            <input id="input1" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="请输入电站机箱内11位编码" oninput="if(value.length>11)value=value.slice(0,11)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站区域</span>
-            <input id="myAddrs" class="my-input5 borad-text-left" type="text" readonly name="addr" placeholder="点击选择电站安装区域 ">
+            <input id="input2" class="my-input5 borad-text-left" data-key="23-385-4224" type="text" readonly name="addr" placeholder="点击选择电站安装区域 ">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">街道名称</span>
-            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入街道名，如成宏路23号 " oninput="if(value.length>15)value=value.slice(0,15)">
+            <input id="input3" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入街道名，如成宏路23号 " oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">具体位置</span>
-            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入小区名，如万科海岸3号机 " oninput="if(value.length>15)value=value.slice(0,15)">
+            <input id="input4" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入小区名，如万科海岸3号机 " oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
     </ul>
     <div class="text-45-b3 tip-container">
@@ -52,10 +55,10 @@
     </div>
 
     <div align="center" style="margin-top:2rem;">
-        <a class="button-style-green">下一步</a>
+        <button id="activePS1" class="button-style-green">下一步</button>
     </div>
 </section>
-<section class="body1-step2">
+<section class="body1-step2" style="display: none">
     <ul class="board1">
         <li class="li-tips borad-text-left">
             2、填写电站计费方式
@@ -63,20 +66,26 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电价成本</span>
-            <input class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="输入电费成本" oninput="if(value.length>4)value=value.slice(0,4)">
+            <input id="input5" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="输入电费成本" oninput="if(value.length>4)value=value.slice(0,4)">
             <span class="borad-text-right pull-right">单位：元/度</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">充电计费</span>
-            <input class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="1元可充电时长 " oninput="if(value.length>4)value=value.slice(0,4)">
+            <input id="input6" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="1元可充电时长 " oninput="if(value.length>4)value=value.slice(0,4)">
             <span class="borad-text-right pull-right">单位：小時/元</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
-            <input class="my-input2 borad-text-left" type="text" name="identifying-code" placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
-            <img class="identifying-img pull-right img-rounded" src="../images/pm7_01.png">
+            <input id="input7" class="my-input2 borad-text-left" type="text" name="identifying-code" placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <img class="identifying-img pull-right img-rounded" onclick="changeVcode()">
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">手机验证码</span>
+            <input id="input5" class="my-input7 borad-text-left" type="number" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <span class="getvcode-green pull-right">获取</span>
         </li>
     </ul>
     <div class="text-45-b3 tip-container" >
@@ -87,11 +96,14 @@
     </div>
 
     <div align="center" style="margin-top:3rem;">
-        <a class="button-style-green">完成</a>
+        <button id="activeFinish" class="button-style-green">完成</button>
+    </div>
+    <div align="center" style="margin-top:1rem;">
+        <button id="activePrevious" class="button-style-green">上一步</button>
     </div>
 </section>
 
-<section class="body2-stpe1">
+<section class="body2-step1" style="display: none">
     <div style="text-align: center;margin-top: 3rem;">
         <img src="../images/p16_1_01.png" style="margin: 0 auto;width:  7.8125rem;height: 9.875rem;" />
         <div align="center">
@@ -104,7 +116,7 @@
 
 </section>
 
-<section class="body2-stpe2">
+<section class="body2-step2" style="display: none">
     <ul class="board1">
         <li class="li-tips borad-text-left">
             输入以下任意一项进行查询
@@ -112,17 +124,17 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站编号</span>
-            <input class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入电站编号" oninput="if(value.length>11)value=value.slice(0,11)">
+            <input id="input8" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入电站编号" oninput="if(value.length>11)value=value.slice(0,11)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">手机号码</span>
-            <input class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入激活人员手机号 " oninput="if(value.length>11)value=value.slice(0,11)">
+            <input id="input9" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入激活人员手机号 " oninput="if(value.length>11)value=value.slice(0,11)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">激活人员</span>
-            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入激活人员姓名 " oninput="if(value.length>6)value=value.slice(0,6)">
+            <input id="input10" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入激活人员姓名 " oninput="if(value.length>6)value=value.slice(0,6)">
         </li>
     </ul>
     <div class="text-45-b3 tip-container" >
@@ -137,7 +149,7 @@
     </div>
 </section>
 
-<section class="body2-stpe3">
+<section class="body2-step3" style="display: none">
     <ul style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
         <li style="position: relative;height: 6.25rem;">
             <span class="borad-text-left" style="position: absolute;bottom: 1.25rem;left: 1.75rem;">查询结果列表</span>
@@ -169,7 +181,5 @@
     </div>
 </section>
 
-<script type="text/javascript" src="{{asset('/js/jquery.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
+
 @endsection

@@ -13,13 +13,13 @@
                     <span class="borad-text-left">首页</span>
                 </li>
             </a>
-            <li role="separator" class="divider"></li>
-            <a href="{{route('dealer_electriccardmanage')}}">
-                <li>
-                    <img class="dealer-option-img img-rounded" src="{{URL::asset('images/pm2_02.png')}}">
-                    <span class="borad-text-left">电卡管理</span>
-                </li>
-            </a>
+            {{--<li role="separator" class="divider"></li>--}}
+            {{--<a href="{{route('dealer_electriccardmanage')}}">--}}
+                {{--<li>--}}
+                    {{--<img class="dealer-option-img img-rounded" src="{{URL::asset('images/pm2_02.png')}}">--}}
+                    {{--<span class="borad-text-left">电卡管理</span>--}}
+                {{--</li>--}}
+            {{--</a>--}}
             <li role="separator" class="divider"></li>
             <a href="{{route('dealer_powerStationManage')}}">
                 <li>

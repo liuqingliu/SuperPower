@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/order.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/order.js?v=1.1')}}"></script>
 @endsection
 @section('title', '账户充值')
 @section('system', '个人中心')
@@ -30,14 +30,14 @@
             <ul class="recharge-ul">
                 @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
-                    <div class="money-block">
+                    <div class="money-block" data-real_price = "{{$pament_money["real_price"]}}">
                         @if($new_user)
-                        <div class="recharge-block_title mini-text-white">新客户专享</div>
+                        <div data-new_user= "{{$new_user}}" class="recharge-block_title mini-text-white">新客户专享</div>
                         @else
                             <div class="recharge-block_title mini-text-white" style="visibility: hidden">新客户专享</div>
                         @endif
-                        <p class="text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
-                        <p class="mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
+                        <p class="real_price text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
+                        <p class=" mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>
                 </li>
                 @endforeach
