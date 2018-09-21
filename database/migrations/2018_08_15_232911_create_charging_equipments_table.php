@@ -26,8 +26,8 @@ class CreateChargingEquipmentsTable extends Migration
             $table->string('jack_info')->default("");
             $table->string('board_info')->default("");
             $table->tinyInteger('net_status',false,true)->default(0);//联网状态
-            $table->integer('charging_cost',false,true)->default(0);//充电成本
-            $table->integer('charging_unit_price',false,true)->default(0);//充电单价
+            $table->unsignedInteger('charging_cost')->default(0);//充电成本,每小时
+            $table->integer('charging_unit_second',false,true)->default(0);//每元可以充电时间
             $table->dateTime('active_time');
             $table->string('manager_phone',22)->index()->default("");
             $table->string('openid',16)->index();

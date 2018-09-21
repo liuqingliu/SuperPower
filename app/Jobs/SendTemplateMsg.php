@@ -2,24 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Models\ChargingEquipment;
-use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
-use App\Models\Logic\Eletric;
-use App\Models\RechargeOrder;
 use App\Models\User;
-use DefaultAcsClient;
-use DefaultProfile;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Mail;
 use Mockery\Exception;
 
 use Illuminate\Support\Facades\Log;
-use \Iot\Request\V20170420 as Iot;
 
 class SendTemplateMsg implements ShouldQueue
 {
@@ -31,9 +23,9 @@ class SendTemplateMsg implements ShouldQueue
      * @return void
      */
 
-    public $message;
+    public $message = [];
 
-    public $devid;
+    public $openid;
 
     public $templateId;
 
@@ -43,10 +35,10 @@ class SendTemplateMsg implements ShouldQueue
      * @param  $message
      * @return void
      */
-    public function __construct($devid, $templateId, $message)
+    public function __construct($openid, $templateId, $message)
     {
         $this->message = $message;
-        $this->devid = $devid;
+        $this->openid = $openid;
         $this->templateId = $templateId;
     }
 
@@ -59,28 +51,25 @@ class SendTemplateMsg implements ShouldQueue
     {
         //
         try {
-            Log::info("send_template_msg_start:");
+            Log::info("send_template_msg_start:".json_encode($this->message).",".$this->openid.",".$this->templateId);
             $app = app('wechat.official_account');
-            $deviceInfo = ChargingEquipment::where("equipment_id", $this->devid)->first();
-            if (empty($deviceInfo) || $deviceInfo["equipment_status"] == Eletric::DEVICE_STATUS_ERROR) {
-                return;
-            }
-            $userInfo = User::where("openid",$deviceInfo->openid)
+            $userInfo = User::where("openid",$this->openid)
                 ->where("user_status", Common::USER_STATUS_DEFAULT)
                 ->whereIn("user_type", Common::$dealers)
                 ->first();//防止离职或者禁用也去给他们发消息
+            Log::info("222:".json_encode($userInfo));
             if(empty($userInfo)){
                 return;
             }
             $app->template_message->send([
-                'touser' => $deviceInfo->openid,
+                'touser' => $this->openid,
                 'template_id' => $this->templateId,
-                'url' => 'https://easywechat.org',
+                'url' => '',
                 'data' => $this->message,
             ]);
             echo "ok！";
         } catch (\Exception $exception) {
-            Log::error("send_template_msg_error:" . $exception->getMessage());
+            Log::info("send_template_msg_error:" . $exception->getMessage());
         }
 
     }
@@ -93,7 +82,6 @@ class SendTemplateMsg implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::info("fail_send_wulian:" . serialize($exception->getMessage()));
+        Log::info("fail_send_template:" . serialize($exception->getMessage()));
     }
-
 }

@@ -16,9 +16,9 @@ class CreateDealersTable extends Migration
     {
         Schema::create('dealers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id',16)->unique()->default("");
             $table->string('id_card',32)->default("");
-            $table->string('parent_user_id',16)->index()->default("");
+            $table->string('openid',34)->index()->default("");
+            $table->string('parent_openid',34)->index()->default("");
             $table->string('province',16)->default("");
             $table->string('city',16)->default("");
             $table->string('area',32)->default("");
@@ -28,6 +28,9 @@ class CreateDealersTable extends Migration
             $table->integer('give_proportion',false,true)->default(0);//抽成比例值，计算需成0.01
             $table->string('remark')->default("");
             $table->string('password',16)->default("");
+            $table->string('bank_username',32)->default("");
+            $table->string('bank_name',32)->default("");
+            $table->string('bank_no',32)->default("");
             $table->timestamps();
         });
     }

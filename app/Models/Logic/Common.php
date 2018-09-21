@@ -33,6 +33,16 @@ class Common
     const ONE_HOUR_SECONDES = 3600;
     const ONE_MINUTE_SECONDES = 60;
 
+    //经销商，设备筛选
+    const SHOW_HUIZONG_TYPE_JXS = 1;
+    const SHOW_HUIZONG_TYPE_DEV = 2;
+
+    //资金流水
+    const CASH_TYPE_SHARE = 1;//经销商流水
+    const CASH_TYPE_DEVIC = 2;//设备充电
+    const CASH_STATUS_INCOME = 1;//进入
+    const CASH_STATUS_OUT = 2;//支出
+
     //session_key
     const SESSION_KEY_USER = "user_info";
 

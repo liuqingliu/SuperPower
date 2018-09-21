@@ -69,13 +69,13 @@
                 </p>
                 <div style="height: 3rem;">
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{$device_info->charging_unit_price}}元</span>/4小时</p>
+                        <p class="middle-text2"><span class="big-red-text">{{$device_info->charging_unit_second}}元</span>/4小时</p>
                     </div>
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_price)*2}}元</span>/8小时</p>
+                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_second)*2}}元</span>/8小时</p>
                     </div>
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_price)*3}}元</span>/12小时</p>
+                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_second)*3}}元</span>/12小时</p>
                     </div>
                 </div>
             </div>

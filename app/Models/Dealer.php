@@ -12,15 +12,15 @@ class Dealer extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
+        'openid',
         'id_card',
-        'parent_user_id',
+        'parent_openid',
         'province',
         'city',
         'area',
         'name',
         'total_income',
-        'income_withdraw',
+        'income_withdraw',//总共提现数
         'give_proportion',
         'remark',
     ];
@@ -29,6 +29,11 @@ class Dealer extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'openid', 'openid');
+    }
+
+    public function cashLogs()
+    {
+        return $this->hasMany(Cashlog::class, 'openid', 'openid');
     }
 }

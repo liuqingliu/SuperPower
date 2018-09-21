@@ -26,3 +26,4 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::get('/testredis', 'ApiController@testredis')->name('testredis');
+//Route::get('/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码

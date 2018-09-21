@@ -14,7 +14,7 @@ return [
     'route' => [
         'enable'     => true,
         'prefix'     => 'lcint-sms',
-        'middleware' => ['web'],
+        'middleware' => ['api'],
     ],
 
     /*
@@ -68,7 +68,7 @@ return [
         'length'        => 4,
         'validMinutes'  => 2,
         'repeatIfValid' => false,
-        'maxAttempts'   => 0,
+        'maxAttempts'   => 5,
     ],
 
     /*
@@ -107,7 +107,6 @@ return [
     'templates' => [
         'Aliyun' => ['SMS_143560259'],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | 模版数据管理

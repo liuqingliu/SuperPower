@@ -49,14 +49,14 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
 
     //api/
     Route::get('/api/getCaptcha', 'ApiController@getCaptcha')->name('getcaptcha');//获取图片验证码
-    Route::post('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
-    Route::post('/api/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
-    Route::post('/api/user/createOrder', 'UserController@createOrder')->name('createorder');//创建用户支付订单
-    Route::post('/api/electric/createOrder', 'UserController@createOrder')->name('electriccreateorder');//创建电卡支付订单
-    Route::get('/api/electric/getRechargeLog', 'ElectricController@getRechargeLog')->name('getrechargeLog');//获取用户的充电记录
-    Route::post('/api/electric/stopChargingOrder', 'ElectricController@stopChargingOrder')->name('stopchargingorder');//停止充电
-    Route::get('/api/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
-    Route::post('/api/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
+//    Route::post('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
+    Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
+    Route::post('/user/createOrder', 'UserController@createOrder')->name('createorder');//创建用户支付订单
+    Route::post('/electric/createOrder', 'UserController@createOrder')->name('electriccreateorder');//创建电卡支付订单
+    Route::get('/electric/getRechargeLog', 'ElectricController@getRechargeLog')->name('getrechargeLog');//获取用户的充电记录
+    Route::post('/electric/stopChargingOrder', 'ElectricController@stopChargingOrder')->name('stopchargingorder');//停止充电
+    Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
+    Route::post('/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
 
     //errors
     Route::get('/prompt','PromptController@index')->name("prompt");
@@ -81,4 +81,6 @@ Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')-
 Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');
 Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
 Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');
+Route::get('/dealer/getDealerList', 'DealerController@getDealerList')->name('getDealerList');
+Route::get('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');
 //});

@@ -8,6 +8,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendSms;
+use App\Jobs\SendSmsQue;
+use App\Jobs\SendTemplateMsg;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
 
@@ -41,11 +44,6 @@ class ApiController extends Controller
 
     public function sendMessage(Request $request)
     {
-        //开启队列:
-//        $res = PhpSms::make("Aliyun","SMS_143560259")->to("16602821326")->data(["code" => "12134"])->send();
-//        dd($res);
-//        PhpSms::queue(true);
-
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required', new ValidatePhoneRule],//,"exists:users,phone"
             'captcha' => 'required|captcha',
@@ -60,18 +58,16 @@ class ApiController extends Controller
         if (!$canSend) {
             return Common::myJson(ErrorCall::$errCallSendInvalid);
         }
-
-        $sendResult = SmsManager::requestVerifySms();
-
-        if (!$sendResult["success"]) {
-            return Common::myJson(ErrorCall::$errSendFail);
-        }
+        PhpSms::queue(true);
+//        dispatch(new SendSmsQue());
+//        dispatch(new SendSms(PhpSms::make("Aliyun","SMS_143560259")->to("15701160070")->data(["code" => "222"])));
+        SmsManager::requestVerifySms();
         return Common::myJson(ErrorCall::$errSucc);
     }
 
     public function testredis()
     {
-//        Redis::set('name', 'guwenjie');
+//        Redis::set('name', 'guw+enjie');
         $values = Redis::get('name');
         dd($values);
         //输出："guwenjie"
@@ -88,16 +84,41 @@ class ApiController extends Controller
 
     public function test()
     {
-        $app = app('wechat.official_account');
-        $app->template_message->send([
-            'touser' => 'user-openid',
-            'template_id' => 'template-id',
-            'url' => 'https://easywechat.org',
-            'data' => [
-                'key1' => 'VALUE',
-                'key2' => 'VALUE2',
-            ],
-        ]);
-        echo "ok！";
+//        $userInfo->openid, "jDcmC6spBaUxKVHtnoVtJxRjb9dZEAAw13R2yokl5No", [
+//        "first" => "您好，充电已开始",
+//        "keyword1" => $orderInfo["created_at"],
+//        "keyword2" => $deviceInfo->province . $deviceInfo->city . $deviceInfo->area . $deviceInfo->street . $deviceInfo->address,
+//        "keyword3" => Common::getPrexZero($request->equipment_id) . ",第" . intval($request->port) . "号插座",
+//        "keyword4" => date("Y年m月d日 H:i"),
+//        "keyword5" => $deviceInfo->charging_unit_second,
+//        "remark" => "欢迎使用智能充电设备，当前余额" . $userInfo->user_money,
+//    ]
+        $user = User::find(1);
+//        $app = app('wechat.official_account');
+//        $app->template_message->send([
+//            'touser' => $user->openid,
+//            'template_id' => 'jDcmC6spBaUxKVHtnoVtJxRjb9dZEAAw13R2yokl5No',
+//            'url' => 'https://easywechat.org',
+//            'data' => [
+//                "first" => "您好，充电已开始",
+//                "keyword1" => date("Y-m-d H:i:s"),
+//                "keyword2" => "成都市华阳",
+//                "keyword3" => "5号机器,第5号插座",
+//                "keyword4" => date("Y年m月d日 H:i"),
+//                "keyword5" => 123,
+//                "remark" => "欢迎使用智能充电设备，当前余额12.5元",
+//            ]
+//        ]);
+        dispatch(new SendTemplateMsg($user->openid,
+            "tK-cDfIBNxHi1Iw539U0XM-LL5bH3vCUei_KgkZeZHI", [
+                "first" => "您好，充电已开始",
+                "keyword1" => date("Y-m-d H:i:s"),
+                "keyword2" => "成都市华阳",
+                "keyword3" => "5号机器,第5号插座",
+                "keyword4" => date("Y年m月d日 H:i"),
+                "keyword5" => 123,
+                "remark" => "欢迎使用智能充电设备，当前余额12.5元",
+            ]));//充电结束
+        echo "ok！2!33!";
     }
 }

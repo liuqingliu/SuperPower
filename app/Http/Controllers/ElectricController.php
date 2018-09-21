@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\SendWulian;
+use App\Jobs\CalculateIncome;
 use App\Jobs\SendTemplateMsg;
 use App\Jobs\SendWulianQue;
 use App\Models\ChargingEquipment;
@@ -37,11 +37,14 @@ class ElectricController extends Controller
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
+        $app = app('wechat.official_account');
+        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
         return view('electric/cardorderpay', [
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
             "card_id" => $request->card_id,
-            "money" => ($cardInfo->money * 1.0 / 100.00),
+            "money" => isset($cardInfo->money) ? ($cardInfo->money * 1.0 / 100.00) : "",
+            "wxjssdk" => $wxJssdkconfig,
         ]);
     }
 
@@ -61,15 +64,15 @@ class ElectricController extends Controller
 
     public function recharge()
     {
-        $rechargeInfo = RechargeOrder::find(1);
+        //如果没有充电的，不允许进来 todo
+        $userInfo = User::find(1);
+        $rechargeInfo = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         $chargingEquipment = $rechargeInfo->chargingEquipment;
+        $unitSecond = $chargingEquipment->recharge_unit_second;
 
-        $unitMoney = $rechargeInfo->recharge_unit_money;
-        $costTime = $rechargeInfo->recharge_end_time;
         return view('electric/recharge', [
-            "charge_price" => $unitMoney,
-            "charge_time" => $costTime,
-            "charge_cost" => Common::getCost($unitMoney, $costTime),
+            "unit_second" => $unitSecond,
+            "created_at" => $rechargeInfo->created_at,
             "socket_info" => $chargingEquipment->address . $rechargeInfo->jack_id . "号插座",
         ]);
     }
@@ -112,12 +115,10 @@ class ElectricController extends Controller
                 $portInfoRes[$port->port] = $port->status;
             }
         }
-        $app = app('wechat.official_account');
-        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
 
         return view('electric/choosesocket', [
             "device_info" => Common::getNeedObj([
-                "ebquipment_status",
+                "equipment_status",
                 "net_status",
                 "equipment_id",
                 "province",
@@ -126,19 +127,19 @@ class ElectricController extends Controller
                 "street",
                 "address",
                 "manager_phone",
-                "charging_unit_price",
+                "charging_unit_second",
                 "jack_info",
                 "board_info",//存储board1
             ], $device),
             "charge_type_list" => Charge::$chargeTypeList,
             "portInfo" => $portInfoRes,
-            "wxjssdk" => $wxJssdkconfig,
+            "user_money" => $userInfo->user_money,
         ]);
     }
 
     public function rechargelog()
     {
-        $userInfo = session("user_info");
+        $userInfo = User::find(1);
         $rechareList = RechargeOrder::where("recharge_str", $userInfo->openid)->get();
         $res = [];
         foreach ($rechareList as $recharge) {
@@ -245,7 +246,7 @@ class ElectricController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'equipment_id' => 'required|string|min:15',
-            'port' => 'required|int|max:10|min:0',
+            'port' => 'required|int|max:30|min:1',
             'recharge_type' => 'required|int|in:' . implode(",", array_keys(Charge::$chargeTypeList)),
         ]);
         if ($validator->fails()) {
@@ -254,7 +255,7 @@ class ElectricController extends Controller
 //        $userInfo = session("user_info");//是否正常登陆过
         $deviceInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
         $userInfo = User::find(1);
-        if ($userInfo->user_money < 200 || $userInfo->user_money < $deviceInfo->charging_unit_price * Charge::$chargeTypeList[$request->recharge_type]["total_time"]) {
+        if ($userInfo->user_money < 200 || $userInfo->user_money < floor(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100) {
             return Common::myJson(ErrorCall::$errUserMoneyNotEnough);
         }
         $portInfo = EquipmentPort::where("equipment_id", $request->equipment_id)->where("port",
@@ -271,9 +272,9 @@ class ElectricController extends Controller
             "recharge_str" => $userInfo->openid,
             "equipment_id" => $request->equipment_id,
             "port" => $request->port,
-            "recharge_total_time" => Charge::$chargeTypeList[$request->recharge_type]["total_time"],
-            "recharge_unit_money" => $deviceInfo->charging_unit_price,
-            "recharge_price" => $deviceInfo->charging_unit_price * Charge::$chargeTypeList[$request->recharge_type]["total_time"],
+            "recharge_total_time" => Charge::$chargeTypeList[$request->recharge_type],
+            "recharge_unit_second" => $deviceInfo->charging_unit_second,
+            "recharge_price" => ceil(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100,
             "type" => Charge::ORDER_RECHARGE_TYPE_USER,
             "created_at" => date("Y-m-d H:i:s")
         ];
@@ -285,7 +286,7 @@ class ElectricController extends Controller
                 $portInfo->save();
             }, 5);
         } catch (\Exception $e) {
-            Log::debug(__FUNCTION__ . ":" . serialize($request->all()));
+            Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
             return Common::myJson(ErrorCall::$errSys);
         }
 
@@ -303,7 +304,7 @@ class ElectricController extends Controller
             "keyword2" => $deviceInfo->province . $deviceInfo->city . $deviceInfo->area . $deviceInfo->street . $deviceInfo->address,
             "keyword3" => Common::getPrexZero($request->equipment_id) . ",第" . intval($request->port) . "号插座",
             "keyword4" => date("Y年m月d日 H:i"),
-            "keyword5" => $deviceInfo->charging_unit_price,
+            "keyword5" => $deviceInfo->charging_unit_second,
             "remark" => "欢迎使用智能充电设备，当前余额" . $userInfo->user_money,
         ]));//充电开始
         return Common::myJson(ErrorCall::$errSucc);
@@ -335,7 +336,7 @@ class ElectricController extends Controller
             DB::transaction(function () use ($rechargeOrder, $portInfo) {
                 $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_ENDING;
                 $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * (time() - strtotime($rechargeOrder->created_at));
+                $rechargeOrder->recharge_price = ceil(time() - strtotime($rechargeOrder->created_at))/($rechargeOrder->recharge_unit_second) ;
                 $rechargeOrder->save();
                 $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
                 $portInfo->save();
@@ -352,7 +353,7 @@ class ElectricController extends Controller
             "order" => $rechargeOrder->order_id,
         ];
         //通知下位机
-        dispatch(new SendWulianQue($request->equipment_id, $callArr));//下发3次，直到有回复过来
+        dispatch(new SendWulianQue($rechargeOrder->equipment_id, $callArr));//下发3次，直到有回复过来
         dispatch(new SendTemplateMsg($rechargeOrder->recharge_str,
             "tK-cDfIBNxHi1Iw539U0XM-LL5bH3vCUei_KgkZeZHI", [
                 "first" => "尊敬的用户，您的充电已经完成！",
@@ -363,6 +364,7 @@ class ElectricController extends Controller
                 "keyword5" => $rechargeOrder->chargingEquipment->province . $rechargeOrder->chargingEquipment->city . $rechargeOrder->chargingEquipment->area . $rechargeOrder->chargingEquipment->street,
                 "remark" => "我们期待与您的下一次邂逅！",
             ]));//充电结束
+        dispatch(new CalculateIncome($rechargeOrder->order_id));
         return Common::myJson(ErrorCall::$errSucc);
     }
 

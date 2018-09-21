@@ -23,28 +23,20 @@ class Charge
     const ORDER_RECHARGE_STATUS_ENDING = 4;//充电结束ING
     const ORDER_RECHARGE_STATUS_ORVERTIME = 5;//订单超时
 
+    //是否已经计算入账
+    const ORDER_RECHARGE_FLAG_DEFAULT = 0;//默认
+    const ORDER_RECHARGE_FLAG_IN_COMED = 1;//已入账
+
     const ORDER_RECHARGE_TYPE_CARD = 0;//电卡
     const ORDER_RECHARGE_TYPE_USER = 1;//用户
 
     public static $chargeTypeList = [
-        0 => [
-            "total_time" => 10 * Common::ONE_HOUR_SECONDES,
-        ],
-        2 => [
-            "total_time" => 2 * Common::ONE_HOUR_SECONDES,
-        ],
-        4 => [
-            "total_time" => 4 * Common::ONE_HOUR_SECONDES,
-        ],
-        6 => [
-            "total_time" => 6 * Common::ONE_HOUR_SECONDES,
-        ],
-        8 => [
-            "total_time" => 8 * Common::ONE_HOUR_SECONDES,
-        ],
-        10 => [
-            "total_time" => 10 * Common::ONE_HOUR_SECONDES,
-        ],
+        0 => 10 * Common::ONE_HOUR_SECONDES,
+        2 => 2 * Common::ONE_HOUR_SECONDES,
+        4 => 4 * Common::ONE_HOUR_SECONDES,
+        6 => 6 * Common::ONE_HOUR_SECONDES,
+        8 => 8 * Common::ONE_HOUR_SECONDES,
+        10 => 10 * Common::ONE_HOUR_SECONDES,
     ];
 
     public static function sendWulianThree($devid, $answer)

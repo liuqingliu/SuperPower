@@ -22,7 +22,7 @@ return [
      *
      */
     'scheme' => [
-//        'Log' => '0 backup',
+        'Log' => '0 backup',
         'Aliyun' => '100',
     ],
 

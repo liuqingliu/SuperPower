@@ -23,10 +23,10 @@ class ChargingEquipment extends Model
         'jack_info',
         'net_status',
         'charging_cost',
-        'charging_unit_price',
+        'charging_unit_second',
         'active_time',
         'openid',//经销商openid
-        'manager_phone',
+        'manager_phone',//管理人员手机号
     ];
 
     public $timestamps = true;
@@ -39,5 +39,10 @@ class ChargingEquipment extends Model
     public function equipmentports()
     {
         return $this->hasMany(EquipmentPort::class, 'equipment_id', 'equipment_id');
+    }
+
+    public function cashLogs()
+    {
+        return $this->hasMany(Cashlog::class, 'equipment_id', 'equipment_id');
     }
 }

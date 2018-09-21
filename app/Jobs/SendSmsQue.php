@@ -17,31 +17,32 @@ use Toplan\PhpSms\Sms;
 use SmsManager;
 use PhpSms;
 
-class SendSms extends Job implements ShouldQueue
+class SendSmsQue extends Job implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    protected $sms;
 
     /**
      * Create a new job instance.
      *
      * @param Sms $sms
      */
-    public function __construct(Sms $sms)
+    public function __construct()
     {
-        $this->sms = $sms;
+
     }
 
     /**
      * Execute the job.
      *
+     *
      * @return void
      */
     public function handle()
     {
-        PhpSms::make();//！！！！！恶心！！！！不知道为什么非要加一个这句话！！！！why？？？？tell me why？？？困扰2天了！！日
-        $this->sms->send();
+        $sms = PhpSms::make("Aliyun","SMS_143560259")->to("15701160070")->data(["code" => "5522"]);
+        var_dump($sms);
+        $res = $sms->send();
+        Log::info("res:".serialize($res));
     }
 
     /**
@@ -53,6 +54,6 @@ class SendSms extends Job implements ShouldQueue
     public function failed(\Exception $exception)
     {
         // 给用户发送失败通知，等等...
-        Log::info("fail_send_sms:".serialize($exception->getMessage()));
+        Log::info("fail_send_sms11:".serialize($exception->getMessage()));
     }
 }

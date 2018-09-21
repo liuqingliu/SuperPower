@@ -10,6 +10,7 @@ namespace App\Listeners;
 
 
 use App\Events\SendWulian;
+use App\Jobs\CalculateIncome;
 use App\Jobs\SendTemplateMsg;
 use App\Mail\CommonError;
 use App\Models\ChargingEquipment;
@@ -140,13 +141,13 @@ class MsnEventSubscriber
         $orderId = Snowflake::nextId();
         if ($answer["cmd"] == "open") {
             //创建订单,设置port为不可用
-            $minTime = min(10 * Common::ONE_HOUR_SECONDES, floor($cardInfo->money / $deviceInfo->charging_unit_price));
+            $minTime = min(10 * Common::ONE_HOUR_SECONDES, floor($cardInfo->money / $deviceInfo->charging_unit_second));
             $orderInfo = [
                 "order_id" => $orderId,
                 "recharge_str" => $event->cardId,
                 "equipment_id" => $event->devid,
                 "port" => $event->port,
-                "recharge_unit_money" => $deviceInfo->charging_unit_price,
+                "recharge_unit_second" => $deviceInfo->charging_unit_second,
                 "type" => Charge::ORDER_RECHARGE_TYPE_CARD,
                 "created_at" => date("Y-m-d H:i:s"),
                 "recharge_total_time" => $minTime,
@@ -228,8 +229,7 @@ class MsnEventSubscriber
                     DB::transaction(function () use ($rechargeOrder) {
                         $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
                         $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                        $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * min((time() - strtotime($rechargeOrder->created_at)),
-                                $rechargeOrder->recharge_total_time);
+                        $rechargeOrder->recharge_price =  ceil(time() - strtotime($rechargeOrder->created_at))/($rechargeOrder->recharge_unit_second) ;
                         Log::info("money_" . (time() - strtotime($rechargeOrder->created_at)) . ",total:" . $rechargeOrder->recharge_total_time . ",min_" . min((time() - strtotime($rechargeOrder->created_at)),
                                 $rechargeOrder->recharge_total_time));
                         $rechargeOrder->save();
@@ -263,6 +263,7 @@ class MsnEventSubscriber
                                 "remark" => "我们期待与您的下一次邂逅！",
                             ]));//充电结束
                     }
+                    dispatch(new CalculateIncome($rechargeOrder->order_id));
                 } catch (\Exception $e) {
                     Log::info(__FUNCTION__ . "-event:" . serialize($event));
                     $errmsg = [

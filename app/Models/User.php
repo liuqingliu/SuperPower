@@ -20,6 +20,7 @@ class User extends Authenticatable
         'phone', //用户手机号
         'user_last_login',//最后登录时间
         'user_status',//用户状态
+        'user_type',//用户类型
         'user_money',//用户余额
         'charging_total_cnt',//累计充电次数
         'charging_total_time',//累计充电时长
@@ -42,11 +43,16 @@ class User extends Authenticatable
 
     public function dealer()
     {
-        return $this->hasOne(Dealer::class, 'user_id', 'user_id');
+        return $this->hasOne(Dealer::class, 'openid', 'openid');
     }
 
     public function electricCards()
     {
         return $this->hasMany(ElectricCard::class, 'openid', 'openid');
+    }
+
+    public function cashLogs()
+    {
+        return $this->hasMany(Cashlog::class, 'openid', 'openid');
     }
 }

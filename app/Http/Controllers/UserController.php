@@ -26,6 +26,8 @@ class UserController extends Controller
     public function center(Request $request)
     {
         $userInfo = User::find(1);
+        $app = app('wechat.official_account');
+        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
         return view('user/center',[
             "user_info" => Common::getNeedObj([
                 "phone",
@@ -36,6 +38,8 @@ class UserController extends Controller
                 "user_type",//0 普通， 1普通經銷商， 2超級經銷商， 3廠商
                 "api_token"
             ], $userInfo),
+            "wxjssdk" => $wxJssdkconfig,
+            "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
         ]);
 
         $wxUser = session('wechat.oauth_user');
@@ -70,7 +74,8 @@ class UserController extends Controller
             $userInfo = $userInfoReal;
         }
         $userInfo = User::find(1);
-
+        $app = app('wechat.official_account');
+        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
 
         return view('user/center',[
             "user_info" => Common::getNeedObj([
@@ -82,6 +87,8 @@ class UserController extends Controller
                 "user_type",
                 "api_token"
             ], $userInfo),
+            "wxjssdk" => $wxJssdkconfig,
+            "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
         ]);
     }
 

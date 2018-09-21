@@ -8,6 +8,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\CalculateIncome;
 use App\Mail\CommonError;
 use App\Models\ElectricCard;
 use App\Models\EquipmentPort;
@@ -54,7 +55,7 @@ class AutoCloseChargeOrder extends Command
      * - 2.数据库中插座占用状态置为可用。
      * - 3.从用户账户扣款（即改写数据库值）
      * - 4.根据既定分成规则，打款到所有相关经销商账户余额。
-     * - 5.生成各个相关经销商打款流水单并存储。
+     * - 5.生成各个相关经销商打款流水单并存储。(这里可以增加一个流水表去记录某订单实际应该增加多少钱，清晰明了)
      * - 6.微信推送相关信息。
      *
      * @return mixed
@@ -96,7 +97,7 @@ class AutoCloseChargeOrder extends Command
                         DB::transaction(function () use ($rechargeOrder) {
                             $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
                             $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                            $rechargeOrder->recharge_price = $rechargeOrder->recharge_unit_money * $rechargeOrder->recharge_total_time;
+                            $rechargeOrder->recharge_price =  ceil(time() - strtotime($rechargeOrder->created_at))/($rechargeOrder->recharge_unit_second) ;
                             $rechargeOrder->save();
                             $portInfo = EquipmentPort::where("equipment_id",
                                 $rechargeOrder->equipment_id)->where("port",
@@ -128,6 +129,7 @@ class AutoCloseChargeOrder extends Command
                                     "remark" => "我们期待与您的下一次邂逅！",
                                 ]));//充电结束
                         }
+                        dispatch(new CalculateIncome($rechargeOrder->order_id));
                     } catch (\Exception $e) {
                         Log::debug("auto_close_error2:" . serialize($e->getMessage()));
                         $errmsg = [

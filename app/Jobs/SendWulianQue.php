@@ -33,6 +33,7 @@ class SendWulianQue implements ShouldQueue
     public $devid;
 
     public $times;
+
     /**
      * 创建一个事件实例。
      *
@@ -54,21 +55,21 @@ class SendWulianQue implements ShouldQueue
     public function handle()
     {
         //
-        try{
+        try {
             Log::info("send_wulian_que_start:");
             $accessKeyId = env("QUEUE_MNS_ACCESS_KEY_LIUQING");
             $accessSecret = env("QUEUE_MNS_SECRET_KEY_LIUQING");
             $func = $this->message["func"];
             if ($func == "card_charge" || $func == "open") {
                 //查询是否开始计费了，就不需要重发了
-                $rechargeOrder = RechargeOrder::where("order_id",$this->message["order"])->first();
+                $rechargeOrder = RechargeOrder::where("order_id", $this->message["order"])->first();
                 if (empty($rechargeOrder) || $rechargeOrder->recharge_status != Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
                     return;
                 }
             }
             if ($func == "cancel") {
                 //查询是否开始计费了，就不需要重发了
-                $rechargeOrder = RechargeOrder::where("order_id",$this->message["order"])->first();
+                $rechargeOrder = RechargeOrder::where("order_id", $this->message["order"])->first();
                 if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_END) {
                     return;
                 }
@@ -83,15 +84,15 @@ class SendWulianQue implements ShouldQueue
             $request->setTopicFullName("/a1GBdrPMPst/{$devid}/serverData"); //消息发送到的Topic全名.
             $response = $client->getAcsResponse($request);
             Log::info("send_wulian_res:" . serialize($response) . ",message:" . json_encode($this->message));
-            if($this->times>=2){
+            if ($this->times >= 2) {
                 return;
             }
 
             sleep(5);
-            dispatch(new SendWulianQue($this->devid, $this->message, $this->times+1));//下发3次，直到有回复过来
+            dispatch(new SendWulianQue($this->devid, $this->message, $this->times + 1));//下发3次，直到有回复过来
 
-        }catch (\Exception $exception){
-            Log::error("send_wulian_que_error:".$exception->getMessage());
+        } catch (\Exception $exception) {
+            Log::error("send_wulian_que_error:" . $exception->getMessage());
         }
 
     }
@@ -99,11 +100,11 @@ class SendWulianQue implements ShouldQueue
     /**
      * 要处理的失败任务。
      *
-     * @param  Exception  $exception
+     * @param  Exception $exception
      * @return void
      */
     public function failed(\Exception $exception)
     {
-        Log::info("fail_send_wulian:".serialize($exception->getMessage()));
+        Log::info("fail_send_wulian:" . serialize($exception->getMessage()));
     }
 }
