@@ -14,3 +14,14 @@ $('#querydealer').click(function () {
     $('.body2-step1').show();
     $('.body2-step2').hide();
 });
+var dealer_type = "";
+$('#normalDealer').click(function () {
+    $('#normalDealer').addClass("text-40-white dealer-swich-seclect").removeClass("text-40-b3 dealer-swich");
+    $('#superDealer').addClass("text-40-b3 dealer-swich").removeClass("text-40-white dealer-swich-seclect");
+    dealer_type = 1;
+});
+$('#superDealer').click(function () {
+    $('#normalDealer').addClass("text-40-b3 dealer-swich").removeClass("text-40-white dealer-swich-seclect");
+    $('#superDealer').addClass("text-40-white dealer-swich-seclect").removeClass("text-40-b3 dealer-swich");
+    dealer_type = 2;
+});

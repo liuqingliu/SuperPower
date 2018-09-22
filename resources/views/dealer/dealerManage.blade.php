@@ -44,8 +44,8 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">账户类别</span>
-            <span class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">普通经销商</span>
-            <span class="text-40-b3 dealer-swich" style="margin-left: 2rem;">超级经销商</span>
+            <span id="normalDealer" onclick="normalDealer()" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">普通经销商</span>
+            <span id="superDealer" onclick="superDealer()" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">超级经销商</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -75,7 +75,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">姓名</span>
-            <input class="borad-text-left" type="text" style=" border: 0;width:16rem ;margin-left: 3.9rem;" name="dealer-name" placeholder="请输入经销商姓名" oninput="if(value.length>6)value=value.slice(0,6)">
+            <input class="borad-text-left my-input8" type="text" placeholder="请输入经销商姓名" oninput="if(value.length>6)value=value.slice(0,6)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
