@@ -12,3 +12,36 @@ function Toast(msg,duration){
         setTimeout(function() { document.body.removeChild(m) }, d * 1000);
     }, duration);
 }
+//获取图片验证码
+function changeVcode() {
+    $.ajax({
+        type: 'GET',
+        url: "/api/getCaptcha",
+        data: {},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                $('.identifying-img').attr("src",data.result);
+            }
+        },
+    });
+}
+//获取验证码倒计时
+var countdown=120;
+var _generate_code = $("#getPhoneVcode");
+function settime() {
+
+    if (countdown == 0) {
+        _generate_code.attr("disabled",true);
+        _generate_code.val("获取验证码");
+        countdown = 120;
+        return false;
+    } else {
+        _generate_code.attr("disabled", false);
+        _generate_code.val(countdown + "s");
+        countdown--;
+    }
+    setTimeout(function() {
+        settime();
+    },1000);
+}

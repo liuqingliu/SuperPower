@@ -166,20 +166,6 @@ $('#activePrevious').click(function () {
     $('.body1-step2').hide();
     $('.body1-step1').show();
 });
-//获取图片验证码
-function changeVcode() {
-    $.ajax({
-        type: 'GET',
-        url: "/api/getCaptcha",
-        data: {},
-        dataType: "json",
-        success: function(data){
-            if (data.errno==0){
-                $('.identifying-img').attr("src",data.result);
-            }
-        },
-    });
-}
 //提交电站激活数据
 $('#activeFinish').click(function () {
     if ($('#input5').val().length==0){

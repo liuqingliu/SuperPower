@@ -229,6 +229,13 @@ input::-ms-input-placeholder {
   margin-top: 0.3rem;
   height:3.4625rem;
 }
+.my-input8 {
+  border: 0;
+  width: 13rem;
+  margin-left: 5rem;
+  margin-top: 0.3rem;
+  height:3.4625rem;
+}
 .img-container {
   text-align: center;
   margin-top: 7.5rem;
@@ -497,6 +504,11 @@ input::-ms-input-placeholder {
 .text-45-red {
   font-size: 1.6rem;
   color: #F15A24;
+}
+
+.vcode-button{
+  background: none;
+  border: 0;
 }
 
 .text-45-blue {

@@ -1,6 +1,8 @@
 @extends('layouts.default')
-
-@section('title', '重置提现密码')
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/resetPassword.js?1.0')}}"></script>
+@endsection
+@section('title', '设置提现密码')
 @section('system', '运营商管理系统')
 @section('content')
 
@@ -29,7 +31,13 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
-            <input class="my-input2 borad-text-left" type="password" name="identifying-code" placeholder="输入验证码" oninput="if(value.length>18)value=value.slice(0,18)">
+            <input id="imageVcode" class="my-input2 borad-text-left" type="text"  placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <img class="identifying-img pull-right img-rounded" onclick="changeVcode()">
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">手机验证码</span>
+            <input class="my-input7 borad-text-left" type="password" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>18)value=value.slice(0,18)">
             <span class="text-45-red pull-right">获取</span>
         </li>
     </ul>
