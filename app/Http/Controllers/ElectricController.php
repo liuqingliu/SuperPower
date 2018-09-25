@@ -258,35 +258,36 @@ class ElectricController extends Controller
         if ($userInfo->user_money < 200 || $userInfo->user_money < floor(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100) {
             return Common::myJson(ErrorCall::$errUserMoneyNotEnough);
         }
-        $portInfo = EquipmentPort::where("equipment_id", $request->equipment_id)->where("port",
-            $request->port)->first();
-        if (empty($portInfo)) {
-            return Common::myJson(ErrorCall::$errPortInvalid);
-        }
-        if ($portInfo->status == Eletric::PORT_STATUS_USE) {
-            return Common::myJson(ErrorCall::$errPortUserd);
-        }
-        //生成订单
-        $orderInfo = [
-            "order_id" => Snowflake::nextId(),
-            "recharge_str" => $userInfo->openid,
-            "equipment_id" => $request->equipment_id,
-            "port" => $request->port,
-            "recharge_total_time" => Charge::$chargeTypeList[$request->recharge_type],
-            "recharge_unit_second" => $deviceInfo->charging_unit_second,
-            "recharge_price" => ceil(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100,
-            "type" => Charge::ORDER_RECHARGE_TYPE_USER,
-            "created_at" => date("Y-m-d H:i:s")
-        ];
-
-        try {
-            DB::transaction(function () use ($orderInfo, $portInfo) {
-                RechargeOrder::insert($orderInfo);
-                $portInfo->status = Eletric::PORT_STATUS_USE;
-                $portInfo->save();
-            }, 5);
-        } catch (\Exception $e) {
-            Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
+        DB::beginTransaction();
+        try{
+            $portInfo = EquipmentPort::where("equipment_id", $request->equipment_id)->where("port",
+                $request->port)->lockForUpdate()->first();
+            if (empty($portInfo)) {
+                DB::rollback();
+                return Common::myJson(ErrorCall::$errPortInvalid);
+            }
+            if ($portInfo->status == Eletric::PORT_STATUS_USE) {
+                DB::rollback();
+                return Common::myJson(ErrorCall::$errPortUserd);
+            }
+            //生成订单
+            $orderInfo = [
+                "order_id" => Snowflake::nextId(),
+                "recharge_str" => $userInfo->openid,
+                "equipment_id" => $request->equipment_id,
+                "port" => $request->port,
+                "recharge_total_time" => Charge::$chargeTypeList[$request->recharge_type],
+                "recharge_unit_second" => $deviceInfo->charging_unit_second,
+                "recharge_price" => ceil(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100,
+                "type" => Charge::ORDER_RECHARGE_TYPE_USER,
+                "created_at" => date("Y-m-d H:i:s")
+            ];
+            RechargeOrder::insert($orderInfo);
+            $portInfo->status = Eletric::PORT_STATUS_USE;
+            $portInfo->save();
+            DB::commit();
+        }catch (\Exception $e){
+            DB::rollback();
             return Common::myJson(ErrorCall::$errSys);
         }
 
@@ -324,12 +325,12 @@ class ElectricController extends Controller
         if (empty($rechargeOrder)) {
             return Common::myJson(ErrorCall::$errOrderNotExist, $validator->errors());
         }
-//        if($rechargeOrder->recharge_str!=$userInfo->openid){
-//            return Common::myJson(ErrorCall::$errNotSelfUser, $validator->errors());
-//        }
-//        if($rechargeOrder->recharge_status!=Charge::ORDER_RECHARGE_STATUS_CHARGING){
-//            return Common::myJson(ErrorCall::$errOrderStatus, $validator->errors());
-//        }
+        if($rechargeOrder->recharge_str!=$userInfo->openid){
+            return Common::myJson(ErrorCall::$errNotSelfUser, $validator->errors());
+        }
+        if($rechargeOrder->recharge_status!=Charge::ORDER_RECHARGE_STATUS_CHARGING){
+            return Common::myJson(ErrorCall::$errOrderStatus, $validator->errors());
+        }
         $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
             $rechargeOrder->port)->first();
         try {

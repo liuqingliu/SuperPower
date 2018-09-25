@@ -105,10 +105,14 @@ class UserController extends Controller
     {
 //        $userInfo = session(Common::SESSION_KEY_USER);
         $userInfo = User::find(1);
-        return view('user/bindphone',[
-            "user_info" => Common::getNeedObj(["phone"], $userInfo)
-        ]);
-        return view('center/index');
+        $outUserInfo = [
+            "user_info" => Common::getNeedObj(["openid","phone","user_type"], $userInfo),
+        ];
+        if(!empty($userInfo->dealer)){
+            $outUserInfo["is_set_pwd"] = !empty($userInfo->dealer->password) ? true : false;
+        }
+
+        return view('user/bindphone',$outUserInfo);
     }
 
     public function order(Request $request)
@@ -154,21 +158,13 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_phone' => ['required',new ValidatePhoneRule],//,"exists:users,phone"
-            'captcha' => 'required|captcha'
-//            'user_password' => 'sometimes|string|max:20|min:6'
-        ]);
-        if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
-        }
-        var_dump("13");exit;
-        $userInfo = Auth::guard("api")->user();
-        $validator = Validator::make($request->all(), [
-            'user_phone' => ['required',new ValidatePhoneRule],
+            'verifyCode' => 'required|verify_code',
             'user_password' => 'sometimes|string|max:20|min:6'
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
+        $userInfo = User::find(1);
         if ($userInfo->user_type!=Common::USER_TYPE_NORMAL) {
             if (empty($request->user_password)) {
                 return Common::myJson(ErrorCall::$errParams, $validator->errors());

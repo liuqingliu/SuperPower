@@ -36,4 +36,6 @@ class ErrorCall
     //dealer
     public static $errCardNotExist = ["errno" => 22, "errmsg" => "电卡不存在"];
     public static $errNotPermit = ["errno" => 23, "errmsg" => "权限不足"];
+    public static $errNotEnough = ["errno" => 24, "errmsg" => "余额不足，不能提现"];
+    public static $notFindUser = ["errno" => 25, "errmsg" => "用户信息不存在"];
 }

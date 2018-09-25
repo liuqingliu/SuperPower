@@ -65,14 +65,13 @@ class AutoCloseChargeOrder extends Command
     {
         $rechargeOrderList = RechargeOrder::whereIn("recharge_status",
             [Charge::ORDER_RECHARGE_STATUS_DEFAULT, Charge::ORDER_RECHARGE_STATUS_CHARGING])
-            ->where("created_at", ">", date("Y-m-d", strtotime("-12 hours")))
+//            ->where("created_at", ">", date("Y-m-d", strtotime("-12 hours")))
             ->get();
         //1.超时未关闭
         // a. 还未开始，关闭
         // b. 计费未结束
 
         foreach ($rechargeOrderList as $rechargeOrder) {
-            Log::info("fuck_order:".serialize($rechargeOrder));
             if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_DEFAULT) {
                 if (time() - strtotime($rechargeOrder->created_at) >= 5 * Common::ONE_MINUTE_SECONDES) {
                     try {
@@ -101,17 +100,16 @@ class AutoCloseChargeOrder extends Command
                             $rechargeOrder->save();
                             $portInfo = EquipmentPort::where("equipment_id",
                                 $rechargeOrder->equipment_id)->where("port",
-                                $rechargeOrder->port)->first();
+                                $rechargeOrder->port)->lockForUpdate()->first();
                             $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
-                            Log::info("port_info_auto_close:".serialize($portInfo));
                             $portInfo->save();
                             if ($rechargeOrder->type == Charge::ORDER_RECHARGE_TYPE_USER) {
-                                $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();
+                                $userInfo = User::where("openid", $rechargeOrder->recharge_str)->lockForUpdate()->first();
                                 Log::info("user_info_auto_close:".serialize($userInfo));
                                 $userInfo->user_money = $userInfo->user_money - $rechargeOrder->recharge_price;
                                 $userInfo->save();
                             } else {
-                                $cardInfo = ElectricCard::where("card_id", $rechargeOrder->recharge_str)->first();
+                                $cardInfo = ElectricCard::where("card_id", $rechargeOrder->recharge_str)->lockForUpdate()->first();
                                 $cardInfo->money = $cardInfo->money - $rechargeOrder->recharge_price;
                                 $cardInfo->save();
                             }
@@ -131,7 +129,6 @@ class AutoCloseChargeOrder extends Command
                         }
                         dispatch(new CalculateIncome($rechargeOrder->order_id));
                     } catch (\Exception $e) {
-                        Log::debug("auto_close_error2:" . serialize($e->getMessage()));
                         $errmsg = [
                             "adr" => __METHOD__.",".__FUNCTION__,
                             "desc" => "自动关闭订单失败",

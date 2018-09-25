@@ -50,7 +50,7 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
     //api/
     Route::get('/api/getCaptcha', 'ApiController@getCaptcha')->name('getcaptcha');//获取图片验证码
 //    Route::post('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
-    Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
+    Route::get('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
     Route::post('/user/createOrder', 'UserController@createOrder')->name('createorder');//创建用户支付订单
     Route::post('/electric/createOrder', 'UserController@createOrder')->name('electriccreateorder');//创建电卡支付订单
     Route::get('/electric/getRechargeLog', 'ElectricController@getRechargeLog')->name('getrechargeLog');//获取用户的充电记录
@@ -66,6 +66,7 @@ Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('up
 Route::get("/api/testwu",'ApiController@testwu');
 Route::get("/api/testGetMessage",'ApiController@testGetMessage');
 Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
+Route::get('/api/sendMessageTest', 'ApiController@sendMessageTest')->name('sendMessageTest');//发送短信验证码
 Route::get("/api/test","ApiController@test");
 
 //Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','dealer.login']], function () {
@@ -79,8 +80,11 @@ Route::get('/dealer/moneyManage', 'DealerController@moneyManage')->name('dealer_
 Route::get('/dealer/powerStationDetail', 'DealerController@powerStationDetail')->name('dealer_powerStationDetail');
 Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')->name('dealer_powerStationManage');
 Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');
+Route::get('/dealer/doResetPassword', 'DealerController@doResetPassword')->name('dealer_resetPassword');
+Route::get('/dealer/doSetPassword', 'DealerController@doSetPassword')->name('dealer_resetPassword');
 Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
 Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');
 Route::get('/dealer/getDealerList', 'DealerController@getDealerList')->name('getDealerList');
 Route::get('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');
+Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
 //});

@@ -321,26 +321,26 @@ class DealerController extends Controller
         if ($userInfo->user_type == Common::USER_TYPE_JXS || ($userInfo->user_type == Common::USER_TYPE_SJXS && $request->user_type == Common::USER_TYPE_SJXS)) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
-        try {
-            DB::transaction(function () use ($request) {
-                $addUser = User::where("user_id", $request->parent_id)->where("user_status",
-                    Common::USER_STATUS_DEFAULT)->where("user_type",
-                    Common::USER_TYPE_NORMAL)->first();
-                Dealer::create([
-                    "openid" => $addUser->openid,
-                    "id_card" => $request->id_card,
-                    "province" => $request->province,
-                    "city" => $request->city,
-                    "area" => $request->area,
-                    "give_proportion" => $request->give_proportion,
-                    "name" => $request->name,
-                    "remark" => $request->remark,
-                ]);
-                $addUser->user_type = $request->user_type == 1 ? Common::USER_TYPE_JXS : Common::USER_TYPE_SJXS;
-                $addUser->save();
-            }, 5);
-        } catch (\Exception $e) {
-            Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
+
+        $addUser = User::where("user_id", $request->parent_id)->where("user_status",
+            Common::USER_STATUS_DEFAULT)->where("user_type",
+            Common::USER_TYPE_NORMAL)->first();
+        if(empty($addUser)){
+            return Common::myJson(ErrorCall::$notFindUser);
+        }
+        Dealer::create([
+            "openid" => $addUser->openid,
+            "id_card" => $request->id_card,
+            "province" => $request->province,
+            "city" => $request->city,
+            "area" => $request->area,
+            "give_proportion" => $request->give_proportion,
+            "name" => $request->name,
+            "remark" => $request->remark,
+        ]);
+        $addUser->user_type = $request->user_type == 1 ? Common::USER_TYPE_JXS : Common::USER_TYPE_SJXS;
+        $res = $addUser->save();
+        if (!$res) {
             return Common::myJson(ErrorCall::$errSys);
         }
         return Common::myJson(ErrorCall::$errSucc);
@@ -360,6 +360,30 @@ class DealerController extends Controller
         }
         $userInfo = User::find(1);
         if ($userInfo->dealer->password != md5($request->old_password)) {
+            return Common::myJson(ErrorCall::$errPassword, $validator->errors());
+        }
+        $userInfo->password = $request->password;
+        $res = $userInfo->save();
+        if ($res) {
+            return Common::myJson(ErrorCall::$errSucc);
+        } else {
+            return Common::myJson(ErrorCall::$errNet);
+        }
+    }
+
+    public function doSetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => ['required', 'confirmed'],//不为空,两次密码是否相同
+            'password_confirmation' => ['required', "same:password"],//不为空,两次密码是否相同
+            'mobile' => 'required|confirm_mobile_not_change',
+            'verifyCode' => 'required|verify_code',
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $userInfo = User::find(1);
+        if ($userInfo->dealer->password != "") {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
         $userInfo->password = $request->password;
@@ -416,21 +440,23 @@ class DealerController extends Controller
     public function doTixian(Request $request)
     {
         $validator = Validator::make($request->all(), [
-//            "money" => "required|int",
-//            "password" => "required|string|max:16",
+            "money" => "required|int",
+            "password" => "required|string|max:16",
             'mobile' => 'required|confirm_mobile_not_change',
             'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        dd($request->all());
         $userInfo = User::find(1);
         if ($userInfo->user_status != Common::USER_STATUS_DEFAULT || $userInfo->user_type == Common::USER_TYPE_NORMAL) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
-        if($userInfo->password != md5($request->password)){
+        if ($userInfo->password != md5($request->password)) {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
+        }
+        if ($request->money > $userInfo->total_income - $userInfo->income_withdraw) {
+            return Common::myJson(ErrorCall::$errNotEnough, $validator->errors());
         }
 
         try {
@@ -448,5 +474,10 @@ class DealerController extends Controller
             return Common::myJson(ErrorCall::$errSys);
         }
         return Common::myJson(ErrorCall::$errSucc);
+    }
+
+    public function bindBank()
+    {
+        return view('dealer/bindBank');
     }
 }

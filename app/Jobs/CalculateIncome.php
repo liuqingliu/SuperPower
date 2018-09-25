@@ -59,21 +59,22 @@ class CalculateIncome implements ShouldQueue
                         Charge::ORDER_RECHARGE_FLAG_DEFAULT)->where("recharge_status",
                         Charge::ORDER_RECHARGE_STATUS_END)->lockForUpdate()->first();
                     if (empty($rechargeOrder)) {
+                        throw new \Exception("充电订单不存在:order_id=".$orderId);
                         return;
                     }
                     $rechargeOrder->in_come_flag = Charge::ORDER_RECHARGE_FLAG_IN_COMED;
                     $rechargeOrder->save();
                     $deviceInfo = $rechargeOrder->chargingEquipment;
-                    $dealerInfo = Dealer::where("openid", $deviceInfo->openid)->lockForUpdate()->first();
+                    $dealerInfo = Dealer::where("openid", $deviceInfo->openid)->first();
                     $dealerInfo->total_income = $dealerInfo->total_income + $rechargeOrder->recharge_price *
                         (100 - $dealerInfo->give_proportion) * 0.01;
                     $deviceInfo->save();
-                    $dealerInfoSuper = Dealer::where("openid", $dealerInfo->parent_openid)->lockForUpdate()->first();
+                    $dealerInfoSuper = Dealer::where("openid", $dealerInfo->parent_openid)->first();
                     if (!empty($dealerInfoSuper)) {
                         $dealerInfoSuper->total_income = $dealerInfoSuper->total_income + $rechargeOrder->recharge_price *
                             $dealerInfoSuper->give_proportion * 0.01 * (100 - $dealerInfo->give_proportion) * 0.01;
                         $dealerInfoSuper->save();
-                        $cs = Dealer::where("openid", $dealerInfoSuper->parent_openid)->lockForUpdate()->first();
+                        $cs = Dealer::where("openid", $dealerInfoSuper->parent_openid)->first();
                         if (!empty($cs)) {
                             $cs->total_income = $cs->total_income + $rechargeOrder->recharge_price *
                                 $dealerInfoSuper->give_proportion * 0.01 * $dealerInfo->give_proportion * 0.01;

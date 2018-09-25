@@ -65,6 +65,41 @@ class ApiController extends Controller
         return Common::myJson(ErrorCall::$errSucc);
     }
 
+    public function sendMessageTest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_phone' => ['sometimes', new ValidatePhoneRule],//,"exists:users,phone"
+            'captcha' => 'required|captcha',
+            'is_need_phone' => 'required|in:0,1'
+//            'ckey' => 'required',
+//            'captcha' => 'required|captcha:'.$request->ckey
+//            'user_password' => 'sometimes|string|max:20|min:6'
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        if ($request->is_need_phone == 0) {
+            unset($request->user_phone);
+            $userInfo = User::find(60);
+            if (!empty($userInfo->phone)) {
+                $request->merge(['user_phone' => $userInfo->phone]);
+            }
+        }
+        if (empty($request->user_phone)) {
+            return Common::myJson(ErrorCall::$errParams);
+        }
+        $canSend = SmsManager::validateSendable();
+        if (!$canSend) {
+            return Common::myJson(ErrorCall::$errCallSendInvalid);
+        }
+//        dd(session()->all(),$request->input(),$request->all());
+        PhpSms::queue(true);
+//        dispatch(new SendSmsQue());
+//        dispatch(new SendSms(PhpSms::make("Aliyun","SMS_143560259")->to("15701160070")->data(["code" => "222"])));
+        SmsManager::requestVerifySms();
+        return Common::myJson(ErrorCall::$errSucc);
+    }
+
     public function testredis()
     {
 //        Redis::set('name', 'guw+enjie');
