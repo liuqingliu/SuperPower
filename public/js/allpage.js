@@ -32,12 +32,12 @@ var _generate_code = $("#getPhoneVcode");
 function settime() {
 
     if (countdown == 0) {
-        _generate_code.attr("disabled",true);
+        _generate_code.attr("disabled",false);
         _generate_code.val("获取验证码");
         countdown = 120;
         return false;
     } else {
-        _generate_code.attr("disabled", false);
+        _generate_code.attr("disabled", true);
         _generate_code.val(countdown + "s");
         countdown--;
     }

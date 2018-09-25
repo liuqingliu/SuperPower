@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/bindphone.js?1.7')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/bindphone.js?1.0')}}"></script>
     {{--@if(($user_info->user_type!=0)&&(!$user_info->is_set_pwd))--}}
         {{--<script type="text/javascript">--}}
             {{--$(document).ready(function () {--}}

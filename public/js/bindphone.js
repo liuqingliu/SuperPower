@@ -33,10 +33,11 @@ function bindPhone() {
         Toast("请输入正确的手机号码");
         return;
     }
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'POST',
         url: "/user/updateUserPhone",
-        data: {"user_phone":$('#phonenum').val(),"captcha":$('#phoneVcode').val()},
+        data: {"user_phone":$('#phonenum').val(),"verifyCode":$('#phoneVcode').val()},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
