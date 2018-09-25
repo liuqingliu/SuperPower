@@ -301,7 +301,7 @@ class DealerController extends Controller
         return Common::myJson(ErrorCall::$errSucc, ["cash_log" => $cashLog, "sum_price" => $sumPrice / 100.00]);
     }
 
-    public function addDealer(Request $request)
+    public function doAddDealer(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => "required|string|max:10|min:2",
@@ -311,7 +311,7 @@ class DealerController extends Controller
             "area" => "required|string",
             "give_proportion" => "required|int|max:100|min:1",
             "parent_id" => "required|string|max:16|min:10",
-            "remark" => "required|string|max:225",
+            "remark" => "sometimes|string|max:225",
             "user_type" => "required|int|in:1,2", //1,普通经销商，2，超级经销商
         ]);
         if ($validator->fails()) {
@@ -395,7 +395,7 @@ class DealerController extends Controller
         }
     }
 
-    public function addEquipment(Request $request)
+    public function doAddEquipment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             "province" => "required|string|max:16",

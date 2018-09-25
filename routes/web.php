@@ -80,11 +80,13 @@ Route::get('/dealer/moneyManage', 'DealerController@moneyManage')->name('dealer_
 Route::get('/dealer/powerStationDetail', 'DealerController@powerStationDetail')->name('dealer_powerStationDetail');
 Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')->name('dealer_powerStationManage');
 Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');
-Route::get('/dealer/doResetPassword', 'DealerController@doResetPassword')->name('dealer_resetPassword');
-Route::get('/dealer/doSetPassword', 'DealerController@doSetPassword')->name('dealer_resetPassword');
+Route::get('/dealer/doResetPassword', 'DealerController@doResetPassword')->name('dealer_resetPassword');//经销商充值密码
+Route::get('/dealer/doSetPassword', 'DealerController@doSetPassword')->name('dealer_dosetPassword');//经销商设置密码
 Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
-Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');
-Route::get('/dealer/getDealerList', 'DealerController@getDealerList')->name('getDealerList');
-Route::get('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');
+Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');//
+Route::get('/dealer/getDealerList', 'DealerController@getDealerList')->name('getDealerList');//获取经销商列表接口
+Route::get('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');//经销商提现接口
 Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
-//});
+Route::get('/dealer/doAddDealer','DealerController@doAddDealer')->name('doAddDealer');//添加经销商接口
+Route::get('/dealer/getEquipmentInfo','DealerController@getEquipmentInfo')->name('getEquipmentInfo');//添加电站接口
+Route::get('/dealer/doAddEquipment','DealerController@doAddEquipment')->name('doAddEquipment');//电站查询接口

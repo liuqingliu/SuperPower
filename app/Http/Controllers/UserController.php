@@ -165,20 +165,20 @@ class UserController extends Controller
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $userInfo = User::find(1);
-        if ($userInfo->user_type!=Common::USER_TYPE_NORMAL) {
-            if (empty($request->user_password)) {
-                return Common::myJson(ErrorCall::$errParams, $validator->errors());
-            } elseif ($request->user_password != $userInfo->dealer->password) {
-                return Common::myJson(ErrorCall::$errPassword, $validator->errors());
-            }
-        }
+//        if ($userInfo->user_type!=Common::USER_TYPE_NORMAL) {
+//            if (empty($request->user_password)) {
+//                return Common::myJson(ErrorCall::$errParams, $validator->errors());
+//            } elseif ($request->user_password != $userInfo->dealer->password) {
+//                return Common::myJson(ErrorCall::$errPassword, $validator->errors());
+//            }
+//        }
         $userInfo->phone = $request->user_phone;
         $res = $userInfo->save();
-        $resDealer = $userInfo->dealer->save();
-        if($res && $resDealer){
+//        $resDealer = $userInfo->dealer->save();
+        if($res){
             return Common::myJson(ErrorCall::$errSucc, $res);
         }else{
-            return Common::myJson(ErrorCall::$errSys, ["res_1" => $res, "res_2" => $resDealer]);
+            return Common::myJson(ErrorCall::$errSys);
         }
     }
 
