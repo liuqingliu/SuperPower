@@ -167,7 +167,7 @@ $('#activePrevious').click(function () {
     $('.body1-step1').show();
 });
 //提交电站激活数据
-$('#activeFinish').click(function () {
+function addPowerStation() {
     if ($('#input5').val().length==0){
         Toast('请输入电价成本', 2000);
         return;
@@ -180,8 +180,24 @@ $('#activeFinish').click(function () {
         Toast('请输入完整验证码', 2000);
         return;
     }
-
-
-
-});
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    $.ajax({
+        type: 'GET',
+        url: "/dealer/doAddEquipment",
+        data: {"street":$('#input3').val(),"address":$('#input4').val(),"province":$('#input2').val().split(" ")[0],"city":$('#input2').val().split(" ")[1]
+            ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"manager_phone":"18081884874"
+            ,"mobile":"18081884874" ,"verifyCode":$('#input7').val()},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                console.log(data)
+                // $("#dialogMsg").text("已成功添加经销商");
+                // $("#buttonText").text("知道了");
+                // $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
 

@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.2')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.3')}}"></script>
     {{--<script type="text/javascript" src="{{asset('/js/jquery.min.js')}}"></script>--}}
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
@@ -78,14 +78,14 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
-            <input id="input7" class="my-input2 borad-text-left" type="text" name="identifying-code" placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <input id="imageVcode" class="my-input2 borad-text-left" type="text" name="identifying-code" placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
             <img class="identifying-img pull-right img-rounded" onclick="changeVcode()">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">手机验证码</span>
-            <input id="input5" class="my-input7 borad-text-left" type="number" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>4)value=value.slice(0,4)">
-            <span class="getvcode-green pull-right">获取</span>
+            <input id="input7" class="my-input7 borad-text-left" type="number" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <input id="getPhoneVcode" type="button" class="getvcode-green pull-right vcode-button" value="获取">
         </li>
     </ul>
     <div class="text-45-b3 tip-container" >
@@ -96,7 +96,7 @@
     </div>
 
     <div align="center" style="margin-top:3rem;">
-        <button id="activeFinish" class="button-style-green">完成</button>
+        <button id="activeFinish" class="button-style-green" onclick="addPowerStation()">完成</button>
     </div>
     <div align="center" style="margin-top:1rem;">
         <button id="activePrevious" class="button-style-green">上一步</button>

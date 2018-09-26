@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/dealerManage.js?v=1.9')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/dealerManage.js?v=2.9')}}"></script>
     {{--<script type="text/javascript" src="{{asset('/js/jquery.min.js')}}"></script>--}}
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
@@ -96,15 +96,15 @@
     </div>
 
     <div align="center" style="margin-top:2rem; width: 100%;">
-        <a class="button-style-blue" onclick="queryDealer()">查询</a>
+        <button class="button-style-blue" onclick="querySingleDealer()">查询</button>
     </div>
     <div align="center" style="margin-top:1rem; width: 100%;">
-        <a class="button-style-red">查看所有经销商</a>
+        <button class="button-style-red" onclick="queryAllDealer()">查看所有经销商</button>
     </div>
 </section>
 
 <section class="body2-step2" style="display: none">
-    <ul style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
+    <ul id="queryResult" style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
         <li style="position: relative;height: 6.25rem;">
             <span class="borad-text-left" style="position: absolute;bottom: 1.25rem;left: 1.75rem;">查询结果列表</span>
             <span class="mini-text-b3" style="position: absolute;bottom: 1.25rem;right: 1.75rem">（点击该经销商可进行编辑）</span>
@@ -112,7 +112,7 @@
                 <div class="line-dark"></div>
             </div>
         </li>
-        <li class="revenus-item">
+        <li class="revenus-item" style="display: none">
             <div class="revenus-item-row" style="top: 1rem;">
                 <span class="pull-left text-36">周杰伦</span>
 
@@ -129,43 +129,9 @@
                 <div class="line-dark"></div>
             </div>
         </li>
-        <li class="revenus-item">
-            <div class="revenus-item-row" style="top: 1rem;">
-                <span class="pull-left text-36">王五</span>
-
-            </div>
-            <div class="revenus-item-row" style="top:2.5rem;">
-                <span class="pull-left mini-text">13808254743</span>
-                <span class="pull-right mini-text">四川省成都市锦江区</span>
-            </div>
-            <div class="revenus-item-row" style="top:4rem;">
-                <span class="pull-left mini-text">510922199005232586</span>
-                <span class="pull-right mini-text-red">冻结</span>
-            </div>
-            <div class="item-line">
-                <div class="line-dark"></div>
-            </div>
-        </li>
-        <li class="revenus-item">
-            <div class="revenus-item-row" style="top: 1rem;">
-                <span class="pull-left text-36">张三</span>
-
-            </div>
-            <div class="revenus-item-row" style="top:2.5rem;">
-                <span class="pull-left mini-text">13808257471</span>
-                <span class="pull-right mini-text">四川省成都市锦江区</span>
-            </div>
-            <div class="revenus-item-row" style="top:4rem;">
-                <span class="pull-left mini-text">510922199510255678</span>
-                <span class="pull-right mini-text">正常</span>
-            </div>
-            <div class="item-line">
-                <div class="line-dark"></div>
-            </div>
-        </li>
     </ul>
     <div align="center" style="margin-top:3rem; width: 100%;">
-        <a class="button-style-blue">加载更多</a>
+        <button class="button-style-blue" onclick="backToQuery()">返回查询</button>
     </div>
 </section>
 {{--普通弹窗--}}

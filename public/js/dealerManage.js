@@ -191,23 +191,126 @@ $("#buttonText").click(function () {
     history.back(-1);
 });
 
-function queryDealer() {
+function querySingleDealer() {
     if ($('#queryByName').val()==''&&$('#queryByPhone').val()==''&&$('#queryByAccount').val()==''){
         Toast("请输入至少一个查询条件");
         return;
     }
+    var querydata = "";
+
+    if ($('#queryByName').val()!=''){
+        querydata = {"name":$('#queryByName').val()};
+    }
+    if ($('#queryByPhone').val()!=''){
+        querydata = {"phone":$('#queryByPhone').val()};
+    }
+    if ($('#queryByAccount').val()!=''){
+        querydata = {"user_id":$('#queryByAccount').val()};
+    }
+
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'GET',
         url: "/dealer/getDealerInfo",
-        data: {"name":$('#queryByName').val(),"phone":$('#queryByPhone').val(),"user_id":$('#queryByAccount').val()},
+        data: querydata,
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-               console.log(data.errmsg);
+                var arry = data.result;
+                $('.body1').hide();
+                $('.body2-step1').hide();
+                $('.body2-step2').show();
+               loaddealer(arry)
             }else {
                 Toast(data.errmsg);
             }
         },
     });
+}
+function loaddealer(arry) {
+    for (var i = 0; i <arry.length; i++) {
+        var dealer = arry[i];
+        var html = '';//遍历拼接html
+        html += '<a href="../dealer/dealerDetail">';
+        html += '<li class="revenus-item">';
+        html += '<div class="revenus-item-row" style="top: 1rem;">';
+        html += '<span class="pull-left text-36">'+dealer.name+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:2.5rem;">';
+        html += '<span class="pull-left mini-text">'+dealer.phone+'</span>';
+        html += ' <span class="pull-right mini-text">'+dealer.province+dealer.city+dealer.area+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:4rem;">';
+        html += ' <span class="pull-left mini-text">'+dealer.id_card+'</span>';
+        if (dealer.user_status =="0"){
+            html += ' <span class="pull-right mini-text">正常</span>';
+        }else {
+            html += '<span class="pull-right mini-text-red">冻结</span>';
+        }
+        html += ' </div>';
+        html += '<div class="item-line">';
+        html += '<div class="line-dark"></div>';
+        html += '</div>';
+        html += '</li>';
+        html += '</a>';
+        $("#queryResult").append(html);
+
+    }
+}
+
+
+function queryAllDealer() {
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    $.ajax({
+        type: 'GET',
+        url: "/dealer/getDealerList",
+        data: {"type":1},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                $('.body1').hide();
+                $('.body2-step1').hide();
+                $('.body2-step2').show();
+                dealerLoader(data.result.cash_log);
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
+
+function dealerLoader(arry) {
+    for (var i = 0; i <arry.length; i++) {
+        var dealer = arry[i];
+        var html = '';//遍历拼接html
+        html += '<a href="../dealer/dealerDetail">';
+        html += '<li class="revenus-item">';
+        html += '<div class="revenus-item-row" style="top: 1rem;">';
+        html += '<span class="pull-left text-36">'+dealer.name+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:2.5rem;">';
+        html += '<span class="pull-left mini-text">'+dealer.phone+'</span>';
+        html += ' <span class="pull-right mini-text">'+dealer.address+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:4rem;">';
+        html += ' <span class="pull-left mini-text">'+dealer.id_card+'</span>';
+        if (dealer.user_status =="0"){
+            html += ' <span class="pull-right mini-text">正常</span>';
+        }else {
+            html += '<span class="pull-right mini-text-red">冻结</span>';
+        }
+        html += ' </div>';
+        html += '<div class="item-line">';
+        html += '<div class="line-dark"></div>';
+        html += '</div>';
+        html += '</li>';
+        html += '</a>';
+        $("#queryResult").append(html);
+
+    }
+}
+function backToQuery() {
+    $('.body1').hide();
+    $('.body2-step2').hide();
+    $('.body2-step1').show();
 }
