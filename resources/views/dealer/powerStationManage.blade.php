@@ -1,13 +1,17 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.3')}}"></script>
-    {{--<script type="text/javascript" src="{{asset('/js/jquery.min.js')}}"></script>--}}
+    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.7')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
 @section('title', '电站管理')
 @section('system', '运营商管理系统')
+@section('dialogMsg',"电站激活成功")
+@section('buttonText',"知道了")
 @section('content')
+    @component('layouts._normaldialog')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
 
 <section class="header">
     @component('layouts._dealerheader')
@@ -32,7 +36,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站编号</span>
-            <input id="input1" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="请输入电站机箱内11位编码" oninput="if(value.length>11)value=value.slice(0,11)">
+            <input id="input1" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="请输入电站机箱内15位编码" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -124,7 +128,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站编号</span>
-            <input id="input8" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入电站编号" oninput="if(value.length>11)value=value.slice(0,11)">
+            <input id="input8" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入电站编号" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -142,15 +146,15 @@
     </div>
 
     <div align="center" style="margin-top:2rem; width: 100%;">
-        <a class="button-style-green">继续查询</a>
+        <button class="button-style-green" onclick="querySingleEquipment()">继续查询</button>
     </div>
     <div align="center" style="margin-top:1rem; width: 100%;">
-        <a class="button-style-red">查看所有电站</a>
+        <button class="button-style-red" onclick="queryAllEquipment()">查看所有电站</button>
     </div>
 </section>
 
 <section class="body2-step3" style="display: none">
-    <ul style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
+    <ul id="queryResult" style="padding: 0;background: #FFFFFF; margin-top: 1.4375rem;">
         <li style="position: relative;height: 6.25rem;">
             <span class="borad-text-left" style="position: absolute;bottom: 1.25rem;left: 1.75rem;">查询结果列表</span>
             <span class="mini-text-b3" style="position: absolute;bottom: 1.25rem;left: 11rem;">（点击该电站可进行编辑）</span>
@@ -158,7 +162,7 @@
                 <div class="line-dark"></div>
             </div>
         </li>
-        <li class="revenus-item">
+        <li class="revenus-item" style="display: none">
             <div class="revenus-item-row" style="top: 1rem;">
                 <span class="pull-left text-36">锦江城市花园2号机</span>
 
@@ -177,6 +181,9 @@
         </li>
     </ul>
     <div align="center" style="margin-top:3rem; width: 100%;">
+        <a class="button-style-green" onclick="backToQuery()">返回查询</a>
+    </div>
+    <div align="center" style="margin-top:3rem; width: 100%;display: none">
         <a class="button-style-green">加载更多</a>
     </div>
 </section>

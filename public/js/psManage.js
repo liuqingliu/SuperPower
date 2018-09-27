@@ -127,6 +127,7 @@ function activePS() {
     $('.body2-step3').hide();
     $('.body1-step1').show();
     $('.body1-step2').hide();
+    $('ul a').remove();
 }
 // 点击电站查询
 function queryPS() {
@@ -138,10 +139,11 @@ function queryPS() {
     $('.body2-step3').hide();
     $('.body1-step1').hide();
     $('.body1-step2').hide();
+    $('ul a').remove();
 }
 //跳到激活电站第二步
 $('#activePS1').click(function () {
-    if ($('#input1').val().length<11){
+    if ($('#input1').val().length<15){
         Toast('请输入正确的机箱编码', 2000);
         return;
     }
@@ -183,17 +185,14 @@ function addPowerStation() {
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'GET',
-        url: "/dealer/doAddEquipment",
+        url: "/dealer/doUpdateEquipment",
         data: {"street":$('#input3').val(),"address":$('#input4').val(),"province":$('#input2').val().split(" ")[0],"city":$('#input2').val().split(" ")[1]
-            ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"manager_phone":"18081884874"
-            ,"mobile":"18081884874" ,"verifyCode":$('#input7').val()},
+            ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"equipment_id":$('#input1').val()
+            ,"equipment_status":"1" ,"verifyCode":$('#input7').val()},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                console.log(data)
-                // $("#dialogMsg").text("已成功添加经销商");
-                // $("#buttonText").text("知道了");
-                // $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
+                $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
             }else {
                 Toast(data.errmsg);
             }
@@ -201,3 +200,155 @@ function addPowerStation() {
     });
 }
 
+$('.dialog-single-button').click(function () {
+    history.back(-1);
+});
+
+//电站查询
+function querySingleEquipment() {
+    if ($('#input8').val()==''&&$('#input9').val()==''&&$('#input10').val()==''){
+        Toast("请输入至少一个查询条件");
+        return;
+    }
+    var querydata = "";
+
+    if ($('#input10').val()!=''){
+        querydata = {"name":$('#input10').val()};
+    }
+    if ($('#input9').val()!=''){
+        querydata = {"phone":$('#input9').val()};
+    }
+    if ($('#input8').val()!=''){
+        querydata = {"equipment_id":$('#input8').val()};
+    }
+
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    $.ajax({
+        type: 'GET',
+        url: "/dealer/getEquipmentInfo",
+        data: querydata,
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                var arry = data.result;
+                if (arry.length==0){
+                    $('.body2-step1').show();
+                    $('.body2-step2').hide();
+                    $('.body2-step3').hide();
+                    $('.body1-step1').hide();
+                    $('.body1-step2').hide();
+                }else {
+                    $('.body2-step1').hide();
+                    $('.body2-step2').hide();
+                    $('.body2-step3').show();
+                    $('.body1-step1').hide();
+                    $('.body1-step2').hide();
+                    loaddealer(arry)
+                }
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
+function loaddealer(arry) {
+    for (var i = 0; i <arry.length; i++) {
+        var equipment = arry[i];
+        var html = '';//遍历拼接html
+        html += '<a href="../dealer/powerStationDetail">';
+        html += '<li class="revenus-item">';
+        html += '<div class="revenus-item-row" style="top: 1rem;">';
+        html += '<span class="pull-left text-36">'+equipment.street+equipment.address+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:2.5rem;">';
+        html += '<span class="pull-left mini-text">'+equipment.equipment_id+'</span>';
+        html += ' <span class="pull-right mini-text">'+equipment.province+equipment.city+equipment.area+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:4rem;">';
+        html += ' <span class="pull-left mini-text">'+equipment.name+'</span>';
+        if (equipment.net_status =="0"){
+            html += ' <span class="pull-right mini-text">在线</span>';
+        }else {
+            html += '<span class="pull-right mini-text-red">离线</span>';
+        }
+        html += ' </div>';
+        html += '<div class="item-line">';
+        html += '<div class="line-dark"></div>';
+        html += '</div>';
+        html += '</li>';
+        html += '</a>';
+        $("#queryResult").append(html);
+
+    }
+}
+//查询所有电站
+function queryAllEquipment() {
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    $.ajax({
+        type: 'GET',
+        url: "/dealer/getDealerList",
+        data: {"type":2},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                var arry = data.result.cash_log
+                if (arry.length==0){
+                    $('.body2-step1').show();
+                    $('.body2-step2').hide();
+                    $('.body2-step3').hide();
+                    $('.body1-step1').hide();
+                    $('.body1-step2').hide();
+                }else {
+                    $('.body2-step1').hide();
+                    $('.body2-step2').hide();
+                    $('.body2-step3').show();
+                    $('.body1-step1').hide();
+                    $('.body1-step2').hide();
+                    dealerLoader(arry);
+                }
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
+
+function dealerLoader(arry) {
+    for (var i = 0; i <arry.length; i++) {
+        var equipment = arry[i];
+        var html = '';//遍历拼接html
+        html += '<a href="../dealer/powerStationDetail">';
+        html += '<li class="revenus-item">';
+        html += '<div class="revenus-item-row" style="top: 1rem;">';
+        html += '<span class="pull-left text-36">'+equipment.street+equipment.address+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:2.5rem;">';
+        html += '<span class="pull-left mini-text">'+equipment.equipment_id+'</span>';
+        html += ' <span class="pull-right mini-text">'+equipment.province+equipment.city+equipment.area+'</span>';
+        html += '</div>';
+        html += ' <div class="revenus-item-row" style="top:4rem;">';
+        html += ' <span class="pull-left mini-text">'+equipment.name+'</span>';
+        if (equipment.net_status =="0"){
+            html += ' <span class="pull-right mini-text">在线</span>';
+        }else {
+            html += '<span class="pull-right mini-text-red">离线</span>';
+        }
+        html += ' </div>';
+        html += '<div class="item-line">';
+        html += '<div class="line-dark"></div>';
+        html += '</div>';
+        html += '</li>';
+        html += '</a>';
+        $("#queryResult").append(html);
+
+    }
+}
+
+function backToQuery() {
+    $('.body2-step1').hide();
+    $('.body2-step2').show();
+    $('.body2-step3').hide();
+    $('.body1-step1').hide();
+    $('.body1-step2').hide();
+    $('ul a').remove();
+}

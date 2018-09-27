@@ -126,6 +126,8 @@ $('#adddealer').click(function () {
     $('.body1').show();
     $('.body2-step1').hide();
     $('.body2-step2').hide();
+    $('ul a').remove();
+
 });
 $('#querydealer').click(function () {
     $('.swich-bar1').css("background-image","url(/images/pm3_01_r.png)");
@@ -134,6 +136,7 @@ $('#querydealer').click(function () {
     $('.body1').hide();
     $('.body2-step1').show();
     $('.body2-step2').hide();
+    $('ul a').remove();
 });
 var dealer_type = "";
 $('#normalDealer').click(function () {
@@ -313,4 +316,5 @@ function backToQuery() {
     $('.body1').hide();
     $('.body2-step2').hide();
     $('.body2-step1').show();
+    $('ul a').remove();
 }
