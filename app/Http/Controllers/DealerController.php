@@ -12,6 +12,7 @@ use App\Models\CashLog;
 use App\Models\ChargingEquipment;
 use App\Models\Dealer;
 use App\Models\ElectricCard;
+use App\Models\EquipmentPort;
 use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
 use App\Models\Logic\Eletric;
@@ -222,14 +223,44 @@ class DealerController extends Controller
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $userInfo = User::find(1);
-        $equipmentInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->where("openid", $userInfo->openid)->first();
-        return Common::myJson(ErrorCall::$errSucc, $equipmentInfo);
+        if($userInfo->user_type==Common::USER_TYPE_ADMIN){
+            $equipmentInfoList = ChargingEquipment::where("equipment_id", $request->equipment_id)->get();
+        }else{
+            $equipmentInfoList = ChargingEquipment::where("equipment_id", $request->equipment_id)->where("openid", $userInfo->openid)->orWhere("parent_openid",$userInfo->openid)->get();
+        }
+        foreach ($equipmentInfoList as $equipmentInfo) {
+            $jackInfo = json_decode($equipmentInfo->board_info, true);
+            $equipmentInfo->total_port  = 0;
+            for ($i = 1; $i <= 3; $i++) {
+                if ($jackInfo["board{$i}"] == 'Y') {
+                    $equipmentInfo->total_port += 10;
+                }
+            }
+            $equipmentInfo->use_port_num = EquipmentPort::where("equipment_id",
+                $equipmentInfo->equipment_id)->where("status", Eletric::PORT_STATUS_USE)->count();
+        }
+        return Common::myJson(ErrorCall::$errSucc, $equipmentInfoList);
     }
 
     public function getEquipmentInfoList(Request $request)
     {
         $userInfo = User::find(1);
-        $equipmentInfoList = ChargingEquipment::where("openid", $userInfo->openid)->get();
+        if($userInfo->user_type==Common::USER_TYPE_ADMIN){
+            $equipmentInfoList = ChargingEquipment::all();
+        }else{
+            $equipmentInfoList = ChargingEquipment::where("openid", $userInfo->openid)->orWhere("parent_openid",$userInfo->openid)->get();
+        }
+        foreach ($equipmentInfoList as $equipmentInfo) {
+            $jackInfo = json_decode($equipmentInfo->board_info, true);
+            $equipmentInfo->total_port  = 0;
+            for ($i = 1; $i <= 3; $i++) {
+                if ($jackInfo["board{$i}"] == 'Y') {
+                    $equipmentInfo->total_port += 10;
+                }
+            }
+            $equipmentInfo->use_port_num = EquipmentPort::where("equipment_id",
+                $equipmentInfo->equipment_id)->where("status", Eletric::PORT_STATUS_USE)->count();
+        }
         return Common::myJson(ErrorCall::$errSucc, $equipmentInfoList);
     }
 

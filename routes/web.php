@@ -90,5 +90,6 @@ Route::get('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');//
 Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
 Route::get('/dealer/doAddDealer','DealerController@doAddDealer')->name('doAddDealer');//添加经销商接口
 Route::get('/dealer/getEquipmentInfo','DealerController@getEquipmentInfo')->name('getEquipmentInfo');//添加电站接口
-Route::get('/dealer/doUpdateEquipment','DealerController@doUpdateEquipment')->name('doUpdateEquipment');//电站查询接口
-Route::get('/dealer/getDealerInfo','DealerController@getDealerInfo')->name('getDealerInfo');//电站查询接口
+Route::get('/dealer/doUpdateEquipment','DealerController@doUpdateEistquipment')->name('doUpdateEquipment');//电站查询接口
+Route::get('/dealer/getDealerInfo','DealerController@getDealerInfo')->name('getDealerInfo');//经销商查询接口
+Route::get('/dealer/getEquipmentInfoList','DealerController@getEquipmentInfoList')->name('getEquipmentInfoList');//经销商查询接口

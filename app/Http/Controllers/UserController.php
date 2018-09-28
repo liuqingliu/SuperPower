@@ -216,7 +216,7 @@ class UserController extends Controller
         $result = $app->order->unify([
             'body' => '充小满-充电了',
             'out_trade_no' => $createParams["order_id"],
-            'total_fee' => $price,
+            'total_fee' => 1,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
             'notify_url' => 'http://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
