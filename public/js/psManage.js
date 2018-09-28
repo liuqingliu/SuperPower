@@ -255,7 +255,7 @@ function loaddealer(arry) {
     for (var i = 0; i <arry.length; i++) {
         var equipment = arry[i];
         var html = '';//遍历拼接html
-        html += '<a href="../dealer/powerStationDetail">';
+        html += '<a href="../dealer/powerStationDetail?devid=869300034342473">';
         html += '<li class="revenus-item">';
         html += '<div class="revenus-item-row" style="top: 1rem;">';
         html += '<span class="pull-left text-36">'+equipment.street+equipment.address+'</span>';
@@ -265,7 +265,7 @@ function loaddealer(arry) {
         html += ' <span class="pull-right mini-text">'+equipment.province+equipment.city+equipment.area+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:4rem;">';
-        html += ' <span class="pull-left mini-text">'+equipment.name+'</span>';
+        html += '<div class="pull-left"><span class="mini-text-red">'+equipment.use_port_num+'</span><span class="mini-text">/'+equipment.total_port+'</span></div>';
         if (equipment.net_status =="0"){
             html += ' <span class="pull-right mini-text">在线</span>';
         }else {
@@ -286,12 +286,13 @@ function queryAllEquipment() {
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'GET',
-        url: "/dealer/getDealerList",
+        url: "/dealer/getEquipmentInfoList",
         data: {"type":2},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                var arry = data.result.cash_log
+                console.log(data)
+                var arry = data.result
                 if (arry.length==0){
                     $('.body2-step1').show();
                     $('.body2-step2').hide();
@@ -317,7 +318,7 @@ function dealerLoader(arry) {
     for (var i = 0; i <arry.length; i++) {
         var equipment = arry[i];
         var html = '';//遍历拼接html
-        html += '<a href="../dealer/powerStationDetail">';
+        html += '<a href="../dealer/powerStationDetail?devid=869300034342473">';
         html += '<li class="revenus-item">';
         html += '<div class="revenus-item-row" style="top: 1rem;">';
         html += '<span class="pull-left text-36">'+equipment.street+equipment.address+'</span>';
@@ -327,7 +328,7 @@ function dealerLoader(arry) {
         html += ' <span class="pull-right mini-text">'+equipment.province+equipment.city+equipment.area+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:4rem;">';
-        html += ' <span class="pull-left mini-text">'+equipment.name+'</span>';
+        html += '<div class="pull-left"><span class="mini-text-red">'+equipment.use_port_num+'</span><span class="mini-text">/'+equipment.total_port+'</span></div>';
         if (equipment.net_status =="0"){
             html += ' <span class="pull-right mini-text">在线</span>';
         }else {

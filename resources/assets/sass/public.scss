@@ -505,6 +505,10 @@ input::-ms-input-placeholder {
   font-size: 1.6rem;
   color: #F15A24;
 }
+.text-45-green {
+  font-size: 1.6rem;
+  color: #46bb4b;
+}
 
 .vcode-button{
   background: none;
@@ -584,6 +588,15 @@ input::-ms-input-placeholder {
   height: 2.5rem;
   line-height: 2.5rem;
   background: #009eff;
+  display: inline-block;
+  border-radius: 0.3rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.equipment-swich-seclect {
+  height: 2.5rem;
+  line-height: 2.5rem;
+  background: #46bb4b;
   display: inline-block;
   border-radius: 0.3rem;
   padding-left: 0.5rem;

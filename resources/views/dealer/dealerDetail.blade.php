@@ -67,11 +67,11 @@
         <li class="borad-heigh">
             <span class="borad-text-left">账户状态</span>
             @if($dealer_info->user_status==1)
-                <span class="text-45-red" style="margin-left: 1.3rem;">正常</span>
-                <span class="text-45-blue pull-right">冻结</span>
+                <span id="status_on" data-dealerStatus="{{$dealer_info->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
+                <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">冻结</span>
             @else
-                <span class="text-45-red" style="margin-left: 1.3rem;">冻结</span>
-                <span class="text-45-blue pull-right">正常</span>
+                <span id="status_on" data-dealerStatus="{{$dealer_info->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
+                <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">冻结</span>
             @endif
         </li>
         <li class="line"></li>

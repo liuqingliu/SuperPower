@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.7')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psManage.js?v=2.0')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
@@ -123,23 +123,23 @@
 <section class="body2-step2" style="display: none">
     <ul class="board1">
         <li class="li-tips borad-text-left">
-            输入以下任意一项进行查询
+            输入以下详情进行查询
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站编号</span>
             <input id="input8" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入电站编号" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
-        <li class="line"></li>
-        <li class="borad-heigh">
-            <span class="borad-text-left">手机号码</span>
-            <input id="input9" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入激活人员手机号 " oninput="if(value.length>11)value=value.slice(0,11)">
-        </li>
-        <li class="line"></li>
-        <li class="borad-heigh">
-            <span class="borad-text-left">激活人员</span>
-            <input id="input10" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入激活人员姓名 " oninput="if(value.length>6)value=value.slice(0,6)">
-        </li>
+        {{--<li class="line"></li>--}}
+        {{--<li class="borad-heigh">--}}
+            {{--<span class="borad-text-left">手机号码</span>--}}
+            {{--<input id="input9" class="my-input5 borad-text-left" type="number" name="identifying-code" placeholder="输入激活人员手机号 " oninput="if(value.length>11)value=value.slice(0,11)">--}}
+        {{--</li>--}}
+        {{--<li class="line"></li>--}}
+        {{--<li class="borad-heigh">--}}
+            {{--<span class="borad-text-left">激活人员</span>--}}
+            {{--<input id="input10" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="输入激活人员姓名 " oninput="if(value.length>6)value=value.slice(0,6)">--}}
+        {{--</li>--}}
     </ul>
     <div class="text-45-b3 tip-container" >
         提示：只能查询自己或下级经销商激活过的电站。
