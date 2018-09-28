@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendSms;
 use App\Jobs\SendSmsQue;
 use App\Jobs\SendTemplateMsg;
+use App\Models\Dealer;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
 
@@ -155,5 +156,23 @@ class ApiController extends Controller
                 "remark" => "欢迎使用智能充电设备，当前余额12.5元",
             ]));//充电结束
         echo "ok！2!33!";
+    }
+
+    public function deleteDeaer(Request $request)
+    {
+        try{
+            $userInfo = User::where("user_id", $request->user_id)->first();
+            if(empty($userInfo)){
+                exit("用户信息为空") ;
+            }
+            $userInfo->user_type = 0;//恢复user_type
+            $userInfo->save();
+            if(!empty($userInfo->dealer)){
+                $userInfo->dealer->delete();
+            }
+            echo "ok";
+        }catch (\Exception $e){
+            exit($e->getMessage());
+        }
     }
 }

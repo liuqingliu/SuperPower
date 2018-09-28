@@ -19,7 +19,7 @@ class DealerLogin
         if (!in_array($userInfo->user_type, Common::$dealers)) {
             $flag = 1;
         }
-        if ($userInfo->user_status==Common::ELETRIC_CARD_STATUS_FREEZONE) {
+        if ($userInfo->user_status==Common::USER_STATUS_FREEZONE) {
             $flag = 1;
         }
         if($flag){

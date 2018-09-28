@@ -20,6 +20,7 @@ use App\Models\RechargeOrder;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use SmsManager;
 
@@ -36,7 +37,6 @@ class DealerController extends Controller
         $dealerInfo = $userInfo->dealer;
         $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
         $dayIncome = 0;
-        $totalIncome = 0;
         $totalUsers = 0;
         $totalChargeCount = 0;
         if (!empty($deviceList)) {
@@ -86,7 +86,9 @@ class DealerController extends Controller
 
     public function dealerDetail()
     {
-        $dealerInfo = User::find(1)->dealer;
+        $userInfo = User::find(1);
+        $dealerInfo = $userInfo->dealer;
+        $dealerInfo->user_id = $userInfo->user_id;
         return view('dealer/dealerDetail', ["dealer_info" => $dealerInfo]);
     }
 
@@ -219,37 +221,65 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $equipmentInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
+        $userInfo = User::find(1);
+        $equipmentInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->where("openid", $userInfo->openid)->first();
         return Common::myJson(ErrorCall::$errSucc, $equipmentInfo);
+    }
+
+    public function getEquipmentInfoList(Request $request)
+    {
+        $userInfo = User::find(1);
+        $equipmentInfoList = ChargingEquipment::where("openid", $userInfo->openid)->get();
+        return Common::myJson(ErrorCall::$errSucc, $equipmentInfoList);
     }
 
     public function getDealerInfo(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => "sometimes|exists:users",
-            'user_id' => "sometimes|exists:users",
-            'name' => "sometimes|exists:dealers",
+            'phone' => "sometimes|string|max:20",
+            'user_id' => "sometimes|string|max:16",
+            'name' => "sometimes|string|max:16",
         ]);
-        if ($validator->fails()) {
+        if ($validator->fails() || (empty($request->phone) && empty($request->user_id) && empty($request->name))) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-
-        if (!empty($request->phone)) {
-            $dealerInfo = User::where("phone", $request->phone)->dealer()->first();
-        } elseif (!empty($request->user_id)) {
-            $dealerInfo = User::where("user_id", $request->user_id)->dealer()->first();
-        } elseif (!empty($request->name)) {
-            $dealerInfo = Dealer::where("name", 'like', $request->name)->dealer()->first();
-        }
         $userInfo = User::find(1);
-        if ($userInfo->user_type == Common::USER_TYPE_ADMIN) {
-            return Common::myJson(ErrorCall::$errSucc, $dealerInfo);
-        } elseif ($userInfo->user_type == Common::USER_TYPE_SJXS) {
-            if ($userInfo->openid == $dealerInfo->parent_openid) {
-                return Common::myJson(ErrorCall::$errSucc, $dealerInfo);
-            }
+        if ($userInfo->user_type == Common::USER_TYPE_NORMAL || $userInfo->user_type == Common::USER_TYPE_JXS) {
+            return Common::myJson(ErrorCall::$errNotPermit);
         }
-        return Common::myJson(ErrorCall::$errSucc);
+        Log::info("request-dealer-info:".serialize($request->all()));
+        $searchUser = null;
+        if (!empty($request->phone)) {
+            $searchUser = User::where("phone", $request->phone)->get();
+        } elseif (!empty($request->user_id)) {
+            $searchUser = User::where("user_id", $request->user_id)->get();
+        } elseif (!empty($request->name)) {
+            $searchUser = Dealer::where("name", 'like', $request->name)->get();
+        }
+        if(empty($searchUser)){
+            return Common::myJson(ErrorCall::$notFindUser);
+        }
+        if ($userInfo->user_type == Common::USER_TYPE_ADMIN) {
+            $dealerList = null;
+            foreach ($searchUser as $user) {
+                $dealerInfo = $user->dealer;
+                $dealerInfo->phone = $user->phone;
+                $dealerInfo->user_status = $user->user_status;
+                $dealerList[] = $dealerInfo;
+            }
+            return Common::myJson(ErrorCall::$errSucc, $dealerList);
+        } else {//超级经销商
+            $dealerList = null;
+            foreach ($searchUser as $user) {
+                $dealerInfo = $user->dealer->where("parent_openid", $userInfo->openid)->first();
+                $dealerInfo->phone = $user->phone;
+                $dealerInfo->user_status = $user->user_status;
+                if(!empty($dealerInfo)){
+                    $dealerList[] = $dealerInfo;
+                }
+            }
+            return Common::myJson(ErrorCall::$errSucc, $dealerList);
+        }
     }
 
     public function getDealerList(Request $request)
@@ -276,6 +306,7 @@ class DealerController extends Controller
                 $cash->id_card = $cash->dealer->id_card;
                 $cash->address = $cash->dealer->province . $cash->dealer->city . $cash->dealer->area;
                 $cash->name = $cash->dealer->name;
+                $cash->phone = $cash->user->phone;
                 $cash->user_status = $cash->user->user_status;
                 unset($cash->user);
                 unset($cash->dealer);
@@ -310,7 +341,7 @@ class DealerController extends Controller
             "city" => "required|string",
             "area" => "required|string",
             "give_proportion" => "required|int|max:100|min:1",
-            "parent_id" => "required|string|max:16|min:10",
+            "son_id" => "required|string|max:16|min:10",
             "remark" => "sometimes|string|max:225",
             "user_type" => "required|int|in:1,2", //1,普通经销商，2，超级经销商
         ]);
@@ -322,7 +353,7 @@ class DealerController extends Controller
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
 
-        $addUser = User::where("user_id", $request->parent_id)->where("user_status",
+        $addUser = User::where("user_id", $request->son_id)->where("user_status",
             Common::USER_STATUS_DEFAULT)->where("user_type",
             Common::USER_TYPE_NORMAL)->first();
         if(empty($addUser)){
@@ -337,6 +368,7 @@ class DealerController extends Controller
             "give_proportion" => $request->give_proportion,
             "name" => $request->name,
             "remark" => $request->remark,
+            "parent_openid" => $userInfo->openid,
         ]);
         $addUser->user_type = $request->user_type == 1 ? Common::USER_TYPE_JXS : Common::USER_TYPE_SJXS;
         $res = $addUser->save();
@@ -352,7 +384,6 @@ class DealerController extends Controller
             'old_password' => "required",
             'password' => ['required', 'confirmed'],//不为空,两次密码是否相同
             'password_confirmation' => ['required', "same:password"],//不为空,两次密码是否相同
-            'mobile' => 'required|confirm_mobile_not_change',
             'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {
@@ -376,7 +407,6 @@ class DealerController extends Controller
         $validator = Validator::make($request->all(), [
             'password' => ['required', 'confirmed'],//不为空,两次密码是否相同
             'password_confirmation' => ['required', "same:password"],//不为空,两次密码是否相同
-            'mobile' => 'required|confirm_mobile_not_change',
             'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {
@@ -395,7 +425,7 @@ class DealerController extends Controller
         }
     }
 
-    public function doAddEquipment(Request $request)
+    public function doUpdateEquipment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             "province" => "required|string|max:16",
@@ -405,19 +435,23 @@ class DealerController extends Controller
             "address" => "required|string|max:255",
             "charging_cost" => "required|int",
             "charging_unit_min" => "required|int",
-            "manager_phone" => "required|int|max:16",
-            'mobile' => 'required|confirm_mobile_not_change',
-            'verifyCode' => 'required|verify_code',
+            'verifyCode' => 'sometimes|verify_code',
+            'equipment_id' => 'required|string|max:20|min:10|exists:charging_equipments',
+            'equipment_status' => 'required|int:1,2',
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $equipmentInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
+        if (empty($equipmentInfo) || $equipmentInfo->equipment_status == $request->equipment_status) {
+            return Common::myJson(ErrorCall::$errParams);
         }
         $userInfo = User::find(1);
         if ($userInfo->user_status != Common::USER_STATUS_DEFAULT || $userInfo->user_type == Common::USER_TYPE_NORMAL) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
-        $nowTime = date("Y-m-d H:i:s");
-        $res = ChargingEquipment::create([
+
+        $updateParams = [
             "province" => $request->province,
             "city" => $request->city,
             "area" => $request->area,
@@ -425,11 +459,12 @@ class DealerController extends Controller
             "address" => $request->address,
             "charging_cost" => $request->charging_cost * 100,
             "charging_unit_second" => $request->charging_unit_min * 60,
-            "manager_phone" => $request->manager_phone,
-            "active_time" => $nowTime,
-            "created_at" => $nowTime,
             "openid" => $userInfo->openid,
-        ]);
+        ];
+        if($request->equipment_status==Eletric::DEVICE_STATUS_ACTIVE) {
+            $updateParams["active_time"] = date("Y-m-d H:i:s");
+        }
+        $res = $equipmentInfo->update($updateParams);
         if ($res) {
             return Common::myJson(ErrorCall::$errSucc);
         } else {
@@ -442,7 +477,6 @@ class DealerController extends Controller
         $validator = Validator::make($request->all(), [
             "money" => "required|int",
             "password" => "required|string|max:16",
-            'mobile' => 'required|confirm_mobile_not_change',
             'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {

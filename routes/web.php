@@ -68,6 +68,7 @@ Route::get("/api/testGetMessage",'ApiController@testGetMessage');
 Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
 Route::get('/api/sendMessageTest', 'ApiController@sendMessageTest')->name('sendMessageTest');//发送短信验证码
 Route::get("/api/test","ApiController@test");
+Route::get("/api/deleteDeaer","ApiController@deleteDeaer");
 
 //Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','dealer.login']], function () {
 //经销商
@@ -89,4 +90,5 @@ Route::get('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');//
 Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
 Route::get('/dealer/doAddDealer','DealerController@doAddDealer')->name('doAddDealer');//添加经销商接口
 Route::get('/dealer/getEquipmentInfo','DealerController@getEquipmentInfo')->name('getEquipmentInfo');//添加电站接口
-Route::get('/dealer/doAddEquipment','DealerController@doAddEquipment')->name('doAddEquipment');//电站查询接口
+Route::get('/dealer/doUpdateEquipment','DealerController@doUpdateEquipment')->name('doUpdateEquipment');//电站查询接口
+Route::get('/dealer/getDealerInfo','DealerController@getDealerInfo')->name('getDealerInfo');//电站查询接口

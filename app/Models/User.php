@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cashlog::class, 'openid', 'openid');
     }
+
+    public function chargingEquipment()
+    {
+        return $this->hasMany(ChargingEquipment::class, 'openid', 'openid');
+    }
 }

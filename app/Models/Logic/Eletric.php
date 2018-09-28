@@ -10,9 +10,9 @@ namespace App\Models\Logic;
 class Eletric
 {
     //用电终端设备状态
-    const DEVICE_STATUS_STATUS = 0;//正常
-    const DEVICE_STATUS_ERROR = 1;//异常
-
+    const DEVICE_STATUS_DEFAULT = 0;//默认
+    const DEVICE_STATUS_ACTIVE = 1;//正常
+    const DEVICE_STATUS_DISABLED = 2;//禁用
     //终端网络
     const DEVICE_NET_STATUS = 0;//正常
     const DEVICE_NET_ERROR = 1;//网络断开

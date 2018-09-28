@@ -36,7 +36,7 @@ class MsnEventSubscriber
     {
         //查询设备表，是否有该设备
         $deviceInfo = ChargingEquipment::where("equipment_id", $event->devid)->where("equipment_status",
-            Eletric::DEVICE_STATUS_STATUS)->first();
+            Eletric::DEVICE_STATUS_ACTIVE)->first();
         $answer = [
             "func" => "register",
             "ret" => "ok",

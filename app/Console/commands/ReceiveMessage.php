@@ -61,6 +61,9 @@ class ReceiveMessage extends Command {
                 Log::info("msn:real_msg".serialize($realMsg));
                 if (isset($realMsg["func"])) {
                     $func = "App\Events\Msns\\".$realMsg["func"];
+                    if (!class_exists($func)) {
+                        return;
+                    }
                     event(new $func($realMsg));
                 }
                 if (isset($realMsg["status"]) && ($realMsg["status"] == "online" || $realMsg["status"] == "offline") ) {

@@ -45,4 +45,9 @@ class ChargingEquipment extends Model
     {
         return $this->hasMany(Cashlog::class, 'equipment_id', 'equipment_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'openid', 'openid');
+    }
 }
