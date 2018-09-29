@@ -1,6 +1,6 @@
 
 @extends('layouts.default')
-
+{{--is_set_password,is_bind_phone,is_bind_bank--}}
 @section('title', '我要提现')
 @section('system', '运营商管理系统')
 @section('content')
@@ -50,4 +50,22 @@
         <a href="#" onclick="" class="mini-text">更换账户绑定手机号</a>
     </div>
 </section>
+{{--dialog--}}
+<div class="modal" id="cardNumInput" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div style="min-height: 14.5rem;" class="center-dialog">
+        <div style="min-height:11rem;width: 100%;padding: 1.5rem;margin-bottom: 3.5rem;" >
+            <p class="borad-text-left">该账户微绑定手机号，请先绑定手机号再进行提现。</p>
+            <input id="dialogInput" style="height:3.4625rem;border: 0;outline:none;" class="borad-text-left" data-toggle="modal" data-target="#newUserDialog" type="number" placeholder="请输入电卡卡号" oninput="if(value.length>11)value=value.slice(0,11)">
+            <div><div class="line-dark"></div></div>
+
+        </div>
+        <div style="width: 100%;height: 1px;background:url('/images/p16_06.png');position: absolute;bottom: 3.535rem;"></div>
+        <div style="height:3.4375rem;width: 100%; line-height: 3.4375rem;position:absolute;bottom: 0;">
+            <div data-dismiss="modal" class="pull-left" style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">取消
+                <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
+            </div>
+            <div class="pull-right" onclick="Values()" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
+        </div>
+    </div>
+</div>
 @endsection

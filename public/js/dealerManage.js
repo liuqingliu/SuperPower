@@ -183,7 +183,7 @@ function addDealer() {
             if (data.errno==0){
                 $("#dialogMsg").text("已成功添加经销商");
                 $("#buttonText").text("知道了");
-                $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
+                $('#myNormalDialog').modal({backdrop: 'static', keyboard: false});
             }else {
                 Toast(data.errmsg);
             }

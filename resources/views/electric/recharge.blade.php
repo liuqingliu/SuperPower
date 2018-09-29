@@ -1,9 +1,11 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/recharge.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/recharge.js?v=1.0')}}"></script>
 @endsection
 @section('title', '正在充电')
 @section('system', '个人中心')
+@section('dialogMsg', '已停止充电，断电操作稍有延迟，请注意安全！')
+@section('buttonText', '知道了')
 @section('content')
     <section class="header">
         @component('layouts._userheader')
@@ -21,17 +23,17 @@
 						<img src="{{URL::asset('images/p16_02.png')}}" class="content-img"/>
                         {{$socket_info}}
 					</span>
-                <span class="content2">
-						<img src="{{URL::asset('images/p16_03.png')}}" class="content-img"/>
-                    {{$charge_time}}
-					</span>
+                <div class="content2"><img src="{{URL::asset('images/p16_03.png')}}"   class="content-img"/>
+                <span id="chargeTime" data-chargetime ="{{$charge_time}}" >
+                </span>
+                </div>
             </div>
             <div class="recharge-container2 pull-right">
                 <div class="pull-left" style="height: 9.5rem; padding-bottom: 1rem;padding-top: 1rem;">
                     <div class="line-vertical"></div>
                 </div>
                 <div class="big-text" style="margin-top: 2.5rem;">计费标准</div>
-                <div class="big-text">{{$charge_price}}</div>
+                <div class="big-text">1元/{{$unit_hour}}小时</div>
                 <!--<span class="big-text">1元/6小时</span>-->
             </div>
 
@@ -56,8 +58,11 @@
                 <div data-dismiss="modal" class="pull-left" style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">点错了
                     <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
                 </div>
-                <div class="pull-right" onclick="closesocket({{$order_id}})" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
+                <div class="pull-right" onclick="closesocket()" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
             </div>
         </div>
     </div>
+    @component('layouts._normaldialog')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
 @endsection
