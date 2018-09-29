@@ -23,6 +23,10 @@ class Dealer extends Model
         'income_withdraw',//总共提现数
         'give_proportion',
         'remark',
+        'password',
+        'bank_name',
+        'bank_no',
+        'bank_username',
     ];
 
     public $timestamps = true;

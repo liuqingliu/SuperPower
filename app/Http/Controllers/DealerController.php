@@ -113,7 +113,7 @@ class DealerController extends Controller
             $totalChargeCount = RechargeOrder::whereIn("equipment_id", $deviceList->toArray())->where("recharge_status",
                 Charge::ORDER_RECHARGE_STATUS_END)->count();
         }
-        return view('dealer/moneymanage', [
+        return view('dealer/moneyManage', [
             "income_withdraw" => ($dealInfo->total_income - $dealInfo->income_withdraw) / 100.00,
             "total_charge_count" => $totalChargeCount,
             "total_income" => $totalIncome / 100.00,
@@ -177,7 +177,12 @@ class DealerController extends Controller
     public function takeOutMoney()
     {
         $dealerInfo = Dealer::find(1);
-        return view('dealer/takeOutMoney', ["income_withdraw" => $dealerInfo->income_withdraw]);
+        return view('dealer/takeOutMoney', [
+            "income_withdraw" => $dealerInfo->income_withdraw,
+            "is_set_password" => !empty($dealerInfo->password),
+            "is_bind_phone" => !empty($dealerInfo->user->phone),
+            "is_bind_bank" => !empty($dealerInfo->bank_no),
+        ]);
     }
 
     //修改电卡状态

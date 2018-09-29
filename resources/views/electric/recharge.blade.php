@@ -31,7 +31,7 @@
                     <div class="line-vertical"></div>
                 </div>
                 <div class="big-text" style="margin-top: 2.5rem;">计费标准</div>
-                <div class="big-text">{{$charge_price}}</div>
+                <div class="big-text">1元/{{$unit_hour}}小时</div>
                 <!--<span class="big-text">1元/6小时</span>-->
             </div>
 
@@ -56,7 +56,7 @@
                 <div data-dismiss="modal" class="pull-left" style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">点错了
                     <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
                 </div>
-                <div class="pull-right" onclick="closesocket({{$order_id}})" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
+                <div class="pull-right" onclick="closesocket()" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
             </div>
         </div>
     </div>

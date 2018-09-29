@@ -67,13 +67,24 @@ class ElectricController extends Controller
         //如果没有充电的，不允许进来 todo
         $userInfo = User::find(1);
         $rechargeInfo = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
+        if(empty($rechargeInfo)) {//这里其实需要跳转走
+            return view('electric/recharge', [
+                "unit_hour" => '',
+//                "created_at" => '',
+                "socket_info" => '',
+                "charge_time" => '',
+//                "now_time" => '',
+            ]);
+        }
         $chargingEquipment = $rechargeInfo->chargingEquipment;
-        $unitSecond = $chargingEquipment->recharge_unit_second;
-
+        $unitSecond = $chargingEquipment->charging_unit_second;
+        $nowTime = time();
         return view('electric/recharge', [
-            "unit_second" => $unitSecond,
-            "created_at" => $rechargeInfo->created_at,
+            "unit_hour" => $unitSecond / 60,
+//            "created_at" => $rechargeInfo->created_at,
             "socket_info" => $chargingEquipment->address . $rechargeInfo->jack_id . "号插座",
+            "charge_time" => ceil(($nowTime-strtotime($rechargeInfo->created_at))/60),
+//            "now_time" => date("Y-m-d H:i:s",$nowTime),
         ]);
     }
 
@@ -312,24 +323,12 @@ class ElectricController extends Controller
     }
 
     //关闭插座
-    public function closeSocket(Request $request)
+    public function closeSocket()
     {
-        $validator = Validator::make($request->all(), [
-            'order_id' => 'required|exists:recharge_orders',
-        ]);
-        if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
-        }
         $userInfo = User::find(1);
-        $rechargeOrder = RechargeOrder::where("order_id", $request->order_id)->first();
+        $rechargeOrder = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if (empty($rechargeOrder)) {
-            return Common::myJson(ErrorCall::$errOrderNotExist, $validator->errors());
-        }
-        if($rechargeOrder->recharge_str!=$userInfo->openid){
-            return Common::myJson(ErrorCall::$errNotSelfUser, $validator->errors());
-        }
-        if($rechargeOrder->recharge_status!=Charge::ORDER_RECHARGE_STATUS_CHARGING){
-            return Common::myJson(ErrorCall::$errOrderStatus, $validator->errors());
+            return Common::myJson(ErrorCall::$errOrderNotExist);
         }
         $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
             $rechargeOrder->port)->first();
