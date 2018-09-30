@@ -32,7 +32,7 @@
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
             <input id="imageVcode" class="my-input2 borad-text-left" type="text"  placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
-            <img class="identifying-img pull-right img-rounded" onclick="changeVcode()">
+            <img id="identifying-img" class="identifying-img pull-right img-rounded" onclick="changeVcode()">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">

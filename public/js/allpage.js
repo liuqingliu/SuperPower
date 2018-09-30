@@ -21,7 +21,7 @@ function changeVcode() {
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                $('.identifying-img').attr("src",data.result);
+                $('#identifying-img').attr("src",data.result);
             }
         },
     });
