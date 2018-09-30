@@ -69,7 +69,7 @@ function creatCardOrder() {
     }
 }
 
-// //调用微信JS api 支付
+//调用微信JS api 支付
 function jsApiCall($res)
 {
     console.log(4);
@@ -78,7 +78,10 @@ function jsApiCall($res)
         'getBrandWCPayRequest',$res,
         function(answer){
             WeixinJSBridge.log(answer.err_msg);
-            alert(answer.err_code+answer.err_desc+answer.err_msg);
+            alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
+            if(answer.err_msg.contains("ok")){
+               window.location.href = "/electric/cardorderpayanswer";
+            }
         }
     );
 }
