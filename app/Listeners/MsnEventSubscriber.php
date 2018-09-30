@@ -65,7 +65,7 @@ class MsnEventSubscriber
         //如果有设备三块板子都有问题，则报警
         if ($event->board1 == "N" && $event->board2 == "N" && $event->board3 == "N") {
             $errmsg = [
-                "adr" => __METHOD__.",".__FUNCTION__,
+                "adr" => __METHOD__ . "," . __FUNCTION__,
                 "desc" => "有设备三个板子都坏了！！！设备编号：" . $event->devid,
                 "detail" => serialize($event),
             ];
@@ -73,6 +73,15 @@ class MsnEventSubscriber
         }
 
         event(new SendWulian($event->devid, $answer));
+        if ($event->version != Eletric::DEVICE_VERSION) {
+            $upgrade = [
+                "func" => "upgrade",
+                "version" => Eletric::DEVICE_VERSION,
+                "size" => strlen(Eletric::DEVICE_VERSION_BIN),
+                "md5" => md5(Eletric::DEVICE_VERSION_BIN)
+            ];
+            event(new SendWulian($event->devid, $upgrade));
+        }
     }
 
     /**
@@ -133,8 +142,9 @@ class MsnEventSubscriber
         }
         //查询当前设备和port
         DB::beginTransaction();
-        try{
-            $portInfo = EquipmentPort::where("equipment_id", $event->devid)->where("port", $event->port)->lockForUpdate()->first();
+        try {
+            $portInfo = EquipmentPort::where("equipment_id", $event->devid)->where("port",
+                $event->port)->lockForUpdate()->first();
             if ($portInfo->status == Eletric::PORT_STATUS_USE) {
                 $answer["cause"] = "porterr";
                 $answer["cmd"] = "refuse";
@@ -142,7 +152,8 @@ class MsnEventSubscriber
             $orderId = Snowflake::nextId();
             if ($answer["cmd"] == "open") {
                 //创建订单,设置port为不可用
-                $minTime = min(10 * Common::ONE_HOUR_SECONDES, floor($cardInfo->money / $deviceInfo->charging_unit_second));
+                $minTime = min(10 * Common::ONE_HOUR_SECONDES,
+                    floor($cardInfo->money / $deviceInfo->charging_unit_second));
                 $orderInfo = [
                     "order_id" => $orderId,
                     "recharge_str" => $event->cardId,
@@ -161,9 +172,9 @@ class MsnEventSubscriber
             $answer["order"] = "{$orderId}";
             $answer["cash"] = $cardInfo->money;
             DB::commit();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();//事务回滚
-            Log::info(__CLASS__.__FUNCTION__.",event=".serialize($event));
+            Log::info(__CLASS__ . __FUNCTION__ . ",event=" . serialize($event));
         }
 
         event(new SendWulian($event->devid, $answer));//下发3次，直到有回复过来
@@ -177,7 +188,7 @@ class MsnEventSubscriber
     public function card_charge($event)
     {
         DB::beginTransaction();
-        try{
+        try {
             $rechargeOrder = RechargeOrder::where("order_id", $event->order)->where("recharge_status",
                 Charge::ORDER_RECHARGE_STATUS_DEFAULT)->lockForUpdate()->first();
             if ($event->ret == "ok") {
@@ -198,7 +209,7 @@ class MsnEventSubscriber
                 }
             }
             DB::commit();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();//事务回滚
             Log::info(__FUNCTION__ . "-event:" . serialize($event));
         }
@@ -223,7 +234,7 @@ class MsnEventSubscriber
                     DB::transaction(function () use ($rechargeOrder) {
                         $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
                         $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                        $rechargeOrder->recharge_price =  ceil(time() - strtotime($rechargeOrder->created_at))/($rechargeOrder->recharge_unit_second) ;
+                        $rechargeOrder->recharge_price = ceil(time() - strtotime($rechargeOrder->created_at)) / ($rechargeOrder->recharge_unit_second);
                         $rechargeOrder->save();
                         $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
                             $rechargeOrder->port)->first();
@@ -256,7 +267,7 @@ class MsnEventSubscriber
                     dispatch(new CalculateIncome($rechargeOrder->order_id));
                 } catch (\Exception $e) {
                     $errmsg = [
-                        "adr" => __METHOD__.",".__FUNCTION__,
+                        "adr" => __METHOD__ . "," . __FUNCTION__,
                         "desc" => "下位机请求关闭订单，服务器处理失败！！！",
                         "detail" => serialize($event),
                     ];
@@ -295,7 +306,7 @@ class MsnEventSubscriber
     public function open($event)
     {
         DB::beginTransaction();
-        try{
+        try {
             $rechargeOrder = RechargeOrder::where("order_id", $event->order)->lockForUpdate()->first();
             if (empty($rechargeOrder)) {
                 return;
@@ -307,7 +318,7 @@ class MsnEventSubscriber
                     $rechargeOrder->port)->first();
                 $portInfo->status = 0;
                 $portInfo->save();
-            }else{
+            } else {
                 $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_CHARGING;
                 $rechargeOrder->save();
                 $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
@@ -316,10 +327,10 @@ class MsnEventSubscriber
                 $portInfo->save();
             }
             DB::commit();
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();//事务回滚
             $errmsg = [
-                "adr" => __METHOD__.",".__FUNCTION__,
+                "adr" => __METHOD__ . "," . __FUNCTION__,
                 "desc" => "下位机开插座成功，但服务器订单开启失败！！！",
                 "detail" => serialize($event),
             ];
@@ -340,7 +351,7 @@ class MsnEventSubscriber
                 if (!$res) {
                     Log::info(__FUNCTION__ . "-event:" . serialize($event));
                     $errmsg = [
-                        "adr" => __METHOD__.",".__FUNCTION__,
+                        "adr" => __METHOD__ . "," . __FUNCTION__,
                         "desc" => "下位机关闭订单成功，但服务器订单关闭失败！！！",
                         "detail" => serialize($event),
                     ];
@@ -358,7 +369,7 @@ class MsnEventSubscriber
             $res = $deviceInfo->save();
             if (!$res) {
                 $errmsg = [
-                    "adr" => __METHOD__.",".__FUNCTION__,
+                    "adr" => __METHOD__ . "," . __FUNCTION__,
                     "desc" => "更改网络状态失败！！！",
                     "detail" => serialize($event),
                 ];
@@ -371,6 +382,28 @@ class MsnEventSubscriber
                     "remark" => $deviceInfo->province . $deviceInfo->city . $deviceInfo->area . $deviceInfo->street . $deviceInfo->address,
                 ]));//网络更改
             }
+        }
+    }
+
+    public function ota($event)
+    {
+        if($event->version != Eletric::DEVICE_VERSION) {
+            $answer = [
+                "func" => "ota",
+                "ret" => "failed",
+            ];
+            event(new SendWulian($event->devid, $answer));
+        }else{
+            $binStr = Eletric::DEVICE_VERSION_BIN;
+            $answer = [
+                "func" => "ota",
+                "ret" => "ok",
+                "offset" => $event->offset,
+                "size" => $event->size,
+                "data" => substr($binStr, $event->offset, $event->size),
+                "version" => Eletric::DEVICE_VERSION,
+            ];
+            event(new SendWulian($event->devid, $answer));
         }
     }
 
@@ -424,6 +457,11 @@ class MsnEventSubscriber
         $events->listen(
             'App\Events\Msns\changeNet',
             'App\Listeners\MsnEventSubscriber@changeNet'//网络状态
+        );
+
+        $events->listen(
+            'App\Events\Msns\ota',
+            'App\Listeners\MsnEventSubscriber@ota'//升级
         );
     }
 }

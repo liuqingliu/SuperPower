@@ -24,4 +24,7 @@ class Eletric
     //port占用情况
     const PORT_STATUS_DEFAULT = 0;//未使用
     const PORT_STATUS_USE = 1;//使用
+
+    const DEVICE_VERSION = "2";
+    const DEVICE_VERSION_BIN = "ADIOJOSDJFALDJFLISDJF";
 }

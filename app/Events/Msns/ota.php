@@ -11,13 +11,17 @@ namespace App\Events\Msns;
 
 use Illuminate\Queue\SerializesModels;
 
-class sync
+class ota
 {
     use SerializesModels;
 
     public $devid;
 
     public $version;
+
+    public $offset;
+
+    public $size;
 
     /**
      * 创建一个事件实例。
@@ -29,5 +33,7 @@ class sync
     {
         $this->devid = $message["devid"];
         $this->version = $message["version"];
+        $this->offset = $message["offset"];
+        $this->size = $message["size"];
     }
 }
