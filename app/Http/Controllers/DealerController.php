@@ -34,7 +34,7 @@ class DealerController extends Controller
 //        $dayIncome = 122;
 //        $totalUsers = 133;
 //        $totalChargeCount = 143234;
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $dealerInfo = $userInfo->dealer;
         $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
         $dayIncome = 0;
@@ -87,7 +87,7 @@ class DealerController extends Controller
 
     public function dealerDetail()
     {
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $dealerInfo = $userInfo->dealer;
         $dealerInfo->user_id = $userInfo->user_id;
         return view('dealer/dealerDetail', ["dealer_info" => $dealerInfo]);
@@ -101,7 +101,7 @@ class DealerController extends Controller
 
     public function moneyManage()
     {
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $dealInfo = $userInfo->dealer;
         $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
         $totalIncome = $dealInfo->total_income;
@@ -134,7 +134,7 @@ class DealerController extends Controller
                 'status' => 'error'
             ]);
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_type == Common::USER_TYPE_JXS) {
             $deviceInfo = ChargingEquipment::where("equipment_id", $request->devid)->where("openid",
                 $userInfo->openid)->first();
@@ -156,7 +156,7 @@ class DealerController extends Controller
 
     public function revenueSummary()
     {
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $dealerInfo = $userInfo->dealer;
         $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
         $totalUsers = 0;
@@ -227,7 +227,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if($userInfo->user_type==Common::USER_TYPE_ADMIN){
             $equipmentInfoList = ChargingEquipment::where("equipment_id", $request->equipment_id)->get();
         }else{
@@ -249,7 +249,7 @@ class DealerController extends Controller
 
     public function getEquipmentInfoList(Request $request)
     {
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if($userInfo->user_type==Common::USER_TYPE_ADMIN){
             $equipmentInfoList = ChargingEquipment::all();
         }else{
@@ -279,7 +279,7 @@ class DealerController extends Controller
         if ($validator->fails() || (empty($request->phone) && empty($request->user_id) && empty($request->name))) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_type == Common::USER_TYPE_NORMAL || $userInfo->user_type == Common::USER_TYPE_JXS) {
             return Common::myJson(ErrorCall::$errNotPermit);
         }
@@ -326,7 +326,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $sumPrice = 0;
         if ($request->type == Common::SHOW_HUIZONG_TYPE_JXS) {
             //来自其他经销商的收益，直属下级
@@ -384,7 +384,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_type == Common::USER_TYPE_JXS || ($userInfo->user_type == Common::USER_TYPE_SJXS && $request->user_type == Common::USER_TYPE_SJXS)) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
@@ -425,7 +425,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->dealer->password != md5($request->old_password)) {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
@@ -448,7 +448,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->dealer->password != "") {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
@@ -482,7 +482,7 @@ class DealerController extends Controller
         if (empty($equipmentInfo) || $equipmentInfo->equipment_status == $request->equipment_status) {
             return Common::myJson(ErrorCall::$errParams);
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_status != Common::USER_STATUS_DEFAULT || $userInfo->user_type == Common::USER_TYPE_NORMAL) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
@@ -518,7 +518,7 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_status != Common::USER_STATUS_DEFAULT || $userInfo->user_type == Common::USER_TYPE_NORMAL) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }

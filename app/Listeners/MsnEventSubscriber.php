@@ -22,6 +22,7 @@ use App\Models\Logic\Eletric;
 use App\Models\Logic\Snowflake;
 use App\Models\RechargeOrder;
 use App\Models\User;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -364,6 +365,13 @@ class MsnEventSubscriber
     public function changeNet($event)
     {
         $deviceInfo = ChargingEquipment::where("equipment_id", $event->devid)->first();
+        if($deviceInfo["net_status"]==0 && $event->netStatus !="online") {
+            return;
+        }
+        if($deviceInfo["net_status"]==1 && $event->netStatus == "online") {
+            return;
+        }
+
         if (!empty($deviceInfo)) {
             $deviceInfo["net_status"] = $event->netStatus == "online" ? 0 : "1";
             $res = $deviceInfo->save();
@@ -387,14 +395,14 @@ class MsnEventSubscriber
 
     public function ota($event)
     {
-        if($event->version != Eletric::DEVICE_VERSION) {
+        $binStr = Eletric::DEVICE_VERSION_BIN;
+        if($event->version != Eletric::DEVICE_VERSION || $event->size+$event->offset > strlen($binStr)) {
             $answer = [
                 "func" => "ota",
                 "ret" => "failed",
             ];
             event(new SendWulian($event->devid, $answer));
         }else{
-            $binStr = Eletric::DEVICE_VERSION_BIN;
             $answer = [
                 "func" => "ota",
                 "ret" => "ok",

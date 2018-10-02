@@ -65,7 +65,7 @@ class ElectricController extends Controller
     public function recharge()
     {
         //如果没有充电的，不允许进来 todo
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $rechargeInfo = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if(empty($rechargeInfo)) {//这里其实需要跳转走
             return view('electric/recharge', [
@@ -101,8 +101,7 @@ class ElectricController extends Controller
                 'status' => 'error'
             ]);
         }
-//        $userInfo = session("user_info");
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $rechargeOrder = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status",
             Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if (!empty($rechargeOrder)) {
@@ -150,7 +149,7 @@ class ElectricController extends Controller
 
     public function rechargelog()
     {
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $rechareList = RechargeOrder::where("recharge_str", $userInfo->openid)->get();
         $res = [];
         foreach ($rechareList as $recharge) {
@@ -265,7 +264,7 @@ class ElectricController extends Controller
         }
 //        $userInfo = session("user_info");//是否正常登陆过
         $deviceInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_money < 200 || $userInfo->user_money < floor(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100) {
             return Common::myJson(ErrorCall::$errUserMoneyNotEnough);
         }
@@ -325,7 +324,7 @@ class ElectricController extends Controller
     //关闭插座
     public function closeSocket()
     {
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $rechargeOrder = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if (empty($rechargeOrder)) {
             return Common::myJson(ErrorCall::$errOrderNotExist);

@@ -25,23 +25,6 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
-        $userInfo = User::find(1);
-        $app = app('wechat.official_account');
-        $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
-        return view('user/center',[
-            "user_info" => Common::getNeedObj([
-                "phone",
-                "headimgurl",
-                "nickname",
-                "user_money",
-                "user_id",
-                "user_type",//0 普通， 1普通經銷商， 2超級經銷商， 3廠商
-                "api_token"
-            ], $userInfo),
-            "wxjssdk" => $wxJssdkconfig,
-            "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
-        ]);
-
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
@@ -73,7 +56,6 @@ class UserController extends Controller
             session([Common::SESSION_KEY_USER => $userInfoReal]);
             $userInfo = $userInfoReal;
         }
-        $userInfo = User::find(1);
         $app = app('wechat.official_account');
         $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
 
@@ -94,8 +76,7 @@ class UserController extends Controller
 
     public function detail()
     {
-//        $userInfo = session(Common::SESSION_KEY_USER);
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         return view('user/detail',[
             "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time","headimgurl"],$userInfo)
         ]);
@@ -103,8 +84,7 @@ class UserController extends Controller
 
     public function bindphone()
     {
-//        $userInfo = session(Common::SESSION_KEY_USER);
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $outUserInfo = [
             "user_info" => Common::getNeedObj(["openid","phone","user_type"], $userInfo),
         ];
@@ -117,8 +97,7 @@ class UserController extends Controller
 
     public function order(Request $request)
     {
-//        $userInfo = session(Common::SESSION_KEY_USER);
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('user/order',[
@@ -131,8 +110,7 @@ class UserController extends Controller
 
     public function orderanswser(Request $request)
     {
-//        $userInfo = session(Common::SESSION_KEY_USER);
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|string|max:30|min:16',
         ]);
@@ -164,7 +142,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
 //        if ($userInfo->user_type!=Common::USER_TYPE_NORMAL) {
 //            if (empty($request->user_password)) {
 //                return Common::myJson(ErrorCall::$errParams, $validator->errors());
@@ -191,7 +169,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = User::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
         //可以充值了？就需要判断提交上来的是否有效
         $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
         $extends = "";
