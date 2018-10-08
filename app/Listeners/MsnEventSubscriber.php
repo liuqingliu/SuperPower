@@ -72,17 +72,7 @@ class MsnEventSubscriber
             ];
             Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
         }
-
         event(new SendWulian($event->devid, $answer));
-        if ($event->version != Eletric::DEVICE_VERSION) {
-            $upgrade = [
-                "func" => "upgrade",
-                "version" => Eletric::DEVICE_VERSION,
-                "size" => strlen(Eletric::DEVICE_VERSION_BIN),
-                "md5" => md5(Eletric::DEVICE_VERSION_BIN)
-            ];
-            event(new SendWulian($event->devid, $upgrade));
-        }
     }
 
     /**
@@ -107,7 +97,23 @@ class MsnEventSubscriber
                     2) . Common::getLeftTime($order->recharge_total_time, $order->created_at);
             $answer["data"] .= $tmp;
         }
+        //        $fp = fopen('somefile.txt', 'r');
+
+// read some data
+// move back to the beginning of the file
+//// same as rewind($fp);
+//        fseek($fp, 2);
+//        $ss = fread($fp,5);
         event(new SendWulian($event->devid, $answer));
+        if ($event->version != Eletric::DEVICE_VERSION) {
+            $upgrade = [
+                "func" => "upgrade",
+                "version" => (int)Eletric::DEVICE_VERSION,
+                "size" => (int)Eletric::DEVICE_VERSION_SIZE,
+                "md5" => Eletric::DEVICE_VERSION_MD5
+            ];
+            event(new SendWulian($event->devid, $upgrade));
+        }
     }
 
     /**
@@ -395,8 +401,7 @@ class MsnEventSubscriber
 
     public function ota($event)
     {
-        $binStr = Eletric::DEVICE_VERSION_BIN;
-        if($event->version != Eletric::DEVICE_VERSION || $event->size+$event->offset > strlen($binStr)) {
+        if($event->version != Eletric::DEVICE_VERSION || $event->size+$event->offset >  Eletric::DEVICE_VERSION_SIZE) {
             $answer = [
                 "func" => "ota",
                 "ret" => "failed",
@@ -408,8 +413,8 @@ class MsnEventSubscriber
                 "ret" => "ok",
                 "offset" => $event->offset,
                 "size" => $event->size,
-                "data" => substr($binStr, $event->offset, $event->size),
-                "version" => Eletric::DEVICE_VERSION,
+                "data" => substr(Eletric::DEVICE_VERSION_BIN, $event->offset, $event->size),
+                "version" => (integer)(Eletric::DEVICE_VERSION),
             ];
             event(new SendWulian($event->devid, $answer));
         }

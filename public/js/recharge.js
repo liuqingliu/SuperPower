@@ -1,6 +1,6 @@
 function closesocket(orderid) {
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/electric/closesocket",
         data: {"order_id":orderid},
         dataType: "json",

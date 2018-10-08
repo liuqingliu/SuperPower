@@ -29,7 +29,7 @@ $(document).ready(function () {
 
 function opensocket(equipment_id) {
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/electric/opensocket",
         data: {"equipment_id":equipment_id,"port":key,"recharge_type":recharge_type},
         dataType: "json",

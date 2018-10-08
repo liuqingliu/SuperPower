@@ -64,16 +64,14 @@ class ElectricController extends Controller
 
     public function recharge()
     {
-        //如果没有充电的，不允许进来 todo
         $userInfo = session(Common::SESSION_KEY_USER);
         $rechargeInfo = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if(empty($rechargeInfo)) {//这里其实需要跳转走
-            return view('electric/recharge', [
-                "unit_hour" => '',
-//                "created_at" => '',
-                "socket_info" => '',
-                "charge_time" => '',
-//                "now_time" => '',
+            return redirect('/prompt')->with([
+                'message' => "没有正在充电的订单",
+                'url' => '/user/center',
+                'jumpTime' => 3,
+                'status' => 'error'
             ]);
         }
         $chargingEquipment = $rechargeInfo->chargingEquipment;
