@@ -23,7 +23,7 @@ function creatOrder() {
             data: {"pay_money_type":recharge_money},
             dataType: "json",
             success: function(data){
-                console.log(data.errno);
+                console.log(data);
                 callpay(data.result);
             },
         });
