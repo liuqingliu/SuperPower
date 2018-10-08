@@ -132,13 +132,13 @@
         <div class="modal" id="bindbankdialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div style="min-height: 19rem;" class="center-dialog">
                 <div style="min-height:11rem;width: 100%;padding: 1.5rem;margin-bottom: 3.5rem;" >
-                    <p class="borad-text-left">为保障您的资金安全，请先设置提现密码。必须包含大小写字母及数字。</p>
+                    <p class="borad-text-left">需先绑定银行卡才能进行提现操作。提现成功后，资金直接转入您绑定的银行卡。</p>
                     <div style="width: 100%;height: 1px;background:url('/images/p16_06.png');position: absolute;bottom: 3.535rem;"></div>
                     <div style="height:3.4375rem;width: 100%; line-height: 3.4375rem;position:absolute;bottom: 0;">
                         <div data-dismiss="modal" class="pull-left" style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">取消
                             <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
                         </div>
-                        <div class="pull-right" onclick="" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
+                        <a class="pull-right" href="{{route('bindBank')}}" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">现在绑定</a>
                     </div>
                 </div>
             </div>

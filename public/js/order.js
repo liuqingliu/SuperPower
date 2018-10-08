@@ -31,7 +31,6 @@ function creatOrder() {
      Toast("请选择充值金额",2000);
     }
 }
-
 // //调用微信JS api 支付
 function jsApiCall($res)
 {
