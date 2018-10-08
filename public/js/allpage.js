@@ -21,23 +21,49 @@ function changeVcode() {
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                $('.identifying-img').attr("src",data.result);
+                $('#identifying-img').attr("src",data.result);
             }
         },
     });
 }
+$("#getPhoneVcode").click(function () {
+    if ($('#imageVcode').val()==''){
+        Toast("请输入验证码");
+        return;
+    }
+    // if ($('#phonenum').val().length!=11){
+    //     Toast("请输入正确的手机号码");
+    //     return;
+    // }
+    $.ajax({
+        type: 'GET',
+        url: "/api/sendMessage",
+        data: {"user_phone":'18081884874'//$('#phonenum').val()
+            ,"captcha":$('#imageVcode').val()},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                Toast("验证码已发送");
+                settime();
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+});
+
 //获取验证码倒计时
 var countdown=120;
 var _generate_code = $("#getPhoneVcode");
 function settime() {
 
     if (countdown == 0) {
-        _generate_code.attr("disabled",true);
-        _generate_code.val("获取验证码");
+        _generate_code.attr("disabled",false);
+        _generate_code.val("获取");
         countdown = 120;
         return false;
     } else {
-        _generate_code.attr("disabled", false);
+        _generate_code.attr("disabled", true);
         _generate_code.val(countdown + "s");
         countdown--;
     }

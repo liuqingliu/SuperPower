@@ -1,9 +1,11 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/recharge.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/recharge.js?v=1.0')}}"></script>
 @endsection
 @section('title', '正在充电')
 @section('system', '个人中心')
+@section('dialogMsg', '已停止充电，断电操作稍有延迟，请注意安全！')
+@section('buttonText', '知道了')
 @section('content')
     <section class="header">
         @component('layouts._userheader')
@@ -21,10 +23,10 @@
 						<img src="{{URL::asset('images/p16_02.png')}}" class="content-img"/>
                         {{$socket_info}}
 					</span>
-                <span class="content2">
-						<img src="{{URL::asset('images/p16_03.png')}}" class="content-img"/>
-                    {{$charge_time}}
-					</span>
+                <div class="content2"><img src="{{URL::asset('images/p16_03.png')}}"   class="content-img"/>
+                <span id="chargeTime" data-chargetime ="{{$charge_time}}" >
+                </span>
+                </div>
             </div>
             <div class="recharge-container2 pull-right">
                 <div class="pull-left" style="height: 9.5rem; padding-bottom: 1rem;padding-top: 1rem;">
@@ -60,4 +62,7 @@
             </div>
         </div>
     </div>
+    @component('layouts._normaldialog')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
 @endsection

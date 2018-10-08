@@ -23,7 +23,7 @@ function creatOrder() {
             data: {"pay_money_type":recharge_money},
             dataType: "json",
             success: function(data){
-                console.log(data.errno);
+                console.log(data);
                 callpay(data.result);
             },
         });
@@ -41,7 +41,12 @@ function jsApiCall($res)
         'getBrandWCPayRequest',$res,
         function(answer){
             WeixinJSBridge.log(answer.err_msg);
-            alert(answer.err_code+answer.err_desc+answer.err_msg);
+            console.log(answer);
+            // alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
+            // if(answer.err_msg.contains(":ok")){
+            //     alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
+            //     window.location.href = "/user/orderanswser";
+            // }
         }
     );
 }
