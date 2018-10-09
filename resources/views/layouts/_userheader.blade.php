@@ -1,5 +1,5 @@
 <div class="text-center title-container">
-    <a href="javascript:history.back(-1);" class="title-back">
+    <a href="javascript:history.go(-1);" class="title-back">
         <img class="title-back-img" src="{{URL::asset('images/p2_01.png')}}" alt="返回">
         <span class="title-back-text">返回</span>
     </a>

@@ -28,6 +28,7 @@
         <div class="line"></div>
         <div>
             <ul class="recharge-ul">
+                <input type="hidden" name="_token" value="{{csrf_token()}}" />
                 @foreach($pay_money_list as $pament_money)
                 <li class="col-xs-4 col-md-4 col-lg-4 recharge-block">
                     <div class="money-block" data-real_price = "{{$pament_money["real_price"]}}">

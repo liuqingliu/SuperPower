@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/bindphone.js?1.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/bindphone.js?1.3')}}"></script>
     {{--@if(($user_info->user_type!=0)&&(!$user_info->is_set_pwd))--}}
         {{--<script type="text/javascript">--}}
             {{--$(document).ready(function () {--}}
@@ -14,7 +14,8 @@
 {{--@section('buttonText',"去设置")--}}
 {{--@endif--}}
 @endsection
-
+@section('dialogMsg',"您已成功绑定手机号")
+@section('buttonText',"知道了")
 @section('title', '绑定手机号')
 @section('system', '个人中心')
 @section('content')
@@ -27,8 +28,6 @@
     <strong>Whoops!</strong> Something went wrong!
 @endcomponent
 {{--@if($user_info->user_type==0)--}}
-@section('dialogMsg',"您已成功绑定手机号")
-@section('buttonText',"知道了")
 <section class="body1">
     <ul class="board1">
         <li class="borad-heigh">

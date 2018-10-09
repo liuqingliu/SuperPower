@@ -53,7 +53,6 @@ Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.logi
     Route::post('/electric/stopChargingOrder', 'ElectricController@stopChargingOrder')->name('stopchargingorder');//停止充电
     Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
     Route::post('/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
-
     //errors
     Route::get('/prompt','PromptController@index')->name("prompt");
 });

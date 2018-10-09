@@ -9,8 +9,9 @@ function getPhoneVcode() {
         Toast("请输入正确的手机号码");
         return;
     }
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/api/sendMessage",
         data: {"user_phone":$('#phonenum').val(),"captcha":$('#imageVcode').val()},
         dataType: "json",
@@ -35,7 +36,7 @@ function bindPhone() {
     }
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: "/user/updateUserPhone",
         data: {"user_phone":$('#phonenum').val(),"verifyCode":$('#phoneVcode').val()},
         dataType: "json",
@@ -49,5 +50,5 @@ function bindPhone() {
     });
 }
 $('.dialog-single-button').click(function () {
-    history.back(-1);
+    history.go(-1);
 });
