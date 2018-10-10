@@ -50,7 +50,7 @@
     {{--confirmDialog--}}
     <div class="modal" id="confirmDialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div style="min-height: 12.5rem;" class="center-dialog">
-            <div style="min-height:9rem;width: 100%;padding: 1.5rem;margin-bottom: 3.5rem;" >
+            <div style="min-height:9rem;width: 100%;padding: 10%;margin-bottom: 3.5rem;" >
                 <p class="borad-text-left" id="cardInfo">确定要停止充电吗？</p>
             </div>
             <div style="width: 100%;height: 1px;background:url('/images/p16_06.png');position: absolute;bottom: 3.535rem;"></div>

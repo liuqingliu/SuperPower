@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?v=1.4')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?v=1.5')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js?')}}" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         wx.config(<?php echo $wxjssdk; ?>);
@@ -97,7 +97,7 @@
                 <p class="borad-text-left" id="cardInfo"></p>
                 <p class="borad-text-left" style="margin-bottom: 0;" id="moneyInfo"></p>
             </div>
-            <div style="width: 100%;height: 1px;background:url('/images/p16_06.png');position: absolute;bottom: 3.535rem;"></div>
+            <div style="width:100%;height: 1px;background:url('/images/p16_06.png');position: absolute;bottom: 3.535rem;"></div>
             <div style="height:3.4375rem;width: 100%; line-height: 3.4375rem;position:absolute;bottom: 0;">
                 <div data-dismiss="modal" class="pull-left" style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">取消
                     <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>

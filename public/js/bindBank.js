@@ -11,3 +11,10 @@ function confirmInfo() {
     $('#moneyInfo').text('充值金额：'+parseFloat(recharge_money).toFixed(2)+'元')
     $('#confirmDialog').modal('show')
 }
+function confirmedBind() {
+    $('#confirmDialog').modal('hide')
+    bindBank();
+}
+function bindBank() {
+    
+}

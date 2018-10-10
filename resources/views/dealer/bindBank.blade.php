@@ -51,7 +51,7 @@
         <div class="modal" id="confirmDialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div style="min-height: 12.5rem;" class="center-dialog">
                 <div style="min-height:9rem;width: 100%;padding: 1.5rem;margin-bottom: 3.5rem;" >
-                    <p class="borad-text-left" id="cardNUm"></p>
+                    <p class="borad-text-left" id="cardNum"></p>
                     <p class="borad-text-left" id="userName"></p>
                     <p class="borad-text-left" style="margin-bottom: 0;" id="bankName"></p>
                 </div>
@@ -60,7 +60,7 @@
                     <div data-dismiss="modal" class="pull-left" style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">取消
                         <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
                     </div>
-                    <div class="pull-right" onclick="confirmedRecharge()" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
+                    <div class="pull-right" onclick="confirmedBind()" style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定</div>
                 </div>
             </div>
         </div>
