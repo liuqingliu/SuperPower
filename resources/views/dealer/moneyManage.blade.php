@@ -46,6 +46,14 @@
             </li>
         </a>
         <li class="line"></li>
+        <a href="{{route("bindBank")}}">
+            <li class="borad-heigh">
+                <img class="borad-img pull-left img-rounded" src="../images/pm9_02.png" alt="收支明细">
+                <span class="borad-text-left">绑定银行</span>
+                <img class="img-getin pull-right img-rounded" src="../images/p15_02.png">
+            </li>
+        </a>
+        <li class="line"></li>
         <a href="{{route("dealer_incomeexpense")}}">
             <li class="borad-heigh">
                 <img class="borad-img pull-left img-rounded" src="../images/pm9_02.png" alt="收支明细">

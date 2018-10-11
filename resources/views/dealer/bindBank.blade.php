@@ -1,5 +1,7 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/bindBank.js?1.0')}}"></script>
+@endsection
 @section('title', '绑定银行卡')
 @section('system', '运营商管理系统')
 @section('content')
@@ -38,7 +40,8 @@
             <li class="borad-heigh">
                 <span class="borad-text-left">手机验证码</span>
                 <input class="my-input7 borad-text-left" type="password" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>18)value=value.slice(0,18)">
-                <span class="text-45-red pull-right">获取</span>
+                <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()"
+                       class="text-45-red pull-right vcode-button" value="获取">
             </li>
         </ul>
         <div align="center" style="margin-top:1.5rem; width: 100%;">
@@ -67,7 +70,7 @@
     </section>
 
 
-    <section class="body2">
+    <section class="body2" style="display: none">
         <div class="tip-container" style="margin-top: 1rem;" >
             <p class="text-40-b3" style="margin-bottom: 1rem;">您已绑定的银行卡</p>
         </div>

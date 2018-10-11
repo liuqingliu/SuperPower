@@ -12,6 +12,7 @@ function Toast(msg,duration){
         setTimeout(function() { document.body.removeChild(m) }, d * 1000);
     }, duration);
 }
+$.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
 //获取图片验证码
 function changeVcode() {
     $.ajax({
@@ -26,19 +27,20 @@ function changeVcode() {
         },
     });
 }
-$("#getPhoneVcode").click(function () {
+//获取短息验证码（传电话）
+function getVcodewihtPhone(){
     if ($('#imageVcode').val()==''){
         Toast("请输入验证码");
         return;
     }
-    // if ($('#phonenum').val().length!=11){
-    //     Toast("请输入正确的手机号码");
-    //     return;
-    // }
+    if ($('#phonenum').val().length!=11){
+        Toast("请输入正确的手机号码");
+        return;
+    }
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/api/sendMessage",
-        data: {"user_phone":'18081884874'//$('#phonenum').val()
+        data: {"user_phone":$('#phonenum').val()
             ,"captcha":$('#imageVcode').val()},
         dataType: "json",
         success: function(data){
@@ -50,7 +52,28 @@ $("#getPhoneVcode").click(function () {
             }
         },
     });
-});
+}
+//获取短息验证码（不传电话）
+function getVcodewihtoutPhone(){
+    if ($('#imageVcode').val()==''){
+        Toast("请输入验证码");
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url: "/api/sendMessage",
+        data: {"captcha":$('#imageVcode').val()},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                Toast("验证码已发送");
+                settime();
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
 
 //获取验证码倒计时
 var countdown=120;

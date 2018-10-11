@@ -39,7 +39,7 @@
         <li class="borad-heigh">
             <span class="borad-text-left">手机号码</span>
             <input id="phonenum" class="my-input1 borad-text-left" type="number" placeholder="请输您的手机号" oninput="if(value.length>11)value=value.slice(0,11)">
-            <input id="getPhoneVcode" type="button" onclick="getPhoneVcode()" class="text-45-red pull-right vcode-button" value="获取">
+            <input id="getPhoneVcode" type="button" onclick="getVcodewihtPhone()" class="text-45-red pull-right vcode-button" value="获取">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">

@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psManage.js?v=2.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psManage.js?v=2.1')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
@@ -89,7 +89,7 @@
         <li class="borad-heigh">
             <span class="borad-text-left">手机验证码</span>
             <input id="input7" class="my-input7 borad-text-left" type="number" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>4)value=value.slice(0,4)">
-            <input id="getPhoneVcode" type="button" class="getvcode-green pull-right vcode-button" value="获取">
+            <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()" class="getvcode-green pull-right vcode-button" value="获取">
         </li>
     </ul>
     <div class="text-45-b3 tip-container" >

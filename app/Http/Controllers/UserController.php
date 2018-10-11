@@ -25,6 +25,9 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
+//        Session()->flush();
+//        echo "1";
+//        return;
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){

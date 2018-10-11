@@ -1,3 +1,5 @@
+changeVcode();
+
 function confirmInfo() {
     if ($('#cardNum').val().length<11){
         Toast('请输入电卡号',2000);

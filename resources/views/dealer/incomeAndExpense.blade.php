@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', '电站管理')
+@section('title', '收支明细')
 @section('system', '运营商管理系统')
 @section('content')
 

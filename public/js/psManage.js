@@ -127,7 +127,7 @@ function activePS() {
     $('.body2-step3').hide();
     $('.body1-step1').show();
     $('.body1-step2').hide();
-    $('ul a').remove();
+    $('.body2-step3 ul a').remove();
 }
 // 点击电站查询
 function queryPS() {
@@ -139,7 +139,7 @@ function queryPS() {
     $('.body2-step3').hide();
     $('.body1-step1').hide();
     $('.body1-step2').hide();
-    $('ul a').remove();
+    $('.body2-step3 ul a').remove();
 }
 //跳到激活电站第二步
 $('#activePS1').click(function () {
@@ -351,5 +351,5 @@ function backToQuery() {
     $('.body2-step3').hide();
     $('.body1-step1').hide();
     $('.body1-step2').hide();
-    $('ul a').remove();
+    $('.body2-step3 ul a').remove();
 }

@@ -1,7 +1,7 @@
 
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.2')}}"></script>
     <script type="text/javascript">
         console.log('is_bind_phone:'+{{$is_bind_phone}});
         console.log('is_set_password:'+{{$is_set_password}});
@@ -36,6 +36,9 @@
 @section('content')
 
 <section class="header">
+    <input id="isbindphone" style="display: none" value="{{$is_bind_phone}}">
+    <input id="isbindbank" style="display: none" value="{{$is_bind_bank}}">
+    <input id="issetpassword" style="display: none" value="{{$is_set_password}}">
     <div style="height:14.6875rem;background: #F15A24;">
         @component('layouts._dealerheader')
             <strong>Whoops!</strong> Something went wrong!
@@ -65,7 +68,8 @@
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
             <input class="my-input2 borad-text-left" type="number" name="identifying-code" placeholder="请输验证码" oninput="if(value.length>6)value=value.slice(0,6)">
-            <a href="#" onclick="" class="get-identifying-code pull-right">获取</a>
+            <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()"
+                   class="text-45-red pull-right vcode-button" value="获取">
         </li>
     </ul>
 </section>
@@ -96,7 +100,7 @@
                 <li class="dialog-li">
                     <input id="phonenum" class="input-dialog borad-text-left" type="number" placeholder="请输您的手机号"
                            oninput="if(value.length>11)value=value.slice(0,11)">
-                    <input id="getPhoneVcode" type="button" onclick="getPhoneVcode()"
+                    <input id="getPhoneVcode" type="button" onclick="getVcodewihtPhone()"
                            class="text-45-red pull-right vcode-button" value="获取">
                 </li>
                 <li class="line"></li>
@@ -143,7 +147,7 @@
                      style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">取消
                     <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
                 </div>
-                <div class="pull-right" onclick=""
+                <div class="pull-right" onclick="setPassword()"
                      style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定
                 </div>
             </div>
@@ -152,8 +156,8 @@
 </div>
 {{--bindbankdialog--}}
 <div class="modal" id="bindbankdialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div style="min-height: 19rem;" class="center-dialog">
-        <div style="min-height:11rem;width: 100%;margin-bottom: 3.5rem;">
+    <div style="min-height: 7rem;" class="center-dialog">
+        <div style="min-height:7rem;width: 100%;margin-bottom: 3.5rem;">
             <p class="borad-text-left" style="margin:1.5rem;">需先绑定银行卡才能进行提现操作。提现成功后，资金直接转入您绑定的银行卡。</p>
             <div style="width: 100%;height: 1px;background:url('/images/p16_06.png');position: absolute;bottom: 3.535rem;"></div>
             <div style="height:3.4375rem;width: 100%; line-height: 3.4375rem;position:absolute;bottom: 0;">
