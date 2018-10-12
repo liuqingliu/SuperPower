@@ -25,6 +25,9 @@ class UserController extends Controller
 {
     public function center(Request $request)
     {
+//        Session()->flush();
+//        echo "1";
+//        return;
         $wxUser = session('wechat.oauth_user');
         $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
@@ -60,15 +63,7 @@ class UserController extends Controller
         $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
 
         return view('user/center',[
-            "user_info" => Common::getNeedObj([
-                "phone",
-                "headimgurl",
-                "nickname",
-                "user_money",
-                "user_id",
-                "user_type",
-                "api_token"
-            ], $userInfo),
+            "user_info" => $userInfo,
             "wxjssdk" => $wxJssdkconfig,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
         ]);

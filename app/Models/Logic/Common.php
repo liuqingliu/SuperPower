@@ -76,13 +76,7 @@ class Common
 
     public static function getNeedObj($needObj, $org)
     {
-        $res = $org;
-        foreach ($org->toArray() as $key => $value) {
-            if(!in_array($key, $needObj)) {
-                unset($res->$key);
-            }
-        }
-        return $res;
+        return $org;
     }
 
     public static function getCost($unitPrice, $time)
@@ -114,4 +108,9 @@ class Common
         return self::getPrexZero($leftTime);
     }
 
+    public static function isPhone($phone)
+    {
+        $preg =  '/^(13[0-9]|14[579]|15[0-3,5-9]|166|17[0135678]|18[0-9])\\d{8}$/';
+        return (bool)preg_match($preg, $phone);
+    }
 }

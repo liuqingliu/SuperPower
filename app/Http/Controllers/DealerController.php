@@ -29,13 +29,16 @@ class DealerController extends Controller
 {
     public function center()
     {
-//        $totalIncome = Dealer::find(1)->total_income;
-//        //今日收益需要实时计算吗？ todo 询问
-//        $dayIncome = 122;
-//        $totalUsers = 133;
-//        $totalChargeCount = 143234;
         $userInfo = session(Common::SESSION_KEY_USER);
         $dealerInfo = $userInfo->dealer;
+        if(empty($dealerInfo)){
+            return redirect('/prompt')->with([
+                'message' => "非经销商禁止入内",
+                'url' => '/user/center',
+                'jumpTime' => 3,
+                'status' => 'error'
+            ]);
+        }
         $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
         $dayIncome = 0;
         $totalUsers = 0;
@@ -95,7 +98,8 @@ class DealerController extends Controller
 
     public function incomeAndExpense()
     {
-        $cashLogList = User::find("1")->cashLogs;
+        $userInfo = session(Common::SESSION_KEY_USER);
+        $cashLogList = $userInfo->cashLogs;
         return view('dealer/incomeAndExpense', ['cash_log' => $cashLogList]);
     }
 
@@ -176,7 +180,8 @@ class DealerController extends Controller
 
     public function takeOutMoney()
     {
-        $dealerInfo = Dealer::find(1);
+        $userInfo = session(Common::SESSION_KEY_USER);
+        $dealerInfo = $userInfo->dealer;
         return view('dealer/takeOutMoney', [
             "income_withdraw" => $dealerInfo->income_withdraw,
             "is_set_password" => !empty($dealerInfo->password),
@@ -429,7 +434,7 @@ class DealerController extends Controller
         if ($userInfo->dealer->password != md5($request->old_password)) {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
-        $userInfo->password = $request->password;
+        $userInfo->password = md5($request->password);
         $res = $userInfo->save();
         if ($res) {
             return Common::myJson(ErrorCall::$errSucc);
@@ -443,17 +448,18 @@ class DealerController extends Controller
         $validator = Validator::make($request->all(), [
             'password' => ['required', 'confirmed'],//不为空,两次密码是否相同
             'password_confirmation' => ['required', "same:password"],//不为空,两次密码是否相同
-            'verifyCode' => 'required|verify_code',
+//            'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $userInfo = session(Common::SESSION_KEY_USER);
-        if ($userInfo->dealer->password != "") {
+        $dealer = $userInfo->dealer;
+        if ($dealer->password != "") {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
-        $userInfo->password = $request->password;
-        $res = $userInfo->save();
+        $dealer->password = md5($request->password);
+        $res = $dealer->save();
         if ($res) {
             return Common::myJson(ErrorCall::$errSucc);
         } else {
