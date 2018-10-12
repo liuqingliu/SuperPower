@@ -1,7 +1,7 @@
 
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.2')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.3')}}"></script>
     <script type="text/javascript">
         console.log('is_bind_phone:'+{{$is_bind_phone}});
         console.log('is_set_password:'+{{$is_set_password}});
@@ -27,10 +27,17 @@
                 $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
             });
         </script>
+    @else
+        <script type="text/javascript">
+            $(document).ready(function () {
+                changeVcode();
+            });
+        </script>
     @endif
 @endsection
 
-{{--is_set_password,is_bind_phone,is_bind_bank--}}
+@section('dialogMsg', '已提交。根据银行处理时间不同，资金约在1-2个工作日内转入您绑定的银行卡。')
+@section('buttonText', '好的')
 @section('title', '我要提现')
 @section('system', '运营商管理系统')
 @section('content')
@@ -57,17 +64,23 @@
     <ul class="board1">
         <li class="borad-heigh">
             <span class="borad-text-left">提现金额</span>
-            <input class="my-input1 borad-text-left" type="number" name="money" placeholder="请输提现金额" oninput="if(value.length>9)value=value.slice(0,9)">
+            <input class="my-input1 borad-text-left" type="number" id="money" placeholder="请输提现金额" oninput="if(value.length>9)value=value.slice(0,9)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">提现密码</span>
-            <input class="my-input1 borad-text-left" type="password" name="password" placeholder="请输提现密码" oninput="if(value.length>18)value=value.slice(0,18)">
+            <input class="my-input1 borad-text-left" type="password" id="password" placeholder="请输提现密码" oninput="if(value.length>18)value=value.slice(0,18)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
-            <input class="my-input2 borad-text-left" type="number" name="identifying-code" placeholder="请输验证码" oninput="if(value.length>6)value=value.slice(0,6)">
+            <input id="imageVcode" class="my-input2 borad-text-left" type="text"  placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <img id="identifying-img" class="identifying-img pull-right img-rounded" onclick="changeVcode()">
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">手机验证码</span>
+            <input class="my-input7 borad-text-left" type="number" id="verifyCode" placeholder="请输验证码" oninput="if(value.length>6)value=value.slice(0,6)">
             <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()"
                    class="text-45-red pull-right vcode-button" value="获取">
         </li>
@@ -75,12 +88,12 @@
 </section>
 <section class="footer">
     <div align="center" style="margin-top:3rem;">
-        <a class="button-style2">确定</a>
+        <a class="button-style2" onclick="doCarry()">确定</a>
     </div>
     <div align="center" style="margin-top:2.5rem;">
-        <a href="#" onclick="" class="mini-text">我忘了提现密码</a>
+        <a href="{{route("dealer_resetPassword")}}" class="mini-text">我忘了提现密码</a>
     </div>
-    <div align="center" >
+    <div align="center" style="display: none">
         <a href="#" onclick="" class="mini-text">更换账户绑定手机号</a>
     </div>
 </section>
@@ -171,4 +184,7 @@
         </div>
     </div>
 </div>
+@component('layouts._normaldialog')
+    <strong>Whoops!</strong> Something went wrong!
+@endcomponent
 @endsection

@@ -42,7 +42,8 @@ function bindPhone() {
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                Toast("绑定电话成功");
+                Toast("绑定电话成功",2000);
+                changeVcode();
                 $('#bindphonedialog').modal('hide');
                 if (!$('#issetpassword').val()){
                     $('#passworddialog').modal({backdrop:'static',keyboard:false});
@@ -55,3 +56,34 @@ function bindPhone() {
         },
     });
 }
+function doCarry() {
+    if ($('#verifyCode').val()==''){
+        Toast("请输入验证码");
+        return;
+    }
+    if ($('#password').val()==''){
+        Toast("请输入提现密码");
+        return;
+    }
+    if ($('#money').val()==''){
+        Toast("请输入提现金额");
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url: "/dealer/doTixian",
+        data: {"money":$('#money').val(),"password":$('#password').val(),"verifyCode":$('#verifyCode').val()},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                $('#myNormalDialog').modal({backdrop:'static',keyboard:false});
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
+$(".dialog-single-button").click(function () {
+    $('#myNormalDialog').modal('hide');
+    history.go(-1);
+});
