@@ -32,11 +32,11 @@ class ErrorCall
     public static $errPortUserd = ["errno" => 19, "errmsg" => "端口已被占用"];
     public static $errPortInvalid = ["errno" => 20, "errmsg" => "无效端口"];
     public static $errOrderStatus = ["errno" => 21, "errmsg" => "订单状态有误"];
-
     //dealer
     public static $errCardNotExist = ["errno" => 22, "errmsg" => "电卡不存在"];
     public static $errNotPermit = ["errno" => 23, "errmsg" => "权限不足"];
     public static $errNotEnough = ["errno" => 24, "errmsg" => "余额不足，不能提现"];
     public static $notFindUser = ["errno" => 25, "errmsg" => "用户信息不存在"];
+    public static $errPasswordExist = ["errno" => 26, "errmsg" => "密码已存在"];
 
 }

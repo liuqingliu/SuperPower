@@ -46,7 +46,6 @@ class ApiController extends Controller
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_phone' => ['required', new ValidatePhoneRule],//,"exists:users,phone"
             'captcha' => 'required|captcha',
 //            'ckey' => 'required',
 //            'captcha' => 'required|captcha:'.$request->ckey
@@ -54,6 +53,19 @@ class ApiController extends Controller
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        if (!isset($request->user_phone)) {
+            $userInfo = session(Common::SESSION_KEY_USER);
+            if (!empty($userInfo->phone)) {
+                $request->merge(['user_phone' => $userInfo->phone]);
+            }
+        }else{
+            if(Common::isPhone($request->user_phone)) {
+                return Common::myJson(ErrorCall::$errParams, $validator->errors());
+            }
+        }
+        if (empty($request->user_phone)) {
+            return Common::myJson(ErrorCall::$errParams);
         }
         $canSend = SmsManager::validateSendable();
         if (!$canSend) {

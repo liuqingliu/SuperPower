@@ -27,7 +27,7 @@ Route::get('/user/center', 'UserController@center')->name('user_center')
 
 Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateUserPhone');
 
-Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.login']], function () {
+Route::group(['middleware' => ['user.login']], function () {
     //用户
     Route::get('/user/detail', 'UserController@detail')->name('user_detail');
     Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
@@ -57,7 +57,7 @@ Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','user.logi
     Route::get('/prompt','PromptController@index')->name("prompt");
 });
 
-Route::group(['middleware' => ['wechat.oauth:default,snsapi_userinfo','dealer.login']], function () {
+Route::group(['middleware' => ['dealer.login']], function () {
 //经销商
     Route::get('/dealer/cardManage', 'DealerController@electriccardmanage')->name('dealer_electriccardmanage');
     Route::get('/dealer/center', 'DealerController@center')->name('dealer_center');

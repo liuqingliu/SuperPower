@@ -19,7 +19,7 @@
             <span class="rechargelog-item-date mini-text">{{$recharge["date"]}}</span>
             <span class="item-time-interval mini-text">{{$recharge["time_s"]}}~{{$recharge["time_e"]}}</span>
             <span class="item-money text-42-red">{{$recharge["recharge_price"]}}</span>
-            <span class="item-time-total text-42-red">{{$recharge["recharge_time"]}}</span>
+            <span class="item-time-total text-42-red">{{$recharge["recharge_end_time"]}}</span>
             <div class="item-line"><div class="line"></div></div>
         </li>
         @endforeach

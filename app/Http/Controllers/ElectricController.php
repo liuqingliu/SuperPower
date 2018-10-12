@@ -148,7 +148,7 @@ class ElectricController extends Controller
     public function rechargelog()
     {
         $userInfo = session(Common::SESSION_KEY_USER);
-        $rechareList = RechargeOrder::where("recharge_str", $userInfo->openid)->get();
+        $rechareList = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status",Charge::ORDER_RECHARGE_STATUS_END)->get();
         $res = [];
         foreach ($rechareList as $recharge) {
             $tmp = [];
@@ -158,7 +158,7 @@ class ElectricController extends Controller
             $tmp["recharge_price"] = $recharge->recharge_price;
             $tmp["date"] = date("Y-m-d", strtotime($recharge->created_at));
             $tmp["time_s"] = date("H:i", strtotime($recharge->created_at));
-            $tmp["time_e"] = date("H:i", strtotime($recharge->created_at) + $recharge->recharge_end_time);
+            $tmp["time_e"] = date("H:i", strtotime($recharge->recharge_end_time));
             $res[] = $tmp;
         }
         return view('electric/rechargelog', [
@@ -203,7 +203,7 @@ class ElectricController extends Controller
     //创建电卡充值订单
     public function createOrder(Request $request)
     {
-        $userInfo = session("user_info");//是否正常登陆过
+        $userInfo = session(Common::SESSION_KEY_USER);//是否正常登陆过
         $validator = Validator::make($request->all(), [
             'pay_money_type' => 'required|int|in:' . implode(",", array_keys(Order::$payMoneyList)),
             'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
@@ -260,7 +260,6 @@ class ElectricController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-//        $userInfo = session("user_info");//是否正常登陆过
         $deviceInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
         $userInfo = session(Common::SESSION_KEY_USER);
         if ($userInfo->user_money < 200 || $userInfo->user_money < floor(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100) {
