@@ -42,7 +42,7 @@ function jsApiCall($res)
         function(answer){
             WeixinJSBridge.log(answer.err_msg);
             // console.log(answer);
-            alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
+            // alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
             if(answer.err_msg=='get_brand_wcpay_request:ok'){
             //     alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
                 window.location.href = "/user/orderanswser";

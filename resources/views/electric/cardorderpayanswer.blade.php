@@ -23,7 +23,7 @@
             <span class="text-48-grey">已成功充值，金额稍后到账</span>
         </div>
         <div style="margin-top: 50px;" align="center">
-            <button class="button-style">返回个人中心</button>
+            <a href="{{route('user_center')}}" class="button-style">返回个人中心</a>
         </div>
     </section>
         {{--<section class="body2">--}}

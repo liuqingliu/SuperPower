@@ -21,6 +21,7 @@ function Values() {
     $('#cardNum').val($('#dialogInput').val());
     recharge_cardNum = $('#dialogInput').val();
     $('#cardNumInput').modal('hide')
+    window.location.replace('/electric/cardorderpay?card_id='+$('#dialogInput').val());
 }
 function confirmInfo() {
     if ($('#cardNum').val().length<11){
@@ -47,7 +48,7 @@ function scanCard(){
         scanType : [ "qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
         success : function(res) {
             var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-            window.location.href = result;//因为我这边是扫描后有个链接，然后跳转到该页面
+            window.location.replace(result);//因为我这边是扫描后有个链接，然后跳转到该页面
         }
     });
 }
@@ -60,7 +61,7 @@ function creatCardOrder() {
             data: {"pay_money_type":recharge_money,"card_id":recharge_cardNum},
             dataType: "json",
             success: function(data){
-                console.log(data.errno);
+                // console.log(data.errno);
                 callpay(data.result);
             },
         });
@@ -79,7 +80,7 @@ function jsApiCall($res)
         function(answer){
             WeixinJSBridge.log(answer.err_msg);
             // alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
-            if(answer.err_msg.contains("ok")){
+            if(answer.err_msg=='get_brand_wcpay_request:ok'){
                window.location.href = "/electric/cardorderpayanswer";
             }else {
                 alert('微信支付异常请，稍后再试！')

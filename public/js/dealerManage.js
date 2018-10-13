@@ -173,7 +173,7 @@ function addDealer() {
     }
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/dealer/doAddDealer",
         data: {"name":$('#addDealerName').val(),"id_card":$('#addDealerIdCard').val(),"province":$('#addDealerArea').val().split(" ")[0],"city":$('#addDealerArea').val().split(" ")[1]
             ,"area":$('#addDealerArea').val().split(" ")[2],"give_proportion":$('#addDealerProportion').val(),"son_id":$('#addDealerAccount').val(),"remark":$('#addDealerRemark').val()
@@ -234,18 +234,18 @@ function loaddealer(arry) {
     for (var i = 0; i <arry.length; i++) {
         var dealer = arry[i];
         var html = '';//遍历拼接html
-        html += '<a href="../dealer/dealerDetail">';
+        html += '<a href="../dealer/dealerDetail?id='+dealer.id+'">';
         html += '<li class="revenus-item">';
         html += '<div class="revenus-item-row" style="top: 1rem;">';
         html += '<span class="pull-left text-36">'+dealer.name+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:2.5rem;">';
-        html += '<span class="pull-left mini-text">'+dealer.phone+'</span>';
+        html += '<span class="pull-left mini-text">'+dealer.user.phone+'</span>';
         html += ' <span class="pull-right mini-text">'+dealer.province+dealer.city+dealer.area+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:4rem;">';
         html += ' <span class="pull-left mini-text">'+dealer.id_card+'</span>';
-        if (dealer.user_status =="0"){
+        if (dealer.user.user_status =="0"){
             html += ' <span class="pull-right mini-text">正常</span>';
         }else {
             html += '<span class="pull-right mini-text-red">冻结</span>';
@@ -267,14 +267,14 @@ function queryAllDealer() {
     $.ajax({
         type: 'GET',
         url: "/dealer/getDealerList",
-        data: {"type":1},
+        data: {},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
                 $('.body1').hide();
                 $('.body2-step1').hide();
                 $('.body2-step2').show();
-                dealerLoader(data.result.cash_log);
+                dealerLoader(data.result);
             }else {
                 Toast(data.errmsg);
             }
@@ -285,19 +285,20 @@ function queryAllDealer() {
 function dealerLoader(arry) {
     for (var i = 0; i <arry.length; i++) {
         var dealer = arry[i];
+        console.log(dealer);
         var html = '';//遍历拼接html
-        html += '<a href="../dealer/dealerDetail">';
+        html += '<a href="../dealer/dealerDetail?id='+dealer.id+'">';
         html += '<li class="revenus-item">';
         html += '<div class="revenus-item-row" style="top: 1rem;">';
         html += '<span class="pull-left text-36">'+dealer.name+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:2.5rem;">';
-        html += '<span class="pull-left mini-text">'+dealer.phone+'</span>';
-        html += ' <span class="pull-right mini-text">'+dealer.address+'</span>';
+        html += '<span class="pull-left mini-text">'+dealer.user.phone +'</span>';
+        html += ' <span class="pull-right mini-text">'+dealer.province+dealer.city+dealer.area+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:4rem;">';
         html += ' <span class="pull-left mini-text">'+dealer.id_card+'</span>';
-        if (dealer.user_status =="0"){
+        if (dealer.user.user_status =="0"){
             html += ' <span class="pull-right mini-text">正常</span>';
         }else {
             html += '<span class="pull-right mini-text-red">冻结</span>';

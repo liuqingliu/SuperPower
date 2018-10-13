@@ -30,7 +30,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">手机号码</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->phone}}</span>
+            <span class="my-input6 borad-text-right">{{$dealer_info->user->phone}}</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -40,14 +40,14 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">对方账号</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->user_id}}</span>
+            <span class="my-input6 borad-text-right">{{$dealer_info->user->user_id}}</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">账户类别</span>
-            @if($dealer_info->user_type==1)
+            @if($dealer_info->user->user_type==1)
             <span class="my-input6 borad-text-right">普通经销商</span>
-                @elseif($dealer_info->user_type==2)
+                @elseif($dealer_info->user->user_type==2)
                 <span class="my-input6 borad-text-right">超级经销商</span>
                 @else
                 <span class="my-input6 borad-text-right">厂商</span>
@@ -66,11 +66,11 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">账户状态</span>
-            @if($dealer_info->user_status==1)
-                <span id="status_on" data-dealerStatus="{{$dealer_info->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
+            @if($dealer_info->user->user_status==1)
+                <span id="status_on" data-dealerStatus="{{$dealer_info->user->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
                 <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">冻结</span>
             @else
-                <span id="status_on" data-dealerStatus="{{$dealer_info->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
+                <span id="status_on" data-dealerStatus="{{$dealer_info->user->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
                 <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">冻结</span>
             @endif
         </li>
