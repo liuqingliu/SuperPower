@@ -7,6 +7,13 @@
             <img class="op-img" src="{{URL::asset('images/pm1_01.png')}}" alt="更多">
         </a>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <a href="{{route('user_center')}}">
+                <li>
+                    <img class="dealer-option-img img-rounded" src="{{URL::asset('images/p1_13_off.png')}}">
+                    <span class="borad-text-left">用户中心</span>
+                </li>
+            </a>
+            <li role="separator" class="divider"></li>
             <a href="{{route('dealer_center')}}">
                 <li>
                     <img class="dealer-option-img img-rounded" src="{{URL::asset('images/pm2_01.png')}}">
