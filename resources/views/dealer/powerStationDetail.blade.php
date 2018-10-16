@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psDetail.js?v=0.1')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psDetail.js?v=1.0')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
@@ -43,22 +43,24 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">街道名称</span>
-            <span class="my-input6 borad-text-right">{{$device_info->street}}</span>
+            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$device_info->street}}" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">具体位置</span>
-            <span class="my-input6 borad-text-right">{{$device_info->address}}</span>
+            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$device_info->address}}" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电价成本</span>
-            <span class="my-input6 borad-text-right">{{$device_info->charging_cost}}元/度</span>
+            <input id="input5" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="{{$device_info->charging_cost}}" oninput="if(value.length>4)value=value.slice(0,4)">
+            <span class="borad-text-right pull-right">单位：元/度</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">充电计费</span>
-            <span class="my-input6 borad-text-right">{{$device_info->charging_unit_second}}小时/元</span>
+            <input id="input6" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="{{$device_info->charging_unit_second}}" oninput="if(value.length>4)value=value.slice(0,4)">
+            <span class="borad-text-right pull-right">单位：小时/元</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -93,7 +95,7 @@
     </div>
 
     <div align="center" style="margin-top:1rem; width: 100%;">
-        <button class="button-style-green">修改信息</button>
+        <button onclick="changePowerStation()" class="button-style-green">修改信息</button>
     </div>
 
 </section>

@@ -1,6 +1,8 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/dealerDetail.js?v=1.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/dealerDetail.js?v=1.2')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
 @section('title', '经销商管理')
 @section('system', '运营商管理系统')
@@ -19,13 +21,12 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">姓名</span>
-            <span class="borad-text-right my-input8">{{$dealer_info->name}}</span>
-            <!--<input class="my-input6 borad-text-left" type="number" name="identifying-code" placeholder="输入11位卡号查询" oninput="if(value.length>11)value=value.slice(0,11)">-->
+            <input id="addDealerName" class="borad-text-left my-input8" type="text" name="identifying-code" placeholder="{{$dealer_info->name}}" oninput="if(value.length>6)value=value.slice(0,6)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">身份证号</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->id_card}}</span>
+            <input id="addDealerIdCard" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$dealer_info->id_card}}" oninput="if(value.length>18)value=value.slice(0,18)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -35,7 +36,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">所在区域</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->province}}{{$dealer_info->city}}{{$dealer_info->area}}</span>
+            <input id="addDealerArea" class="my-input5 borad-text-left" data-key="23-385-4224" readonly type="text" name="addr" placeholder="{{$dealer_info->province}}{{$dealer_info->city}}{{$dealer_info->area}}">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -56,7 +57,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">抽成比例</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->give_proportion}}</span>
+            <input id="addDealerProportion" class="my-input5 borad-text-left" type="number" placeholder="{{$dealer_info->give_proportion}}" oninput="if(value.length>6)value=value.slice(0,6)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -77,7 +78,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">备注信息</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->remark}}</span>
+            <input id="addDealerRemark" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$dealer_info->remark}}" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
     </ul>
 </section>
@@ -90,7 +91,7 @@
     </div>
 
     <div align="center" style="margin-top:1rem; width: 100%;">
-        <button class="button-style-blue">修改信息</button>
+        <button onclick="changeDealer()" class="button-style-blue">修改信息</button>
     </div>
 </section>
 @endsection

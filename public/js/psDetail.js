@@ -131,3 +131,35 @@ $('#status_off').click(function () {
     $('#status_off').addClass("text-40-white equipment-swich-seclect").removeClass("text-40-b3 dealer-swich");
     equipment_status = 1;
 });
+
+//修改电数据
+function changePowerStation() {
+    if ($('#input5').val().length==0){
+        Toast('请输入电价成本', 2000);
+        return;
+    }
+    if ($('#input6').val().length==0){
+        Toast('请输入计费标准', 2000);
+        return;
+    }
+    if ($('#input7').val().length<4){
+        Toast('请输入完整验证码', 2000);
+        return;
+    }
+    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    $.ajax({
+        type: 'GET',
+        url: "/dealer/doUpdateEquipment",
+        data: {"street":$('#input3').val(),"address":$('#input4').val(),"province":$('#input2').val().split(" ")[0],"city":$('#input2').val().split(" ")[1]
+            ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"equipment_id":$('#input1').val()
+            ,"equipment_status":"1" ,"verifyCode":$('#input7').val()},
+        dataType: "json",
+        success: function(data){
+            if (data.errno==0){
+                $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
+            }else {
+                Toast(data.errmsg);
+            }
+        },
+    });
+}
