@@ -17,9 +17,10 @@ function setPassword() {
             if (data.errno==0){
                 Toast("密码设置成功");
                 $('#passworddialog').modal('hide');
-                if (!$('#isbindbank').val()){
-                    $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
-                }
+                window.location.reload();
+                // if (!$('#isbindbank').val()){
+                //     $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
+                // }
             }else {
                 Toast(data.errmsg);
             }
@@ -45,11 +46,12 @@ function bindPhone() {
                 Toast("绑定电话成功",2000);
                 changeVcode();
                 $('#bindphonedialog').modal('hide');
-                if (!$('#issetpassword').val()){
-                    $('#passworddialog').modal({backdrop:'static',keyboard:false});
-                }else if (!$('#isbindbank').val()){
-                    $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
-                }
+                window.location.reload();
+                // if (!$('#issetpassword').val()){
+                //     $('#passworddialog').modal({backdrop:'static',keyboard:false});
+                // }else if (!$('#isbindbank').val()){
+                //     $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
+                // }
             }else {
                 Toast(data.errmsg);
             }
@@ -85,5 +87,5 @@ function doCarry() {
 }
 $(".dialog-single-button").click(function () {
     $('#myNormalDialog').modal('hide');
-    history.go(-1);
+    location.replace(document.referrer);
 });

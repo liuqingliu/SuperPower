@@ -1,12 +1,7 @@
 
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.3')}}"></script>
-    <script type="text/javascript">
-        console.log('is_bind_phone:'+{{$is_bind_phone}});
-        console.log('is_set_password:'+{{$is_set_password}});
-        console.log('is_bind_bank:'+{{$is_bind_bank}});
-    </script>
+    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.4')}}"></script>
     @if(!$is_bind_phone)
         <script type="text/javascript">
             $(document).ready(function () {
@@ -72,6 +67,7 @@
             <input class="my-input1 borad-text-left" type="password" id="password" placeholder="请输提现密码" oninput="if(value.length>18)value=value.slice(0,18)">
         </li>
         <li class="line"></li>
+        @if($is_bind_phone)
         <li class="borad-heigh">
             <span class="borad-text-left">验证码</span>
             <input id="imageVcode" class="my-input2 borad-text-left" type="text"  placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
@@ -84,6 +80,7 @@
             <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()"
                    class="text-45-red pull-right vcode-button" value="获取">
         </li>
+        @endif
     </ul>
 </section>
 <section class="footer">
@@ -98,6 +95,7 @@
     </div>
 </section>
 {{--bindphonedialog--}}
+@if(!$is_bind_phone)
 <div class="modal" id="bindphonedialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
     <div style="min-height: 19rem;" class="center-dialog">
         <div style="min-height:11rem;width: 100%;margin-bottom: 3.5rem;">
@@ -130,13 +128,14 @@
                      style="height:3.4375rem;width: 50%;text-align: center;color: #777777;font-size: 1.65rem;">取消
                     <div class="line-vertical pull-right" style="height: 3.4375rem;width: 1px;"></div>
                 </div>
-                <div class="pull-right" onclick=""
+                <div class="pull-right" onclick="bindPhone()"
                      style="height:3.4375rem;width: 50%;text-align: center;color: #F15A24;font-size: 1.65rem;">确定
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endif
 {{--passworddialog--}}
 <div class="modal" id="passworddialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
     <div style="min-height: 19rem;" class="center-dialog">

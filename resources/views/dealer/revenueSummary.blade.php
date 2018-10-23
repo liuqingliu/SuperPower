@@ -14,17 +14,17 @@
         <div style="height:5.25rem;">
             <div style="height: 5.25rem;padding-bottom: 1rem;padding-top: 1rem;">
                 <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                    <p class="mini-text-white-number" style="margin: 0;">2000000.00</p>
+                    <p class="mini-text-white-number" style="margin: 0;">{{$total_income}}</p>
                     <p class="mini-text-white">累计收益</p>
                 </div>
                 <div class="col-xs-4 col-md-4 col-lg-4 hasline" align="center">
                     <div class="line-vertical-white vertical"></div>
-                    <p class="mini-text-white-number" style="margin: 0;">10010</p>
+                    <p class="mini-text-white-number" style="margin: 0;">{{$total_users}}</p>
                     <p class="mini-text-white">累计用户</p>
                 </div>
                 <div class="col-xs-4 col-md-4 col-lg-4 hasline" align="center">
                     <div class="line-vertical-white vertical"></div>
-                    <p class="mini-text-white-number" style="margin: 0;">2125552</p>
+                    <p class="mini-text-white-number" style="margin: 0;">{{$total_charge_count}}</p>
                     <p class="mini-text-white">累计充电次数</p>
                 </div>
             </div>
@@ -38,7 +38,7 @@
             <ul style="padding: 0;">
                 <li class="revenus-heigh">
                     <span class="borad-text-left">起止时间：</span>
-                    <span class="borad-text-right">注册时间-今天</span>
+                    <span class="borad-text-right">注册时间-昨天</span>
                 </li>
                 <li class="revenus-heigh">
                     <span class="borad-text-left">数据来源：</span>

@@ -40,8 +40,7 @@ function getVcodewihtPhone(){
     $.ajax({
         type: 'POST',
         url: "/api/sendMessage",
-        data: {"user_phone":$('#phonenum').val()
-            ,"captcha":$('#imageVcode').val(),"is_need_phone":1},
+        data: {"user_phone":$('#phonenum').val(),"captcha":$('#imageVcode').val()},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
@@ -62,7 +61,7 @@ function getVcodewihtoutPhone(){
     $.ajax({
         type: 'POST',
         url: "/api/sendMessage",
-        data: {"captcha":$('#imageVcode').val(),"is_need_phone":0,"user_phone": ""},
+        data: {"captcha":$('#imageVcode').val()},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
