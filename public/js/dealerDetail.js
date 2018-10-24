@@ -155,9 +155,9 @@ function changeDealer() {
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'POST',
-        url: "/dealer/doAddDealer",
+        url: "/dealer/doUpdateEquipment",
         data: {"name":$('#addDealerName').val(),"id_card":$('#addDealerIdCard').val(),"province":$('#addDealerArea').val().split(" ")[0],"city":$('#addDealerArea').val().split(" ")[1]
-            ,"area":$('#addDealerArea').val().split(" ")[2],"give_proportion":$('#addDealerProportion').val(),"son_id":$('#addDealerAccount').val(),"remark":$('#addDealerRemark').val()
+            ,"area":$('#addDealerArea').val().split(" ")[2],"give_proportion":$('#addDealerProportion').val(),"son_id":$('#addDealerAccount').text(),"remark":$('#addDealerRemark').val()
             ,"user_type":dealer_type},
         dataType: "json",
         success: function(data){

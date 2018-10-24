@@ -21,12 +21,12 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">姓名</span>
-            <input id="addDealerName" class="borad-text-left my-input8" type="text" name="identifying-code" placeholder="{{$dealer_info->name}}" oninput="if(value.length>6)value=value.slice(0,6)">
+            <input id="addDealerName" class="borad-text-left my-input8" type="text" name="identifying-code" value="{{$dealer_info->name}}" oninput="if(value.length>6)value=value.slice(0,6)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">身份证号</span>
-            <input id="addDealerIdCard" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$dealer_info->id_card}}" oninput="if(value.length>18)value=value.slice(0,18)">
+            <input id="addDealerIdCard" class="my-input5 borad-text-left" type="text" name="identifying-code" value="{{$dealer_info->id_card}}" oninput="if(value.length>18)value=value.slice(0,18)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -36,12 +36,12 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">所在区域</span>
-            <input id="addDealerArea" class="my-input5 borad-text-left" data-key="23-385-4224" readonly type="text" name="addr" placeholder="{{$dealer_info->province}}{{$dealer_info->city}}{{$dealer_info->area}}">
+            <input id="addDealerArea" class="my-input5 borad-text-left" data-key="23-385-4224" readonly type="text" name="addr" value="{{$dealer_info->province}}{{$dealer_info->city}}{{$dealer_info->area}}">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">对方账号</span>
-            <span class="my-input6 borad-text-right">{{$dealer_info->user->user_id}}</span>
+            <span id="addDealerAccount" class="my-input6 borad-text-right">{{$dealer_info->user->user_id}}</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -57,7 +57,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">抽成比例</span>
-            <input id="addDealerProportion" class="my-input5 borad-text-left" type="number" placeholder="{{$dealer_info->give_proportion}}" oninput="if(value.length>6)value=value.slice(0,6)">
+            <input id="addDealerProportion" class="my-input5 borad-text-left" type="number" value="{{$dealer_info->give_proportion}}" oninput="if(value.length>6)value=value.slice(0,6)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -78,7 +78,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">备注信息</span>
-            <input id="addDealerRemark" class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$dealer_info->remark}}" oninput="if(value.length>15)value=value.slice(0,15)">
+            <input id="addDealerRemark" class="my-input5 borad-text-left" type="text" name="identifying-code" value="{{$dealer_info->remark}}" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
     </ul>
 </section>
