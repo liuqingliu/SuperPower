@@ -132,7 +132,7 @@ $('#status_off').click(function () {
     equipment_status = 1;
 });
 
-//修改电数据
+//修改电站数据
 function changePowerStation() {
     if ($('#input5').val().length==0){
         Toast('请输入电价成本', 2000);
