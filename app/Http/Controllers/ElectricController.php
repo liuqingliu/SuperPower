@@ -240,7 +240,7 @@ class ElectricController extends Controller
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
             "card_id" => $request->card_id,
-            'notify_url' => 'https://www.cxm.lcint.cn/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+            'notify_url' => 'https://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
         ]);
 
         if (isset($result["prepay_id"])) {

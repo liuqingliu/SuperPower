@@ -51,7 +51,7 @@ class Common
     const STATUS_SEND_SUCCESS = 1;
 
     //domain
-    const DOMAIN = "cmx.lcint.cn";
+    const DOMAIN = "cxm.lcint.cn";
 
     //mail_exception_wechat_order
     public static $emailOferrorForWechcatOrder = [
