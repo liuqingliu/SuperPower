@@ -10,6 +10,8 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendTemplateMsg;
 use App\Mail\CommonError;
+use App\Models\ElectricCard;
+use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
 use App\Models\Logic\Order;
 use App\Models\User;
@@ -73,13 +75,19 @@ class PaymentController extends Controller
             }
             //记录日志
             //如果保存失败，会出现什么情况？
-            $user = User::where("openid", $message["openid"])->first();
-            Log::info("payment_notfiy_first:order-org:".serialize($order->toArray()).",user-org:".serialize($user->toArray()));
             $res = $order->save(); // 保存订单
             if ($res) {
-                //给用户余额价钱
-                $user->user_money = $user->user_money + $wxOrder["total_fee"];
-                $res2 = $user->save();
+                //给用户余额+钱(电卡)
+                if($order->order_type==Charge::ORDER_RECHARGE_TYPE_USER) {
+                    $user = User::where("openid", $message["openid"])->first();
+                    $user->user_money = $user->user_money + $wxOrder["total_fee"];
+                    $res2 = $user->save();
+                }else{
+                    $cardInfo = ElectricCard::where("card_id", $order->card_id)->first();
+                    $cardInfo = $cardInfo->money + $wxOrder["total_fee"];
+                    $res2 = $cardInfo->save();
+                }
+
             }
             if (!$res || !$res2) {
                 $errmsg = [
@@ -89,7 +97,7 @@ class PaymentController extends Controller
                 ];
                 Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
             } else {
-                dispatch(new SendTemplateMsg($user->openid, "oGikchlZLTCLf3aR7ar58DqGywd1nCUBTkDY4WkKO40", [
+                dispatch(new SendTemplateMsg($message["openid"], "oGikchlZLTCLf3aR7ar58DqGywd1nCUBTkDY4WkKO40", [
                     "first" => "您好，账户充值成功",
                     "keyword1" => ($order->price * 1.0 / 100.00) . "元",
                     "keyword2" => $order->created_at,

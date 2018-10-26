@@ -11,10 +11,15 @@
 |
 */
 
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
+
 Route::get('/', function () {
     return 1;
 });
-
+//errors
+Route::get('/prompt','PromptController@index')->name("prompt");
 Route::get('/login', 'UserController@center')->name('login')
     ->middleware('wechat.oauth:default,snsapi_userinfo')
 ;//这里是登录
@@ -25,9 +30,10 @@ Route::any('/payment/wechatnotify', 'PaymentController@wechatnotify')->name("wec
 Route::get('/user/center', 'UserController@center')->name('user_center')
     ->middleware('wechat.oauth:default,snsapi_userinfo');
 
-Route::post('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateUserPhone');
-
+//Route::get('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
 Route::group(['middleware' => ['user.login']], function () {
+    //管理员设置微信
+    Route::get('/wechat/createWechatMenu', 'WeChatController@createWechatMenu')->name('create_wechat_menu');
     //用户
     Route::get('/user/detail', 'UserController@detail')->name('user_detail');
     Route::get('/user/bindphone', 'UserController@bindphone')->name('user_bindphone');
@@ -53,8 +59,7 @@ Route::group(['middleware' => ['user.login']], function () {
     Route::post('/electric/stopChargingOrder', 'ElectricController@stopChargingOrder')->name('stopchargingorder');//停止充电
     Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
     Route::post('/electric/bindPhone', 'ElectricController@bindPhone')->name('bindPhone');//电卡绑定手机号
-    //errors
-    Route::get('/prompt','PromptController@index')->name("prompt");
+    Route::get('/api/capTest','ApiController@capTest')->name('capTest');
 });
 
 Route::group(['middleware' => ['dealer.login']], function () {
@@ -68,16 +73,18 @@ Route::group(['middleware' => ['dealer.login']], function () {
     Route::get('/dealer/powerStationDetail', 'DealerController@powerStationDetail')->name('dealer_powerStationDetail');
     Route::get('/dealer/powerStationManage', 'DealerController@powerStationManage')->name('dealer_powerStationManage');
     Route::get('/dealer/resetPassword', 'DealerController@resetPassword')->name('dealer_resetPassword');
-    Route::post('/dealer/doResetPassword', 'DealerController@doResetPassword')->name('dealer_resetPassword');//经销商充值密码
+    Route::post('/dealer/doResetPassword', 'DealerController@doResetPassword')->name('dealer_doResetPassword');//经销商充值密码
     Route::post('/dealer/doSetPassword', 'DealerController@doSetPassword')->name('dealer_dosetPassword');//经销商设置密码
     Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
     Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');//
     Route::get('/dealer/getDealerList', 'DealerController@getDealerList')->name('getDealerList');//获取经销商列表接口
+    Route::get('/dealer/getCashLogList', 'DealerController@getDealerList')->name('getCashLogList');//获取收入明细列表
     Route::post('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');//经销商提现接口
     Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
+    Route::post('/dealer/doBindBank', 'DealerController@doBindBank')->name('doBindBank');//绑定各银行卡
     Route::post('/dealer/doAddDealer', 'DealerController@doAddDealer')->name('doAddDealer');//添加经销商接口
     Route::get('/dealer/getEquipmentInfo', 'DealerController@getEquipmentInfo')->name('getEquipmentInfo');//添加电站接口
-    Route::post('/dealer/doUpdateEquipment', 'DealerController@doUpdateEistquipment')->name('doUpdateEquipment');//电站查询接口
+    Route::post('/dealer/doUpdateEquipment', 'DealerController@doUpdateEquipment')->name('doUpdateEquipment');//电站查询接口
     Route::get('/dealer/getDealerInfo', 'DealerController@getDealerInfo')->name('getDealerInfo');//经销商查询接口
     Route::get('/dealer/getEquipmentInfoList',
         'DealerController@getEquipmentInfoList')->name('getEquipmentInfoList');//经销商查询接口

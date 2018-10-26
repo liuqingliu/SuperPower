@@ -6,7 +6,7 @@
  * Time: 16:15
  */
 return [
-    'characters' => '2346789',
+    'characters' => '012346789',
     'default'   => [
         'length'    => 4,
         'width'     => 120,

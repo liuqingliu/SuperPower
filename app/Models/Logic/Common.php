@@ -45,12 +45,13 @@ class Common
 
     //session_key
     const SESSION_KEY_USER = "user_info";
+    const SESSION_KEY_DEALER = "dealer_user_info";
 
     //iot状态
     const STATUS_SEND_SUCCESS = 1;
 
     //domain
-    const DOMAIN = "www.babyang.top";
+    const DOMAIN = "cmx.lcint.cn";
 
     //mail_exception_wechat_order
     public static $emailOferrorForWechcatOrder = [

@@ -13,6 +13,7 @@ use App\Jobs\SendSmsQue;
 use App\Jobs\SendTemplateMsg;
 use App\Models\Dealer;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 use App\Models\Logic\Common;
@@ -46,7 +47,9 @@ class ApiController extends Controller
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'user_phone' => ['sometimes', new ValidatePhoneRule],
             'captcha' => 'required|captcha',
+//            'is_need_phone' => 'required|in:0,1'
 //            'ckey' => 'required',
 //            'captcha' => 'required|captcha:'.$request->ckey
 //            'user_password' => 'sometimes|string|max:20|min:6'
@@ -54,17 +57,19 @@ class ApiController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        if (!isset($request->user_phone)) {
-            $userInfo = session(Common::SESSION_KEY_USER);
+        if (!isset($request->user_phone))  {
+            $wxUser = session('wechat.oauth_user');
+            $userInfo = User::where("openid",$wxUser['default']->id)->first();
             if (!empty($userInfo->phone)) {
                 $request->merge(['user_phone' => $userInfo->phone]);
             }
         }else{
-            if(Common::isPhone($request->user_phone)) {
+            if(!Common::isPhone($request->user_phone)) {
                 return Common::myJson(ErrorCall::$errParams, $validator->errors());
             }
         }
         if (empty($request->user_phone)) {
+            Log::info("xxx3");
             return Common::myJson(ErrorCall::$errParams);
         }
         $canSend = SmsManager::validateSendable();
