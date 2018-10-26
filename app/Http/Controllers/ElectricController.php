@@ -64,7 +64,8 @@ class ElectricController extends Controller
 
     public function recharge()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $rechargeInfo = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if(empty($rechargeInfo)) {//这里其实需要跳转走
             return redirect('/prompt')->with([
@@ -99,7 +100,8 @@ class ElectricController extends Controller
                 'status' => 'error'
             ]);
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $rechargeOrder = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status",
             Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if (!empty($rechargeOrder)) {
@@ -147,7 +149,8 @@ class ElectricController extends Controller
 
     public function rechargelog()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $rechareList = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status",Charge::ORDER_RECHARGE_STATUS_END)->get();
         $res = [];
         foreach ($rechareList as $recharge) {
@@ -203,7 +206,8 @@ class ElectricController extends Controller
     //创建电卡充值订单
     public function createOrder(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);//是否正常登陆过
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $validator = Validator::make($request->all(), [
             'pay_money_type' => 'required|int|in:' . implode(",", array_keys(Order::$payMoneyList)),
             'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
@@ -218,7 +222,7 @@ class ElectricController extends Controller
         $createParams = [
             "order_id" => Snowflake::nextId(),
             "card_id" => $request->card_id,
-            "price" => $price * 100,
+            "price" => 1,
             "extends" => $extends,
             "openid" => $userInfo->openid,
             "order_type" => Order::PAY_METHOD_WECHAT,
@@ -235,7 +239,8 @@ class ElectricController extends Controller
             'total_fee' => 1,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
-            'notify_url' => 'http://www.babyang.top/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+            "card_id" => $request->card_id,
+            'notify_url' => 'https://www.cxm.lcint.cn/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
         ]);
 
         if (isset($result["prepay_id"])) {
@@ -261,7 +266,8 @@ class ElectricController extends Controller
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
         $deviceInfo = ChargingEquipment::where("equipment_id", $request->equipment_id)->first();
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if ($userInfo->user_money < 200 || $userInfo->user_money < floor(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100) {
             return Common::myJson(ErrorCall::$errUserMoneyNotEnough);
         }
@@ -321,7 +327,8 @@ class ElectricController extends Controller
     //关闭插座
     public function closeSocket()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $rechargeOrder = RechargeOrder::where("recharge_str", $userInfo->openid)->where("recharge_status", Charge::ORDER_RECHARGE_STATUS_CHARGING)->first();
         if (empty($rechargeOrder)) {
             return Common::myJson(ErrorCall::$errOrderNotExist);

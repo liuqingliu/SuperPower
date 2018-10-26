@@ -66,6 +66,10 @@ class CalculateIncome implements ShouldQueue
                     $rechargeOrder->save();
                     $deviceInfo = $rechargeOrder->chargingEquipment;
                     $dealerInfo = Dealer::where("openid", $deviceInfo->openid)->first();
+                    if(empty($dealerInfo)) {
+                        throw new \Exception("经销商不存在:openid=".$deviceInfo->openid);
+                        return;
+                    }
                     $dealerInfo->total_income = $dealerInfo->total_income + $rechargeOrder->recharge_price *
                         (100 - $dealerInfo->give_proportion) * 0.01;
                     $deviceInfo->save();
@@ -83,7 +87,7 @@ class CalculateIncome implements ShouldQueue
                     }
                 }, 5);
             } catch (\Exception $e) {
-                Log::debug("auto_close_error1:" . serialize($e->getMessage()));
+                Log::debug("calculate_income:" . serialize($e->getMessage()));
                 return;
             }
         } catch (\Exception $exception) {
