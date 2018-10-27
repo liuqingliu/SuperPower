@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/usercenter.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/usercenter.js?v=1.0')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js')}}" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         wx.config(<?php echo $wxjssdk; ?>);
@@ -8,7 +8,12 @@
 @endsection
 @section('title', '个人中心')
 @section('system', '个人中心')
+@section('dialogMsg',"您还没有绑定手机号！")
+@section('buttonText',"去绑定")
 @section('content')
+    @component('layouts._normaldialog')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
     <section class="header">
         <a href="{{route('user_detail')}}">
         <div class="user-center-header">
@@ -76,7 +81,7 @@
         </ul>
         <ul class="board1">
             @if(($user_info->user_type)>0)
-            <a href="{{route("dealer_center")}}">
+            <a  @if (empty($user_info->phone)) data-toggle="modal" data-target="#myNormalDialog" @else href="{{route("dealer_center")}}@endif">
                 <li class="borad-heigh">
                     <img class="borad-img pull-left img-rounded" src="{{URL::asset('images/p1_08.png')}}" alt="运营商管理平台">
                     <span class="borad-text-left">运营商管理平台</span>

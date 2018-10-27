@@ -47,7 +47,7 @@ function getVcodewihtPhone(){
                 Toast("验证码已发送");
                 settime();
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });
@@ -68,7 +68,7 @@ function getVcodewihtoutPhone(){
                 Toast("验证码已发送");
                 settime();
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });

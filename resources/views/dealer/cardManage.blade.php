@@ -5,7 +5,7 @@
 @section('content')
 
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
     <div class="swich-container" align="center">

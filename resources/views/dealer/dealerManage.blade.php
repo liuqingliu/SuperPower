@@ -8,7 +8,7 @@
 @section('system', '运营商管理系统')
 @section('content')
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
     <div class="swich-container" align="center">

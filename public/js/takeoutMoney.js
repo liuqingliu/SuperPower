@@ -22,7 +22,7 @@ function setPassword() {
                 //     $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
                 // }
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });
@@ -53,7 +53,7 @@ function bindPhone() {
                 //     $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
                 // }
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });
@@ -80,7 +80,7 @@ function doCarry() {
             if (data.errno==0){
                 $('#myNormalDialog').modal({backdrop:'static',keyboard:false});
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });

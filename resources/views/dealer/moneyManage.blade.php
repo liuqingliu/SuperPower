@@ -5,7 +5,7 @@
 @section('content')
 <section class="header">
     <div style="height:18.75rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <div style="height:14rem;">

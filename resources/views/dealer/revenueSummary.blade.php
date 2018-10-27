@@ -7,7 +7,7 @@
 
 <section class="header">
     <div style="height:10rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->

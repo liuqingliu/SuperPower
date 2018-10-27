@@ -117,10 +117,11 @@ $(function() {
         });
     });
 });
+changeVcode();
 function back() {
     history.back(-1);
 }
-var dealer_status = $('#status_on').data('dealerStatus');
+var dealer_status = $('#status_on').data('dealerstatus');
 $('#status_on').click(function () {
     $('#status_on').addClass("text-40-white dealer-swich-seclect").removeClass("text-40-b3 dealer-swich");
     $('#status_off').addClass("text-40-b3 dealer-swich").removeClass("text-40-white dealer-swich-seclect");
@@ -144,7 +145,7 @@ function changeDealer() {
         Toast("请选择经销商所在区域");
         return;
     }
-    if ($('#addDealerAccount').val().length==''){
+    if ($('#addDealerAccount').text().length==''){
         Toast("请输入经销商账号");
         return;
     }
@@ -152,21 +153,23 @@ function changeDealer() {
         Toast("请输入抽成比例");
         return;
     }
+    if ($('#phoneVcode').val().length<4){
+        Toast('请输入完整验证码', 2000);
+        return;
+    }
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'POST',
-        url: "/dealer/doUpdateEquipment",
+        url: "/dealer/doUpdateDealer",
         data: {"name":$('#addDealerName').val(),"id_card":$('#addDealerIdCard').val(),"province":$('#addDealerArea').val().split(" ")[0],"city":$('#addDealerArea').val().split(" ")[1]
-            ,"area":$('#addDealerArea').val().split(" ")[2],"give_proportion":$('#addDealerProportion').val(),"son_id":$('#addDealerAccount').text(),"remark":$('#addDealerRemark').val()
-            ,"user_type":dealer_type},
+            ,"area":$('#addDealerArea').val().split(" ")[2],"give_proportion":$('#addDealerProportion').val(),"verifyCode":$('#phoneVcode').val(),"remark":$('#addDealerRemark').val()
+            ,"user_status":dealer_status,user_id: $('#addDealerAccount').text()},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                $("#dialogMsg").text("已成功添加经销商");
-                $("#buttonText").text("知道了");
-                $('#myNormalDialog').modal({backdrop: 'static', keyboard: false});
+                Toast('修改成功', 3000);
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });

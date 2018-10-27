@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/dealerDetail.js?v=1.2')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/dealerDetail.js?v=1.7')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
@@ -9,7 +9,7 @@
 @section('content')
 
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
 </section>
@@ -36,7 +36,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">所在区域</span>
-            <input id="addDealerArea" class="my-input5 borad-text-left" data-key="23-385-4224" readonly type="text" name="addr" value="{{$dealer_info->province}}{{$dealer_info->city}}{{$dealer_info->area}}">
+            <input id="addDealerArea" class="my-input5 borad-text-left" data-key="23-385-4224" readonly type="text" name="addr" value="{{$dealer_info->province}} {{$dealer_info->city}} {{$dealer_info->area}}">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
@@ -68,10 +68,10 @@
         <li class="borad-heigh">
             <span class="borad-text-left">账户状态</span>
             @if($dealer_info->user->user_status==1)
-                <span id="status_on" data-dealerStatus="{{$dealer_info->user->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
+                <span id="status_on" data-dealerstatus="{{$dealer_info->user->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
                 <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">冻结</span>
             @else
-                <span id="status_on" data-dealerStatus="{{$dealer_info->user->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
+                <span id="status_on" data-dealerstatus="{{$dealer_info->user->user_status}}" class="text-40-white dealer-swich-seclect" style="margin-left: 1.15rem;">正常</span>
                 <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">冻结</span>
             @endif
         </li>
@@ -79,6 +79,18 @@
         <li class="borad-heigh">
             <span class="borad-text-left">备注信息</span>
             <input id="addDealerRemark" class="my-input5 borad-text-left" type="text" name="identifying-code" value="{{$dealer_info->remark}}" oninput="if(value.length>15)value=value.slice(0,15)">
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">验证码</span>
+            <input id="imageVcode" class="my-input2 borad-text-left" type="text"  placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <img id="identifying-img" class="identifying-img pull-right img-rounded" onclick="changeVcode()">
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">手机验证码</span>
+            <input id="phoneVcode" class="my-input7 borad-text-left" type="number" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>6)value=value.slice(0,6)">
+            <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()" class="text-45-red pull-right vcode-button" value="获取">
         </li>
     </ul>
 </section>

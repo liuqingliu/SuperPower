@@ -34,6 +34,7 @@
                     <span class="borad-text-left">电站管理</span>
                 </li>
             </a>
+            @if($type>1)
             <li role="separator" class="divider"></li>
             <a href="{{route('dealer_manage')}}">
                 <li>
@@ -41,6 +42,7 @@
                     <span class="borad-text-left">经销商管理</span>
                 </li>
             </a>
+            @endif
             <li role="separator" class="divider"></li>
             <a href="{{route('dealer_moneymanage')}}">
                 <li>
