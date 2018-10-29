@@ -19,7 +19,7 @@ function bindPhone() {
             if (data.errno==0){
                 $('#myNormalDialog').modal('show')
             }else {
-                Toast(data.errmsg.result);
+                Toast(data.result);
             }
         },
     });

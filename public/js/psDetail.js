@@ -160,7 +160,7 @@ function changePowerStation() {
                 Toast('修改成功', 3000);
                 // $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
             }else {
-                Toast(data.errmsg.result);
+                Toast(data.result);
             }
         },
     });
