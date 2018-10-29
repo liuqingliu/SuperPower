@@ -18,9 +18,9 @@ class CreateEquipmentPortsTable extends Migration
             $table->increments('id');
             $table->string('equipment_id',16)->default("");
             $table->integer('port',false,true)->default(0);
-            $table->tinyInteger('user_type',false,true)->default(0);
+            $table->tinyInteger('status',false,true)->default(0);
             $table->timestamps();
-            $table->primary(['equipment_id', 'port']);
+            $table->unique(['equipment_id', 'port']);
         });
     }
 

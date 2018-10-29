@@ -64,7 +64,7 @@ class ClearAllMsnMessage extends Command {
                 foreach ($messages as $message)
                 {
                     $nowTime = $message->getEnqueueTime();
-                    echo "now_time:".date("Y-m-d H:i:s",strtotime($endTime)).",enqueue_time:".date("Y-m-d H:i:s",strtotime(substr($nowTime, 0, 10)))."\n";
+                    echo "now_time:".date("Y-m-d H:i:s",$endTime).",enqueue_time:".date("Y-m-d H:i:s",strtotime(substr($nowTime, 0, 10)))."\n";
                     if ($endTime < substr($nowTime, 0, 10)) {
                         exit;
                     }

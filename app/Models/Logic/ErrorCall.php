@@ -40,4 +40,5 @@ class ErrorCall
     public static $errPasswordExist = ["errno" => 26, "errmsg" => "密码已存在"];
     public static $errIdcard = ["errno" => 27, "errmsg" => "身份证信息不匹配"];
     public static $errPhoneEmpty = ["errno" => 28, "errmsg" => "手机号为空"];
+    public static $errEquipmentStatus = ["errno" => 29, "errmsg" => "设备状态有误"];
 }

@@ -28,7 +28,7 @@ class WeChatController extends Controller
         $app = app('wechat.official_account');
         $app->server->push(function ($message) {
             Log::info('message:' . serialize($message));
-            return "欢迎关注 朗畅智能！";
+            return "";
         });
 
         return $app->server->serve();

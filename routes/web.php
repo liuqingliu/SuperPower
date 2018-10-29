@@ -54,7 +54,7 @@ Route::group(['middleware' => ['user.login']], function () {
     Route::post('/api/sendMessage', 'ApiController@sendMessage')->name('sendMessage');//发送短信验证码
     Route::get('/user/updateUserPhone', 'UserController@updateUserPhone')->name('updateuserphone');//更新用户手机号
     Route::post('/user/createOrder', 'UserController@createOrder')->name('createorder');//创建用户支付订单
-    Route::post('/electric/createOrder', 'UserController@createOrder')->name('electriccreateorder');//创建电卡支付订单
+    Route::post('/electric/createOrder', 'ElectricController@createOrder')->name('electriccreateorder');//创建电卡支付订单
     Route::get('/electric/getRechargeLog', 'ElectricController@getRechargeLog')->name('getrechargeLog');//获取用户的充电记录
     Route::post('/electric/stopChargingOrder', 'ElectricController@stopChargingOrder')->name('stopchargingorder');//停止充电
     Route::get('/electric/getElectricCardInfo', 'ElectricController@getElectricCardInfo')->name('getelectriccardinfo');//电卡详情
@@ -83,6 +83,7 @@ Route::group(['middleware' => ['dealer.login']], function () {
     Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
     Route::post('/dealer/doBindBank', 'DealerController@doBindBank')->name('doBindBank');//绑定各银行卡
     Route::post('/dealer/doAddDealer', 'DealerController@doAddDealer')->name('doAddDealer');//添加经销商接口
+    Route::post('/dealer/doUpdateDealer', 'DealerController@doUpdateDealer')->name('doUpdateDealer');//添加经销商接口
     Route::get('/dealer/getEquipmentInfo', 'DealerController@getEquipmentInfo')->name('getEquipmentInfo');//添加电站接口
     Route::post('/dealer/doUpdateEquipment', 'DealerController@doUpdateEquipment')->name('doUpdateEquipment');//电站查询接口
     Route::get('/dealer/getDealerInfo', 'DealerController@getDealerInfo')->name('getDealerInfo');//经销商查询接口

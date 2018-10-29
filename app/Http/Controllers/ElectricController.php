@@ -210,10 +210,10 @@ class ElectricController extends Controller
         $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $validator = Validator::make($request->all(), [
             'pay_money_type' => 'required|int|in:' . implode(",", array_keys(Order::$payMoneyList)),
-            'card_id' => 'required|string|max:11|min:11|unique:ElectricCard'
+            'card_id' => 'required|string|max:11|min:11|exists:electric_cards'
         ]);
         if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+            return Common::myJson(ErrorCall::$errParams, $validator->errors()->first());
         }
         //可以充值了？就需要判断提交上来的是否有效
         $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
@@ -222,10 +222,11 @@ class ElectricController extends Controller
         $createParams = [
             "order_id" => Snowflake::nextId(),
             "card_id" => $request->card_id,
-            "price" => 1,
+            "price" => $price,
             "extends" => $extends,
             "openid" => $userInfo->openid,
             "order_type" => Order::PAY_METHOD_WECHAT,
+            "type" => Charge::ORDER_RECHARGE_TYPE_CARD,
         ];
         $res = ChargeOrder::create($createParams);
         if (!$res) {
@@ -236,10 +237,9 @@ class ElectricController extends Controller
         $result = $app->order->unify([
             'body' => '充小满-充电了',
             'out_trade_no' => $createParams["order_id"],
-            'total_fee' => 1,
+            'total_fee' => $price,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
-            "card_id" => $request->card_id,
             'notify_url' => 'https://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
         ]);
 
@@ -248,8 +248,9 @@ class ElectricController extends Controller
             Log::info("jssdk:" . serialize($jssdk));
             return Common::myJson(ErrorCall::$errSucc, $jssdk);
         } else {
-            $orderInfo = order::where("order_id", $createParams["order_id"])->first();
+            $orderInfo = ChargeOrder::where("order_id", $createParams["order_id"])->first();
             $orderInfo->order_status = Order::ORDER_STATUS_CLOSED;
+            $orderInfo->save();
             return Common::myJson(ErrorCall::$errWechatPayPre, $result["err_code_des"]);
         }
     }

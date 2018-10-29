@@ -78,13 +78,13 @@ class PaymentController extends Controller
             $res = $order->save(); // 保存订单
             if ($res) {
                 //给用户余额+钱(电卡)
-                if($order->order_type==Charge::ORDER_RECHARGE_TYPE_USER) {
+                if($order->type==Charge::ORDER_RECHARGE_TYPE_USER) {
                     $user = User::where("openid", $message["openid"])->first();
                     $user->user_money = $user->user_money + $wxOrder["total_fee"];
                     $res2 = $user->save();
                 }else{
                     $cardInfo = ElectricCard::where("card_id", $order->card_id)->first();
-                    $cardInfo = $cardInfo->money + $wxOrder["total_fee"];
+                    $cardInfo->money = $cardInfo->money + $wxOrder["total_fee"];
                     $res2 = $cardInfo->save();
                 }
 

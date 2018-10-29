@@ -136,6 +136,7 @@ class MsnEventSubscriber
             "cash" => 0,
             "left_time" => 0
         ];
+        Log::info("card_info:".serialize($cardInfo).",event:".serialize($event));
         if (empty($cardInfo) || $cardInfo->card_status == Eletric::CARD_STATUS_FROZEN) {
             $answer["cause"] = "block";
             $answer["cmd"] = "refuse";

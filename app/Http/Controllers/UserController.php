@@ -6,6 +6,7 @@
  * Time: 7:39
  */
 namespace App\Http\Controllers;
+use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
 use App\Models\Logic\ErrorCall;
 use App\Models\Logic\Order;
@@ -98,7 +99,7 @@ class UserController extends Controller
             "pay_money_list" => $payMoneyList,
             "pay_method_list" => $payMethodList,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
-            "user_money" => $userInfo->user_money,
+            "user_money" => $userInfo->user_money * 1.0/ 100,
         ]);
     }
 
@@ -177,10 +178,11 @@ class UserController extends Controller
 
         $createParams = [
             "order_id" => Snowflake::nextId(),
-            "price" => 1,
+            "price" => $price,
             "extends" => $extends,
             "openid" => $userInfo->openid,
             "order_type" => Order::PAY_METHOD_WECHAT,
+            "type" => Charge::ORDER_RECHARGE_TYPE_USER,
         ];
         $res = ChargeOrder::create($createParams);
         if(!$res){
@@ -191,7 +193,7 @@ class UserController extends Controller
         $result = $app->order->unify([
             'body' => '充小满-充电了',
             'out_trade_no' => $createParams["order_id"],
-            'total_fee' => 1,
+            'total_fee' => $price,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
             'notify_url' => 'https://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址

@@ -113,7 +113,7 @@ return [
              'key'                => env('WECHAT_PAYMENT_KEY', ''),
 //             'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
 //             'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
-             'notify_url'         => 'https://cxm.lcint.cn/payment/wechatnotify',                           // 默认支付结果通知地址(可覆盖)
+             'notify_url'         => 'https://'.App\Models\Logic\Common::DOMAIN.'/payment/wechatnotify',                           // 默认支付结果通知地址(可覆盖)
          ],
          // ...
      ],
