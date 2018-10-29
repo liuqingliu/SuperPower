@@ -8,3 +8,6 @@ function scanPower(){
         }
     });
 }
+$(".dialog-single-button").click(function () {
+    window.location.href = '/user/bindphone';
+});

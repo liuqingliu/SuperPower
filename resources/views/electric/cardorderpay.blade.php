@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?v=1.7')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/cardorderpay.js?v=1.3')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jweixin-1.2.0.js?')}}" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         wx.config(<?php echo $wxjssdk; ?>);
@@ -85,7 +85,7 @@
 
 <section class="footer">
     <div align="center" style="margin-top:1.5rem;">
-        <button class="button-style" onclick="confirmInfo()">马上充值</button>
+        <a class="button-style" onclick="confirmInfo()">马上充值</a>
     </div>
     <div align="center" style="margin-top:1.25rem;">
         <a href="{{route('user_order')}}" onclick="" class="mini-text">为账户充值，点击这里</a>

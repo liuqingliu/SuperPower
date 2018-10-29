@@ -21,45 +21,44 @@
 </head>
 <body>
 <div style="margin:auto; width: 50%; height: auto; overflow: hidden;">
-    <div class="box box-default" style="margin-top: 20%;">
-        <div class="box-header with-border">
-            <i class="fa fa-bullhorn"></i>
-            <h3 class="box-title">提示</h3>
+    <div style="margin-top: 20%;width: 100%">
+        <div style="text-align: center;">
+            <img src="{{URL::asset('images/error.png')}}" style="height: 11.25rem;width: 15.625rem;"/>
+            <div class="box-body">
+                @if ($data['status']=='error')
+                    <div class="callout callout-danger">
+                        <p>{{$data['message']}}</p>
+                        <p>浏览器页面将在<b id="loginTime_error">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <a href="javascript:void(0);" class="jump_now">立即跳转</a>
+                    </div>
+                @endif
+                @if ($data['status']=='continue')
+                    <div class="callout callout-info">
+                        <h4>未完成，继续</h4>
+                        <p>{{$data['message']}}</p>
+                        <p>浏览器页面将在<b id="loginTime_continue">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <a href="javascript:void(0);" class="jump_now">立即跳转</a>
+                    </div>
+                @endif
+                @if ($data['status']=='warning')
+                    <div class="callout callout-warning">
+                        <h4>警告</h4>
+                        <p>{{$data['message']}}</p>
+                        <p>浏览器页面将在<b id="loginTime_warning">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <a href="javascript:void(0);" class="jump_now">立即跳转</a>
+                    </div>
+                @endif
+                @if ($data['status']=='success')
+                    <div class="callout callout-success">
+                        <h4>成功</h4>
+                        <p>{{$data['message']}}</p>
+                        <p>浏览器页面将在<b id="loginTime_success">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <a href="javascript:void(0);" class="jump_now">立即跳转</a>
+                    </div>
+                @endif
+            </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-            @if ($data['status']=='error')
-                <div class="callout callout-danger">
-                    <h4>错误</h4>
-                    <p>{{$data['message']}}</p>
-                    <p>浏览器页面将在<b id="loginTime_error">{{ $data['jumpTime'] }}</b>秒后跳转......<a href="javascript:void(0);" class="jump_now">立即跳转</a> </p>
-                </div>
-            @endif
-            @if ($data['status']=='continue')
-                <div class="callout callout-info">
-                    <h4>未完成，继续</h4>
-                    <p>{{$data['message']}}</p>
-                    <p>浏览器页面将在<b id="loginTime_continue">{{ $data['jumpTime'] }}</b>秒后跳转......<a href="javascript:void(0);" class="jump_now">立即跳转</a> </p>
-                </div>
-            @endif
-            @if ($data['status']=='warning')
-                <div class="callout callout-warning">
-                    <h4>警告</h4>
-                    <p>{{$data['message']}}</p>
-                    <p>浏览器页面将在<b id="loginTime_warning">{{ $data['jumpTime'] }}</b>秒后跳转......<a href="javascript:void(0);" class="jump_now">立即跳转</a> </p>
-                </div>
-            @endif
-            @if ($data['status']=='success')
-                <div class="callout callout-success">
-                    <h4>成功</h4>
-                    <p>{{$data['message']}}</p>
-                    <p>浏览器页面将在<b id="loginTime_success">{{ $data['jumpTime'] }}</b>秒后跳转......<a href="javascript:void(0);" class="jump_now">立即跳转</a> </p>
-                </div>
-            @endif
-        </div>
-        <!-- /.box-body -->
     </div>
-    <!-- /.box -->
 </div>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->

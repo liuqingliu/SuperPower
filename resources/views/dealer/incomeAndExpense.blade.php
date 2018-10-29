@@ -6,7 +6,7 @@
 
 
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
     <div class="swich-container" align="center" style="display: none">
@@ -25,6 +25,7 @@
 </section>
 <section class="body">
     <ul class="board1">
+        @foreach($cash_log as $cashLogList)
         <li class="revenus-item">
             <div class="revenus-item-row" style="top: 1.5rem;">
                 <span class="pull-left text-36">提成收入</span>
@@ -38,6 +39,7 @@
                 <div class="line-dark"></div>
             </div>
         </li>
+        @endforeach
     </ul>
 </section>
 <section class="footer" style="display: none">

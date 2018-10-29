@@ -18,10 +18,12 @@ use App\Models\Logic\Common;
 use App\Models\Logic\Eletric;
 use App\Models\Logic\ErrorCall;
 use App\Models\RechargeOrder;
+use App\Models\Tixian;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use SmsManager;
 
@@ -29,17 +31,10 @@ class DealerController extends Controller
 {
     public function center()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
-        $dealerInfo = $userInfo->dealer;
-        if(empty($dealerInfo)){
-            return redirect('/prompt')->with([
-                'message' => "非经销商禁止入内",
-                'url' => '/user/center',
-                'jumpTime' => 3,
-                'status' => 'error'
-            ]);
-        }
-        $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
+        $wxUser = session('wechat.oauth_user');
+        $dealerInfo = Dealer::where("openid",$wxUser['default']->id)->first();
+         
+        $deviceList = ChargingEquipment::where("openid", $dealerInfo->openid)->pluck("equipment_id");
         $dayIncome = 0;
         $totalUsers = 0;
         $totalChargeCount = 0;
@@ -88,26 +83,37 @@ class DealerController extends Controller
         return view('dealer/dealerManage');
     }
 
-    public function dealerDetail()
+    public function dealerDetail(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
-        $dealerInfo = $userInfo->dealer;
-        $dealerInfo->user_id = $userInfo->user_id;
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|int|exists:dealers',
+        ]);
+        if ($validator->fails()) {
+            return redirect('/prompt')->with([
+                'message' => ErrorCall::$errParams["errmsg"],
+                'url' => '/dealer/center',
+                'jumpTime' => 3,
+                'status' => 'error'
+            ]);
+        }
+        $dealerInfo = Dealer::find($request->id);
+        $userInfo = $dealerInfo->user;
         return view('dealer/dealerDetail', ["dealer_info" => $dealerInfo]);
     }
 
     public function incomeAndExpense()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $cashLogList = $userInfo->cashLogs;
         return view('dealer/incomeAndExpense', ['cash_log' => $cashLogList]);
     }
 
     public function moneyManage()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
-        $dealInfo = $userInfo->dealer;
-        $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
+        $wxUser = session('wechat.oauth_user');
+        $dealInfo = Dealer::where("openid",$wxUser['default']->id)->first();
+        $deviceList = ChargingEquipment::where("openid", $dealInfo->openid)->pluck("equipment_id");
         $totalIncome = $dealInfo->total_income;
         $totalUsers = 0;
         $totalChargeCount = 0;
@@ -138,7 +144,8 @@ class DealerController extends Controller
                 'status' => 'error'
             ]);
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if ($userInfo->user_type == Common::USER_TYPE_JXS) {
             $deviceInfo = ChargingEquipment::where("equipment_id", $request->devid)->where("openid",
                 $userInfo->openid)->first();
@@ -160,9 +167,9 @@ class DealerController extends Controller
 
     public function revenueSummary()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
-        $dealerInfo = $userInfo->dealer;
-        $deviceList = ChargingEquipment::where("openid", $userInfo->openid)->pluck("equipment_id");
+        $wxUser = session('wechat.oauth_user');
+        $dealerInfo = Dealer::where("openid",$wxUser['default']->id)->first();
+        $deviceList = ChargingEquipment::where("openid", $dealerInfo->openid)->pluck("equipment_id");
         $totalUsers = 0;
         $totalChargeCount = 0;
         if (!empty($deviceList)) {
@@ -180,10 +187,10 @@ class DealerController extends Controller
 
     public function takeOutMoney()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
-        $dealerInfo = $userInfo->dealer;
+        $wxUser = session('wechat.oauth_user');
+        $dealerInfo = Dealer::where("openid",$wxUser['default']->id)->first();
         return view('dealer/takeOutMoney', [
-            "income_withdraw" => $dealerInfo->income_withdraw,
+            "income_withdraw" =>  ($dealerInfo->total_income - $dealerInfo->income_withdraw) / 100.00,
             "is_set_password" => !empty($dealerInfo->password),
             "is_bind_phone" => !empty($dealerInfo->user->phone),
             "is_bind_bank" => !empty($dealerInfo->bank_no),
@@ -191,21 +198,22 @@ class DealerController extends Controller
     }
 
     //修改电卡状态
-    public function changeCardStatus(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'card_id' => "required|exists:electric_cards"
-        ]);
-        if ($validator->fails()) {
-            return Common::myJson(ErrorCall::$errParams, $validator->errors());
-        }
-        $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
-        if (empty($cardInfo)) {
-            return Common::myJson(ErrorCall::$errCardNotExist);
-        }
-
-        return Common::myJson(ErrorCall::$errSucc);
-    }
+//    public function changeCardStatus(Request $request)
+//    {
+//        $validator = Validator::make($request->all(), [
+//            'card_id' => "required|exists:electric_cards"
+//        ]);
+//        if ($validator->fails()) {
+//            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+//        }
+//        $dealerInfo = session(Common::SESSION_KEY_DEALER);
+//        $cardInfo = ElectricCard::where("card_id", $request->card_id)->first();
+//        if (empty($cardInfo)) {
+//            return Common::myJson(ErrorCall::$errCardNotExist);
+//        }
+//
+//        return Common::myJson(ErrorCall::$errSucc);
+//    }
 
     public function getCardInfo(Request $request)
     {
@@ -232,7 +240,8 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if($userInfo->user_type==Common::USER_TYPE_ADMIN){
             $equipmentInfoList = ChargingEquipment::where("equipment_id", $request->equipment_id)->get();
         }else{
@@ -254,7 +263,8 @@ class DealerController extends Controller
 
     public function getEquipmentInfoList(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if($userInfo->user_type==Common::USER_TYPE_ADMIN){
             $equipmentInfoList = ChargingEquipment::all();
         }else{
@@ -284,7 +294,8 @@ class DealerController extends Controller
         if ($validator->fails() || (empty($request->phone) && empty($request->user_id) && empty($request->name))) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if ($userInfo->user_type == Common::USER_TYPE_NORMAL || $userInfo->user_type == Common::USER_TYPE_JXS) {
             return Common::myJson(ErrorCall::$errNotPermit);
         }
@@ -325,13 +336,42 @@ class DealerController extends Controller
 
     public function getDealerList(Request $request)
     {
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
+        if ($userInfo->user_type == Common::USER_TYPE_NORMAL || $userInfo->user_type == Common::USER_TYPE_JXS) {
+            return Common::myJson(ErrorCall::$errNotPermit);
+        }
+        $dealerInfo = session(Common::SESSION_KEY_DEALER);
+
+        if ($userInfo->user_type == Common::USER_TYPE_ADMIN) {
+            $dealerList = null;
+            $searchUser = Dealer::all();
+            foreach ($searchUser as $dealer) {
+                $user = $dealer->user;
+                $dealerList[] = $dealer;
+            }
+            return Common::myJson(ErrorCall::$errSucc, $dealerList);
+        } else {//超级经销商
+            $searchUser = Dealer::where("parent_openid", $dealerInfo->openid)->get();
+            $dealerList = null;
+            foreach ($searchUser as $dealer) {
+                $user = $dealer->user;
+                $dealerList[] = $dealer;
+            }
+            return Common::myJson(ErrorCall::$errSucc, $dealerList);
+        }
+    }
+
+    public function getCashLogList(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'type' => "required|in:1,2",
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $sumPrice = 0;
         if ($request->type == Common::SHOW_HUIZONG_TYPE_JXS) {
             //来自其他经销商的收益，直属下级
@@ -389,7 +429,8 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if ($userInfo->user_type == Common::USER_TYPE_JXS || ($userInfo->user_type == Common::USER_TYPE_SJXS && $request->user_type == Common::USER_TYPE_SJXS)) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
@@ -422,21 +463,23 @@ class DealerController extends Controller
     public function doResetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'old_password' => "required",
             'password' => ['required', 'confirmed'],//不为空,两次密码是否相同
             'password_confirmation' => ['required', "same:password"],//不为空,两次密码是否相同
+            'id_card' =>'required',
             'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
-        if ($userInfo->dealer->password != md5($request->old_password)) {
-            return Common::myJson(ErrorCall::$errPassword, $validator->errors());
+        $wxUser = session('wechat.oauth_user');
+        $dealer = Dealer::where("openid",$wxUser['default']->id)->first();
+        if ($dealer->id_card != $request->id_card) {
+            return Common::myJson(ErrorCall::$errIdcard, $validator->errors());
         }
-        $userInfo->password = md5($request->password);
-        $res = $userInfo->save();
+        $dealer->password = md5($request->password);
+        $res = $dealer->save();
         if ($res) {
+            session([Common::SESSION_KEY_DEALER => $dealer]);
             return Common::myJson(ErrorCall::$errSucc);
         } else {
             return Common::myJson(ErrorCall::$errNet);
@@ -453,8 +496,8 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
-        $dealer = $userInfo->dealer;
+        $wxUser = session('wechat.oauth_user');
+        $dealer = Dealer::where("openid",$wxUser['default']->id)->first();
         if ($dealer->password != "") {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
@@ -488,7 +531,8 @@ class DealerController extends Controller
         if (empty($equipmentInfo) || $equipmentInfo->equipment_status == $request->equipment_status) {
             return Common::myJson(ErrorCall::$errParams);
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         if ($userInfo->user_status != Common::USER_STATUS_DEFAULT || $userInfo->user_type == Common::USER_TYPE_NORMAL) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
@@ -524,27 +568,29 @@ class DealerController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
+        $dealerInfo = Dealer::where("openid",$wxUser['default']->id)->first();
         if ($userInfo->user_status != Common::USER_STATUS_DEFAULT || $userInfo->user_type == Common::USER_TYPE_NORMAL) {
             return Common::myJson(ErrorCall::$errNotPermit, $validator->errors());
         }
-        if ($userInfo->password != md5($request->password)) {
+        if ($dealerInfo->password != md5($request->password)) {
             return Common::myJson(ErrorCall::$errPassword, $validator->errors());
         }
-        if ($request->money > $userInfo->total_income - $userInfo->income_withdraw) {
+        if ($request->money*100 > $dealerInfo->total_income - $dealerInfo->income_withdraw) {
             return Common::myJson(ErrorCall::$errNotEnough, $validator->errors());
         }
 
         try {
-            DB::transaction(function () use ($userInfo, $request) {
-                $dealerInfo = Dealer::where("openid", $userInfo->openid)->lockForUpdate()->first();
+            DB::transaction(function () use ($dealerInfo, $request) {
                 $dealerInfo->income_withdraw = $dealerInfo->income_withdraw + $request->money;
                 $dealerInfo->save();
                 Tixian::create([
-                    "openid" => $userInfo->openid,
-                    "money" => $request->money,
+                    "openid" => $dealerInfo->openid,
+                    "money" => $request->money * 100,
                 ]);
             }, 5);
+            session([Common::SESSION_KEY_DEALER => $dealerInfo]);
         } catch (\Exception $e) {
             Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
             return Common::myJson(ErrorCall::$errSys);
@@ -554,6 +600,37 @@ class DealerController extends Controller
 
     public function bindBank()
     {
-        return view('dealer/bindBank');
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
+        return view('dealer/bindBank',[
+            'is_bind_bank' => !empty($userInfo->dealer->bank_no),
+            'bank_no' => $userInfo->dealer->bank_no,
+            'bank_name' => $userInfo->dealer->bank_name,
+            'bank_username' => $userInfo->dealer->bank_username,
+        ]);
+    }
+
+    public function doBindBank(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "bank_name" => "required|string",
+            "bank_no" => "required|string",
+            "bank_username" => "required|string",
+            'verifyCode' => 'required|verify_code',
+        ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $wxUser = session('wechat.oauth_user');
+        $dealerInfo = Dealer::where("openid",$wxUser['default']->id)->first();
+        $dealerInfo->bank_name = $request->bank_name;
+        $dealerInfo->bank_no = $request->bank_no;
+        $dealerInfo->bank_username = $request->bank_username;
+        $res = $dealerInfo->save();
+        if(!$res) {
+            return Common::myJson(ErrorCall::$errSys);
+        }else{
+            return Common::myJson(ErrorCall::$errSucc);
+        }
     }
 }

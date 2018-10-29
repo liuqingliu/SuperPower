@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/order.js?v=1.6')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/order.js?v=1.2')}}"></script>
 @endsection
 @section('title', '账户充值')
 @section('system', '个人中心')
@@ -38,7 +38,7 @@
                             <div class="recharge-block_title mini-text-white" style="visibility: hidden">新客户专享</div>
                         @endif
                         <p class="real_price text-48-grey recharge-block-text">充{{$pament_money["real_price"]}}元</p>
-                        <p class=" mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
+                        <p class="given_price mini-text-red recharge-block-text">赠送{{$pament_money["given_price"]}}元</p>
                     </div>
                 </li>
                 @endforeach
@@ -71,7 +71,7 @@
 </div>
 <section class="footer">
     <div align="center" style="margin-top:1.5rem;">
-        <button class="button-style" onclick="creatOrder()">马上充值</button>
+        <a id="gopay" class="button-style" onclick="creatOrder()">马上充值</a>
     </div>
     <div align="center" style="margin-top:1.25rem;">
         <a href="{{route('electric_cardorderpay')}}" class="mini-text">为电卡充值，点击这里</a>

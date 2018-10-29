@@ -159,8 +159,9 @@ class MsnEventSubscriber
             $orderId = Snowflake::nextId();
             if ($answer["cmd"] == "open") {
                 //创建订单,设置port为不可用
-                $minTime = min(10 * Common::ONE_HOUR_SECONDES,
-                    floor($cardInfo->money / $deviceInfo->charging_unit_second));
+                $minTime = min(6 * Common::ONE_HOUR_SECONDES,
+                    $cardInfo->money * $deviceInfo->charging_unit_second);
+                Log::info("card_request:".$minTime.",cardinfo=".$cardInfo->money.",device_unit=".$deviceInfo->charging_unit_second);
                 $orderInfo = [
                     "order_id" => $orderId,
                     "recharge_str" => $event->cardId,

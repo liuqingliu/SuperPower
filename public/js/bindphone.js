@@ -19,11 +19,12 @@ function bindPhone() {
             if (data.errno==0){
                 $('#myNormalDialog').modal('show')
             }else {
-                Toast(data.errmsg);
+                Toast(data.errmsg.result);
             }
         },
     });
 }
 $('.dialog-single-button').click(function () {
-    history.go(-1);
+    // history.go(-1);
+    self.location=document.referrer;
 });

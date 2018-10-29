@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use stdClass;
 
 
 class UserController extends Controller
@@ -29,41 +30,36 @@ class UserController extends Controller
 //        echo "1";
 //        return;
         $wxUser = session('wechat.oauth_user');
-        $userInfo = session(Common::SESSION_KEY_USER);
         if(empty($wxUser) || !isset($wxUser["default"])){
             dd("请求非法");
         }
-        if(empty($userInfo)) {
-            $userInfoReal = User::where("openid",$wxUser['default']->id)->first();
-            if($userInfoReal["user_status"]==Common::USER_STATUS_FREEZONE) {
-                dd("非法用户，请联系管理员");
-            }
-            if (empty($userInfoReal)) {
-                User::create([
-                    'openid'=>$wxUser['default']->id,
-                    'user_id'=>Common::getUid(),
-                    'headimgurl'=>$wxUser['default']->avatar,
-                    'nickname' => $wxUser['default']->nickname,
-                    'ip' => $request->getClientIp(),
-                    'user_last_login' => date("Y-m-d H:i:s"),
-                    'api_token' => md5($wxUser['default']->id."cxm*#*".time()),
-                ]);
-                $userInfoReal = User::where("openid",$wxUser['default']->id)->first();
-            }
-            $userInfoReal->user_last_login = date("Y-m-d H:i:s");
-//            $userInfoReal->api_token = md5($wxUser['default']->id."cxm*#*".time());//脚本批量更新
-            $res = $userInfoReal->save();
-            if(!$res){
-                dd("请刷新重试");
-            }
-            session([Common::SESSION_KEY_USER => $userInfoReal]);
-            $userInfo = $userInfoReal;
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
+        if (empty($userInfo)) {
+            User::create([
+                'openid'=>$wxUser['default']->id,
+                'user_id'=>Common::getUid(),
+                'headimgurl'=>$wxUser['default']->avatar,
+                'nickname' => $wxUser['default']->nickname,
+                'ip' => $request->getClientIp(),
+                'user_last_login' => date("Y-m-d H:i:s"),
+                'api_token' => md5($wxUser['default']->id."cxm*#*".time()),
+            ]);
+            $userInfo = User::where("openid",$wxUser['default']->id)->first();
+        }
+        if($userInfo->user_status==Common::USER_STATUS_FREEZONE) {
+            dd("非法用户，请联系管理员");
         }
         $app = app('wechat.official_account');
         $wxJssdkconfig = $app->jssdk->buildConfig(array('checkJsApi', 'scanQRCode'), false);
-
+        $showUser = new stdClass();
+        $showUser->headimgurl = $userInfo->headimgurl;
+        $showUser->nickname = $userInfo->nickname;
+        $showUser->user_id = $userInfo->user_id;
+        $showUser->phone = $userInfo->phone;
+        $showUser->user_money = $userInfo->user_money * 0.01;
+        $showUser->user_type = $userInfo->user_type;
         return view('user/center',[
-            "user_info" => $userInfo,
+            "user_info" => $showUser,
             "wxjssdk" => $wxJssdkconfig,
             "new_user" => UserLogic::isNewUser($userInfo->openid, $userInfo->created_at),
         ]);
@@ -71,7 +67,8 @@ class UserController extends Controller
 
     public function detail()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         return view('user/detail',[
             "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time","headimgurl"],$userInfo)
         ]);
@@ -79,7 +76,8 @@ class UserController extends Controller
 
     public function bindphone()
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $outUserInfo = [
             "user_info" => Common::getNeedObj(["openid","phone","user_type"], $userInfo),
         ];
@@ -92,7 +90,8 @@ class UserController extends Controller
 
     public function order(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $payMoneyList = Order::$payMoneyList;
         $payMethodList = Order::$payMethodList;
         return view('user/order',[
@@ -105,7 +104,8 @@ class UserController extends Controller
 
     public function orderanswser(Request $request)
     {
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $validator = Validator::make($request->all(), [
             'order_id' => 'required|string|max:30|min:16',
         ]);
@@ -137,7 +137,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
 //        if ($userInfo->user_type!=Common::USER_TYPE_NORMAL) {
 //            if (empty($request->user_password)) {
 //                return Common::myJson(ErrorCall::$errParams, $validator->errors());
@@ -164,7 +165,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());
         }
-        $userInfo = session(Common::SESSION_KEY_USER);
+        $wxUser = session('wechat.oauth_user');
+        $userInfo = User::where("openid",$wxUser['default']->id)->first();
         //可以充值了？就需要判断提交上来的是否有效
         $price = Order::$payMoneyList[$request->pay_money_type]["real_price"] * 100;//真实充值
         $extends = "";
@@ -175,7 +177,7 @@ class UserController extends Controller
 
         $createParams = [
             "order_id" => Snowflake::nextId(),
-            "price" => $price * 100,
+            "price" => 1,
             "extends" => $extends,
             "openid" => $userInfo->openid,
             "order_type" => Order::PAY_METHOD_WECHAT,
@@ -192,7 +194,7 @@ class UserController extends Controller
             'total_fee' => 1,
             'trade_type' => 'JSAPI',
             'openid' => $userInfo->openid,
-            'notify_url' => 'http://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
+            'notify_url' => 'https://'.Common::DOMAIN.'/payment/wechatnotify', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
         ]);
 
         if(isset($result["prepay_id"])) {

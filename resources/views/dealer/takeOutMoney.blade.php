@@ -42,7 +42,7 @@
     <input id="isbindbank" style="display: none" value="{{$is_bind_bank}}">
     <input id="issetpassword" style="display: none" value="{{$is_set_password}}">
     <div style="height:14.6875rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->

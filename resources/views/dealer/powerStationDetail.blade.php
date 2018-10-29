@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psDetail.js?v=1.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psDetail.js?v=1.5')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
@@ -10,7 +10,7 @@
 
 
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
 </section>
@@ -22,7 +22,7 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站编号</span>
-            <span class="my-input6 borad-text-right">{{$device_info->equipment_id}}</span>
+            <span id="input1" class="my-input6 borad-text-right">{{$device_info->equipment_id}}</span>
             <!--<input class="my-input6 borad-text-left" type="number" name="identifying-code" placeholder="输入11位卡号查询" oninput="if(value.length>11)value=value.slice(0,11)">-->
         </li>
         <li class="line"></li>
@@ -38,28 +38,28 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站区域</span>
-            <input id="psArea" data-key="23-385-4224" class="my-input5 borad-text-left" type="text" readonly placeholder="{{$device_info->province}}{{$device_info->city}}{{$device_info->area}}">
+            <input id="input2" data-key="23-385-4224" class="my-input5 borad-text-left" type="text" readonly value="{{$device_info->province}}{{$device_info->city}}{{$device_info->area}}">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">街道名称</span>
-            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$device_info->street}}" oninput="if(value.length>15)value=value.slice(0,15)">
+            <input id="input3" class="my-input5 borad-text-left" type="text" name="identifying-code" value="{{$device_info->street}}" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">具体位置</span>
-            <input class="my-input5 borad-text-left" type="text" name="identifying-code" placeholder="{{$device_info->address}}" oninput="if(value.length>15)value=value.slice(0,15)">
+            <input id="input4"  class="my-input5 borad-text-left" type="text" name="identifying-code" value="{{$device_info->address}}" oninput="if(value.length>15)value=value.slice(0,15)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电价成本</span>
-            <input id="input5" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="{{$device_info->charging_cost}}" oninput="if(value.length>4)value=value.slice(0,4)">
+            <input id="input5" class="my-input1 borad-text-left" @if($is_self) readonly @endif type="number" name="identifying-code" value="{{$device_info->charging_cost}}" oninput="if(value.length>4)value=value.slice(0,4)">
             <span class="borad-text-right pull-right">单位：元/度</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">充电计费</span>
-            <input id="input6" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="{{$device_info->charging_unit_second}}" oninput="if(value.length>4)value=value.slice(0,4)">
+            <input id="input6" class="my-input1 borad-text-left" @if($is_self) readonly @endif type="number" name="identifying-code" value="{{$device_info->charging_unit_second}}" oninput="if(value.length>4)value=value.slice(0,4)">
             <span class="borad-text-right pull-right">单位：小时/元</span>
         </li>
         <li class="line"></li>
@@ -79,13 +79,25 @@
         <li class="line"></li>
         <li class="borad-heigh">
             <span class="borad-text-left">电站状态</span>
-            @if($device_info->equipment_status==0)
+            @if($device_info->equipment_status==1)
                 <span id="status_on" data-equipmentStatus="{{$device_info->equipment_status}}" class="text-40-white equipment-swich-seclect" style="margin-left: 1.15rem;">已激活</span>
                 <span id="status_off" class="text-40-b3 dealer-swich" style="margin-left: 2rem;">已停用</span>
             @else
                 <span id="status_on" data-equipmentStatus="{{$device_info->equipment_status}}" class="text-40-b3 dealer-swich" style="margin-left: 1.15rem;">已激活</span>
                 <span id="status_off"class="text-40-white equipment-swich-seclect"  style="margin-left: 2rem;">已停用</span>
             @endif
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">验证码</span>
+            <input id="imageVcode" class="my-input2 borad-text-left" type="text"  placeholder="输入右侧验证码" oninput="if(value.length>4)value=value.slice(0,4)">
+            <img id="identifying-img" class="identifying-img pull-right img-rounded" onclick="changeVcode()">
+        </li>
+        <li class="line"></li>
+        <li class="borad-heigh">
+            <span class="borad-text-left">手机验证码</span>
+            <input id="phoneVcode" class="my-input7 borad-text-left" type="number" name="identifying-code" placeholder="输入收到的验证码" oninput="if(value.length>6)value=value.slice(0,6)">
+            <input id="getPhoneVcode" type="button" onclick="getVcodewihtoutPhone()" class="text-45-red pull-right vcode-button" value="获取">
         </li>
     </ul>
 </section>

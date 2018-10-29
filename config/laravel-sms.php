@@ -14,7 +14,7 @@ return [
     'route' => [
         'enable'     => true,
         'prefix'     => 'lcint-sms',
-        'middleware' => ['api'],
+        'middleware' => ['web'],
     ],
 
     /*
