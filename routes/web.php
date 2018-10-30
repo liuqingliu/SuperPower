@@ -14,7 +14,7 @@
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
-
+Route::get("/api/testredis",'ApiController@testredis');
 Route::get('/', function () {
     return 1;
 });
@@ -78,7 +78,8 @@ Route::group(['middleware' => ['dealer.login']], function () {
     Route::get('/dealer/revenueSummary', 'DealerController@revenueSummary')->name('dealer_revenueSummary');
     Route::get('/dealer/takeOutMoney', 'DealerController@takeOutMoney')->name('dealer_takeOutMoney');//
     Route::get('/dealer/getDealerList', 'DealerController@getDealerList')->name('getDealerList');//获取经销商列表接口
-    Route::get('/dealer/getCashLogList', 'DealerController@getDealerList')->name('getCashLogList');//获取收入明细列表
+    Route::get('/dealer/getRevenueSummaryList', 'DealerController@getRevenueSummaryList')->name('getRevenueSummaryList');//获取营销列表
+    Route::get('/dealer/getCashLogList', 'DealerController@getCashLogList')->name('getCashLogList');//获取收入明细列表
     Route::post('/dealer/doTixian', 'DealerController@doTixian')->name('doTixian');//经销商提现接口
     Route::get('/dealer/bindBank', 'DealerController@bindBank')->name('bindBank');
     Route::post('/dealer/doBindBank', 'DealerController@doBindBank')->name('doBindBank');//绑定各银行卡

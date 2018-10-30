@@ -17,6 +17,7 @@ use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
 use App\Models\Logic\Eletric;
 use App\Models\Logic\ErrorCall;
+use App\Models\Logic\Snowflake;
 use App\Models\RechargeOrder;
 use App\Models\Tixian;
 use App\Models\User;
@@ -181,6 +182,19 @@ class DealerController extends Controller
         $wxUser = session('wechat.oauth_user');
         $dealerInfo = Dealer::where("openid", $wxUser['default']->id)->first();
         return view('dealer/resetPassword', ["type" => $dealerInfo->user->type]);
+    }
+
+    public function bindBank()
+    {
+        $wxUser = session('wechat.oauth_user');
+        $dealer = Dealer::where("openid", $wxUser['default']->id)->first();
+        return view('dealer/bindBank', [
+            'is_bind_bank' => !empty($dealer->bank_no),
+            'bank_no' => $dealer->bank_no,
+            'bank_name' => $dealer->bank_name,
+            'bank_username' => $dealer->bank_username,
+            "type" => $dealer->type
+        ]);
     }
 
     public function revenueSummary()
@@ -384,7 +398,7 @@ class DealerController extends Controller
         }
     }
 
-    public function getCashLogList(Request $request)
+    public function getRevenueSummaryList(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'type' => "required|in:1,2",
@@ -432,7 +446,7 @@ class DealerController extends Controller
                 unset($cash->chargingEquipment);
             }
         }
-        return Common::myJson(ErrorCall::$errSucc, ["cash_log" => $cashLog, "sum_price" => $sumPrice / 100.00]);
+        return Common::myJson(ErrorCall::$errSucc, ["revenue_summary_list" => $cashLog, "sum_price" => $sumPrice / 100.00]);
     }
 
     public function doAddDealer(Request $request)
@@ -661,6 +675,17 @@ class DealerController extends Controller
                     "openid" => $dealerInfo->openid,
                     "money" => $request->money * 100,
                 ]);
+                $dateTime = date("Y-m-d H:i:s");
+                CashLog::create([
+                    "openid" => $dealerInfo->openid,
+                    "equipment_id" => "",
+                    "cash_id" => Snowflake::nextId(),
+                    "cash_type" => Common::CASH_TYPE_TIXIAN,
+                    "cash_status" => Common::CASH_STATUS_OUT,
+                    "cash_price" => $request->money * 100,
+                    "created_at" => $dateTime,
+                    "updated_at" => $dateTime,
+                ]);
             }, 5);
         } catch (\Exception $e) {
             Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
@@ -669,16 +694,25 @@ class DealerController extends Controller
         return Common::myJson(ErrorCall::$errSucc);
     }
 
-    public function bindBank()
+    public function getCashLogList(Request $request)
     {
-        $wxUser = session('wechat.oauth_user');
-        $userInfo = User::where("openid", $wxUser['default']->id)->first();
-        return view('dealer/bindBank', [
-            'is_bind_bank' => !empty($userInfo->dealer->bank_no),
-            'bank_no' => $userInfo->dealer->bank_no,
-            'bank_name' => $userInfo->dealer->bank_name,
-            'bank_username' => $userInfo->dealer->bank_username,
+        $validator = Validator::make($request->all(), [
+            "cash_status" => "sometimes|int",
         ]);
+        if ($validator->fails()) {
+            return Common::myJson(ErrorCall::$errParams, $validator->errors());
+        }
+        $wxUser = session('wechat.oauth_user');
+        if(isset($request->cash_status)) {
+            $cashLogList = CashLog::where("openid", $wxUser['default']->id)->where("cash_status", $request->cash_status)->get();
+        }else{
+            $cashLogList = CashLog::where("openid", $wxUser['default']->id)->get();
+        }
+        foreach ($cashLogList as &$cashlog) {
+            $cashlog->cash_price = $cashlog->cash_price / 100;
+            $cashlog->created_at = date("Y-m-d",strtotime($cashlog->created_at));
+        }
+        return Common::myJson(ErrorCall::$errSucc, ["cash_log_list" => $cashLogList]);
     }
 
     public function doBindBank(Request $request)
@@ -687,7 +721,7 @@ class DealerController extends Controller
             "bank_name" => "required|string",
             "bank_no" => "required|string",
             "bank_username" => "required|string",
-            'verifyCode' => 'required|verify_code',
+//            'verifyCode' => 'required|verify_code',
         ]);
         if ($validator->fails()) {
             return Common::myJson(ErrorCall::$errParams, $validator->errors());

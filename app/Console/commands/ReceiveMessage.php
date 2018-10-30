@@ -5,14 +5,17 @@
  * Date: 2018/9/4
  * Time: 17:45
  */
+
 namespace App\Console\Commands;
 
 use AliyunMNS\Client;
 use AliyunMNS\Exception\MnsException;
+use App\Models\Logic\Common;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class ReceiveMessage extends Command {
+class ReceiveMessage extends Command
+{
 
     /**
      * The console command name.
@@ -45,6 +48,7 @@ class ReceiveMessage extends Command {
      */
     public function handle()
     {
+        $startTime = time();
         while (1) {
             $receiptHandle = null;
             try {
@@ -58,37 +62,38 @@ class ReceiveMessage extends Command {
                 $message = base64_decode($body->payload);
                 $realMsg = json_decode($message, true);
                 $receiptHandle = $res->getReceiptHandle();
-                Log::info("msn:real_msg".serialize($realMsg));
+                Log::info("msn:real_msg" . serialize($realMsg));
                 if (isset($realMsg["func"])) {
-                    $func = "App\Events\Msns\\".$realMsg["func"];
+                    $func = "App\Events\Msns\\" . $realMsg["func"];
                     if (!class_exists($func)) {
                         return;
                     }
                     event(new $func($realMsg));
                 }
-                if (isset($realMsg["status"]) && ($realMsg["status"] == "online" || $realMsg["status"] == "offline") ) {
+                if (isset($realMsg["status"]) && ($realMsg["status"] == "online" || $realMsg["status"] == "offline")) {
                     $func = "App\Events\Msns\\changeNet";
                     event(new $func($realMsg["deviceName"], $realMsg["status"]));
                 }
             } catch (MnsException $e) {
                 echo "ReceiveMessage Failed: " . $e . "\n";
                 echo "MNSErrorCode: " . $e->getMnsErrorCode() . "\n";
-                Log::debug("ReceiveMessage-error: ".serialize($e->getMessage()));
+                Log::debug("ReceiveMessage-error: " . serialize($e->getMessage()));
 //                exit;
             }
 
-            if($receiptHandle){
-                try
-                {
+            if ($receiptHandle) {
+                try {
                     $delres = $queue->deleteMessage($receiptHandle);
-                }
-                catch (MnsException $e)
-                {
+                } catch (MnsException $e) {
                     echo "deleteMessage Failed: " . $e . "\n";
                     echo "MNSErrorCode: " . $e->getMnsErrorCode() . "\n";
-                    Log::debug("deleteMessage-error: ".serialize($e->getMessage()));
+                    Log::debug("deleteMessage-error: " . serialize($e->getMessage()));
                     return;
                 }
+            }
+
+            if (time() > $startTime + Common::ONE_DAY_SECONDES) {
+                break;
             }
         }
     }

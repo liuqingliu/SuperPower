@@ -3,9 +3,11 @@
 namespace App\Jobs;
 
 use App\Mail\CommonError;
+use App\Models\CashLog;
 use App\Models\Dealer;
 use App\Models\Logic\Charge;
 use App\Models\Logic\Common;
+use App\Models\Logic\Snowflake;
 use App\Models\RechargeOrder;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -70,19 +72,52 @@ class CalculateIncome implements ShouldQueue
                         throw new \Exception("经销商不存在:openid=".$deviceInfo->openid);
                         return;
                     }
-                    $dealerInfo->total_income = $dealerInfo->total_income + $rechargeOrder->recharge_price *
-                        (100 - $dealerInfo->give_proportion) * 0.01;
-                    $deviceInfo->save();
+                    $addPrice = $rechargeOrder->recharge_price * (100 - $dealerInfo->give_proportion) * 0.01;
+                    $dealerInfo->total_income = $dealerInfo->total_income + $addPrice;
+                    $dealerInfo->save();
+                    $dateTime = date("Y-m-d H:i:s");
+                    CashLog::create([
+                        "openid" => $deviceInfo->openid,
+                        "equipment_id" => $deviceInfo->equipment_id,
+                        "cash_id" => Snowflake::nextId(),
+                        "cash_type" => Common::CASH_TYPE_DEVIC,
+                        "cash_status" => Common::CASH_STATUS_INCOME,
+                        "cash_price" => $addPrice,
+                        "created_at" => $dateTime,
+                        "updated_at" => $dateTime,
+                    ]);
                     $dealerInfoSuper = Dealer::where("openid", $dealerInfo->parent_openid)->first();
                     if (!empty($dealerInfoSuper)) {
-                        $dealerInfoSuper->total_income = $dealerInfoSuper->total_income + $rechargeOrder->recharge_price *
+                        $spAddPrice = $rechargeOrder->recharge_price *
                             $dealerInfoSuper->give_proportion * 0.01 * (100 - $dealerInfo->give_proportion) * 0.01;
+                        $dealerInfoSuper->total_income = $dealerInfoSuper->total_income + $spAddPrice;
                         $dealerInfoSuper->save();
+                        CashLog::create([
+                            "openid" => $dealerInfoSuper->openid,
+                            "equipment_id" => $deviceInfo->equipment_id,
+                            "cash_id" => Snowflake::nextId(),
+                            "cash_type" => Common::CASH_TYPE_SHARE,
+                            "cash_status" => Common::CASH_STATUS_INCOME,
+                            "cash_price" => $spAddPrice,
+                            "created_at" => $dateTime,
+                            "updated_at" => $dateTime,
+                        ]);
                         $cs = Dealer::where("openid", $dealerInfoSuper->parent_openid)->first();
                         if (!empty($cs)) {
-                            $cs->total_income = $cs->total_income + $rechargeOrder->recharge_price *
+                            $csAddPrice = $rechargeOrder->recharge_price *
                                 $dealerInfoSuper->give_proportion * 0.01 * $dealerInfo->give_proportion * 0.01;
+                            $cs->total_income = $cs->total_income + $csAddPrice;
                             $cs->save();
+                            CashLog::create([
+                                "openid" => $cs->openid,
+                                "equipment_id" => $deviceInfo->equipment_id,
+                                "cash_id" => Snowflake::nextId(),
+                                "cash_type" => Common::CASH_TYPE_SHARE,
+                                "cash_status" => Common::CASH_STATUS_INCOME,
+                                "cash_price" => $csAddPrice,
+                                "created_at" => $dateTime,
+                                "updated_at" => $dateTime,
+                            ]);
                         }
                     }
                 }, 5);

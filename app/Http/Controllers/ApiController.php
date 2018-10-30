@@ -120,8 +120,12 @@ class ApiController extends Controller
 
     public function testredis()
     {
-//        Redis::set('name', 'guw+enjie');
-        $values = Redis::get('name');
+        if(empty(Redis::get('err_event_email_key'))) {
+            Redis::setex('err_event_email_key', 2,3);
+            dd(2);
+        }
+        Redis::del('err_event_email_key');
+        $values = Redis::get('err_event_email_key');
         dd($values);
         //输出："guwenjie"
         //加一个小例子比如网站首页某个人员或者某条新闻日访问量特别高，可以存储进redis，减轻内存压力

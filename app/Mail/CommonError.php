@@ -39,6 +39,7 @@ class CommonError extends  Mailable
             ->view('emails.common')
             ->with([
                 'msg' => $this->message,
+                'time' => date("Y-m-d H:i:s"),
             ]);
     }
 

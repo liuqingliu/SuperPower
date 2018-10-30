@@ -26,6 +26,7 @@ use function GuzzleHttp\Psr7\str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
 
 class MsnEventSubscriber
 {
@@ -65,12 +66,15 @@ class MsnEventSubscriber
 
         //如果有设备三块板子都有问题，则报警
         if ($event->board1 == "N" && $event->board2 == "N" && $event->board3 == "N") {
-            $errmsg = [
-                "adr" => __METHOD__ . "," . __FUNCTION__,
-                "desc" => "有设备三个板子都坏了！！！设备编号：" . $event->devid,
-                "detail" => serialize($event),
-            ];
-            Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
+            if(empty(Redis::get('err_event_email_key'))) {
+                Redis::setex('err_event_email_key', 3600, $event->devid);
+                $errmsg = [
+                    "adr" => __METHOD__ . "," . __FUNCTION__,
+                    "desc" => "有设备三个板子都坏了！！！设备编号：" . $event->devid,
+                    "detail" => serialize($event),
+                ];
+                Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
+            }
         }
         event(new SendWulian($event->devid, $answer));
     }

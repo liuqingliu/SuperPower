@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command("ReceiveMessage:receive")->everyMinute()->withoutOverlapping();
+        $schedule->command("ReceiveMessage:receive")->everyTenMinutes();
         $schedule->command("AutoCloseChargeOrder:close")->everyMinute()->withoutOverlapping();
     }
 

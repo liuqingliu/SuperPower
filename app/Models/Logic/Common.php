@@ -30,6 +30,7 @@ class Common
 
     //时间
     const ONE_WEEK_SECONDES = 7 * 24 * 3600;
+    const ONE_DAY_SECONDES = 24 *3600;
     const ONE_HOUR_SECONDES = 3600;
     const ONE_MINUTE_SECONDES = 60;
 
@@ -38,9 +39,10 @@ class Common
     const SHOW_HUIZONG_TYPE_DEV = 2;
 
     //资金流水
-    const CASH_TYPE_SHARE = 1;//经销商流水
+    const CASH_TYPE_SHARE = 1;//经销商流水分成
     const CASH_TYPE_DEVIC = 2;//设备充电
-    const CASH_STATUS_INCOME = 1;//进入
+    const CASH_TYPE_TIXIAN = 3;//提现
+    const CASH_STATUS_INCOME = 1;//收入
     const CASH_STATUS_OUT = 2;//支出
 
     //session_key
