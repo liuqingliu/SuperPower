@@ -23,7 +23,7 @@ function querySummary(type) {
                 $('.footer ul li').remove();
                 $("#sum").text(data.result.sum_price);
                 // console.log(data);
-                var arry = data.result.cash_log;
+                var arry = data.result.revenue_summary_list;
                 if (type==2){
                     loadbydevice(arry)
                 }else {
