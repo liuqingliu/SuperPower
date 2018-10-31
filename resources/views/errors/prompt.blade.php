@@ -28,7 +28,7 @@
                 @if ($data['status']=='error')
                     <div class="callout callout-danger">
                         <p>{{$data['message']}}</p>
-                        <p>浏览器页面将在<b id="loginTime_error">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <p>将在<b id="loginTime_error">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
                         <a href="javascript:void(0);" class="jump_now">立即跳转</a>
                     </div>
                 @endif
@@ -36,7 +36,7 @@
                     <div class="callout callout-info">
                         <h4>未完成，继续</h4>
                         <p>{{$data['message']}}</p>
-                        <p>浏览器页面将在<b id="loginTime_continue">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <p>在<b id="loginTime_continue">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
                         <a href="javascript:void(0);" class="jump_now">立即跳转</a>
                     </div>
                 @endif
@@ -44,7 +44,7 @@
                     <div class="callout callout-warning">
                         <h4>警告</h4>
                         <p>{{$data['message']}}</p>
-                        <p>浏览器页面将在<b id="loginTime_warning">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <p>将在<b id="loginTime_warning">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
                         <a href="javascript:void(0);" class="jump_now">立即跳转</a>
                     </div>
                 @endif
@@ -52,7 +52,7 @@
                     <div class="callout callout-success">
                         <h4>成功</h4>
                         <p>{{$data['message']}}</p>
-                        <p>浏览器页面将在<b id="loginTime_success">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
+                        <p>将在<b id="loginTime_success">{{ $data['jumpTime'] }}</b>秒后跳转......</p>
                         <a href="javascript:void(0);" class="jump_now">立即跳转</a>
                     </div>
                 @endif

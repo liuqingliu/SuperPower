@@ -27,7 +27,7 @@ function doReset() {
                 Toast("重置密码成功",2000);
                 window.history.back(-1);
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });

@@ -195,7 +195,7 @@ function addPowerStation() {
             if (data.errno==0){
                 $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });
@@ -245,7 +245,7 @@ function querySingleEquipment() {
                     loaddealer(arry)
                 }
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });
@@ -306,7 +306,7 @@ function queryAllEquipment() {
                     dealerLoader(arry);
                 }
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });

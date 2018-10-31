@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/incomeAndExpense.js?v=1.0')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/incomeAndExpense.js?v=1.1')}}"></script>
 @endsection
 @section('title', '收支明细')
 @section('system', '运营商管理系统')

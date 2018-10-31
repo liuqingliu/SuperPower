@@ -120,7 +120,7 @@ function bindBank() {
                 Toast("银行卡绑定成功",3000);
                 self.location=document.referrer;
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });

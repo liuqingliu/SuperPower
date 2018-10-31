@@ -169,7 +169,7 @@ function changeDealer() {
             if (data.errno==0){
                 Toast('修改成功', 3000);
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });

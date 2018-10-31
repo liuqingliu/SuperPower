@@ -30,7 +30,7 @@ function querySummary(type) {
                     loadbydealer(arry)
                 }
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });

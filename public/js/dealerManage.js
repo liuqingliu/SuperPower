@@ -185,7 +185,7 @@ function addDealer() {
                 $("#buttonText").text("知道了");
                 $('#myNormalDialog').modal({backdrop: 'static', keyboard: false});
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });
@@ -225,7 +225,7 @@ function querySingleDealer() {
                 $('.body2-step2').show();
                loaddealer(arry)
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });
@@ -276,7 +276,7 @@ function queryAllDealer() {
                 $('.body2-step2').show();
                 dealerLoader(data.result);
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });

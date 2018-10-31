@@ -14,7 +14,7 @@ function querySummary() {
                 var arry = data.result.cash_log_list;
                 loadlog(arry)
             }else {
-                Toast(data.result);
+               Toast(data.errmsg);
             }
         },
     });
@@ -49,9 +49,9 @@ function loadlog(arry) {
         html += ' <div class="revenus-item-row" style="top:3rem;">';
         // html += '<span class="pull-left text-36">余额</span>';
         if (item.cash_status==1) {
-            html += '<span class="pull-right text-36">+'+item.cash_price+'</span>';
+            html += '<span class="pull-right text-36">+'+item.cash_price+'元</span>';
         }else {
-            html += '<span class="pull-right text-36">-'+item.cash_price+'</span>';
+            html += '<span class="pull-right text-36">-'+item.cash_price+'元</span>';
         }
         html += '</div>';
         html += '<div class="item-line">';
