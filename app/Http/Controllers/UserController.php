@@ -71,7 +71,7 @@ class UserController extends Controller
         $wxUser = session('wechat.oauth_user');
         $userInfo = User::where("openid",$wxUser['default']->id)->first();
         return view('user/detail',[
-            "user_info" => Common::getNeedObj(["nickname","phone","user_id","user_money","charging_total_cnt","charging_total_time","headimgurl"],$userInfo)
+            "user_info" => $userInfo
         ]);
     }
 
@@ -80,7 +80,7 @@ class UserController extends Controller
         $wxUser = session('wechat.oauth_user');
         $userInfo = User::where("openid",$wxUser['default']->id)->first();
         $outUserInfo = [
-            "user_info" => Common::getNeedObj(["openid","phone","user_type"], $userInfo),
+            "user_info" => $userInfo,
         ];
         if(!empty($userInfo->dealer)){
             $outUserInfo["is_set_pwd"] = !empty($userInfo->dealer->password) ? true : false;

@@ -92,7 +92,7 @@ class ReceiveMessage extends Command
                 }
             }
 
-            if (time() > $startTime + Common::ONE_DAY_SECONDES) {
+            if (time() > $startTime + Common::ONE_HOUR_SECONDES) {
                 break;
             }
         }

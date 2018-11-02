@@ -247,7 +247,7 @@ class MsnEventSubscriber
                     DB::transaction(function () use ($rechargeOrder) {
                         $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
                         $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                        $rechargeOrder->recharge_price = ceil(time() - strtotime($rechargeOrder->created_at)) / ($rechargeOrder->recharge_unit_second);
+                        $rechargeOrder->recharge_price = ceil((time() - strtotime($rechargeOrder->created_at)) / $rechargeOrder->recharge_unit_second);
                         $rechargeOrder->save();
                         $portInfo = EquipmentPort::where("equipment_id", $rechargeOrder->equipment_id)->where("port",
                             $rechargeOrder->port)->first();
@@ -262,7 +262,7 @@ class MsnEventSubscriber
                             $cardInfo->money = $cardInfo->money - $rechargeOrder->recharge_price;
                             $cardInfo->save();
                         }
-                    }, 5);
+                    });
                     event(new SendWulian($event->devid, $answer));
                     if ($rechargeOrder->type == Charge::ORDER_RECHARGE_TYPE_USER) {
                         $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();

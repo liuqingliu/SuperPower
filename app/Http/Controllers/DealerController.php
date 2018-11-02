@@ -457,7 +457,7 @@ class DealerController extends Controller
             "province" => "required|string",
             "city" => "required|string",
             "area" => "required|string",
-            "give_proportion" => "required|int|max:100|min:1",
+            "give_proportion" => "required|int|max:99|min:1",
             "son_id" => "required|string|max:16|min:10",
             "remark" => "sometimes|string|max:225",
             "user_type" => "required|int|in:1,2", //1,普通经销商，2，超级经销商
@@ -535,7 +535,7 @@ class DealerController extends Controller
                 $dealerInfo->give_proportion = $request->give_proportion;
                 $dealerInfo->remark = $request->remark;
                 $dealerInfo->save();
-            }, 5);
+            });
         } catch (\Exception $e) {
             Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
             return Common::myJson(ErrorCall::$errSys);
@@ -669,13 +669,12 @@ class DealerController extends Controller
 
         try {
             DB::transaction(function () use ($dealerInfo, $request) {
-                $dealerInfo->income_withdraw = $dealerInfo->income_withdraw + $request->money;
+                $dealerInfo->income_withdraw = $dealerInfo->income_withdraw + $request->money * 100;
                 $dealerInfo->save();
                 Tixian::create([
                     "openid" => $dealerInfo->openid,
                     "money" => $request->money * 100,
                 ]);
-                $dateTime = date("Y-m-d H:i:s");
                 CashLog::create([
                     "openid" => $dealerInfo->openid,
                     "equipment_id" => "",
@@ -683,10 +682,8 @@ class DealerController extends Controller
                     "cash_type" => Common::CASH_TYPE_TIXIAN,
                     "cash_status" => Common::CASH_STATUS_OUT,
                     "cash_price" => $request->money * 100,
-                    "created_at" => $dateTime,
-                    "updated_at" => $dateTime,
                 ]);
-            }, 5);
+            });
         } catch (\Exception $e) {
             Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
             return Common::myJson(ErrorCall::$errSys);
@@ -709,8 +706,7 @@ class DealerController extends Controller
             $cashLogList = CashLog::where("openid", $wxUser['default']->id)->get();
         }
         foreach ($cashLogList as &$cashlog) {
-            $cashlog->cash_price = $cashlog->cash_price / 100;
-            $cashlog->created_at = date("Y-m-d",strtotime($cashlog->created_at));
+            $cashlog->cash_price = sprintf("%.2f",$cashlog->cash_price * 1.00 / 100);
         }
         return Common::myJson(ErrorCall::$errSucc, ["cash_log_list" => $cashLogList]);
     }

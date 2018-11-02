@@ -58,24 +58,35 @@ class CalculateIncome implements ShouldQueue
             try {
                 DB::transaction(function () use ($orderId) {
                     $rechargeOrder = RechargeOrder::where("order_id", $orderId)->where("in_come_flag",
-                        Charge::ORDER_RECHARGE_FLAG_DEFAULT)->where("recharge_status",
-                        Charge::ORDER_RECHARGE_STATUS_END)->lockForUpdate()->first();
+                        Charge::ORDER_RECHARGE_FLAG_DEFAULT)->whereIn("recharge_status",
+                        [
+                            Charge::ORDER_RECHARGE_STATUS_END,
+                            Charge::ORDER_RECHARGE_STATUS_ENDING
+                        ])->lockForUpdate()->first();
                     if (empty($rechargeOrder)) {
-                        throw new \Exception("充电订单不存在:order_id=".$orderId);
+                        DB::rollback();
+                        throw new \Exception("充电订单不存在:order_id=" . $orderId);
                         return;
                     }
                     $rechargeOrder->in_come_flag = Charge::ORDER_RECHARGE_FLAG_IN_COMED;
                     $rechargeOrder->save();
                     $deviceInfo = $rechargeOrder->chargingEquipment;
                     $dealerInfo = Dealer::where("openid", $deviceInfo->openid)->first();
-                    if(empty($dealerInfo)) {
-                        throw new \Exception("经销商不存在:openid=".$deviceInfo->openid);
+                    if (empty($dealerInfo)) {
+                        DB::rollback();
+                        throw new \Exception("经销商不存在:openid=" . $deviceInfo->openid);
                         return;
                     }
-                    $addPrice = $rechargeOrder->recharge_price * (100 - $dealerInfo->give_proportion) * 0.01;
+                    if($dealerInfo->user->user_type == Common::USER_TYPE_ADMIN) {
+                        $addPrice = $rechargeOrder->recharge_price;
+                    }else {
+                        $addPrice = Common::getInt(floor($rechargeOrder->recharge_price * (100 - $dealerInfo->give_proportion) * 0.01));
+                    }
+                    if ($addPrice == 0) {
+                        return;
+                    }
                     $dealerInfo->total_income = $dealerInfo->total_income + $addPrice;
                     $dealerInfo->save();
-                    $dateTime = date("Y-m-d H:i:s");
                     CashLog::create([
                         "openid" => $deviceInfo->openid,
                         "equipment_id" => $deviceInfo->equipment_id,
@@ -83,13 +94,21 @@ class CalculateIncome implements ShouldQueue
                         "cash_type" => Common::CASH_TYPE_DEVIC,
                         "cash_status" => Common::CASH_STATUS_INCOME,
                         "cash_price" => $addPrice,
-                        "created_at" => $dateTime,
-                        "updated_at" => $dateTime,
                     ]);
+                    if($dealerInfo->user->user_type == Common::USER_TYPE_ADMIN) {
+                        return;
+                    }
                     $dealerInfoSuper = Dealer::where("openid", $dealerInfo->parent_openid)->first();
                     if (!empty($dealerInfoSuper)) {
-                        $spAddPrice = $rechargeOrder->recharge_price *
-                            $dealerInfoSuper->give_proportion * 0.01 * (100 - $dealerInfo->give_proportion) * 0.01;
+                        if($dealerInfoSuper->user->user_type == Common::USER_TYPE_ADMIN) {
+                            $spAddPrice = $rechargeOrder->recharge_price - $addPrice;
+                        }else {
+                            $spAddPrice = Common::getInt(floor($rechargeOrder->recharge_price * ($dealerInfo->give_proportion - $dealerInfoSuper->give_proportion) * 0.01));
+                        }
+
+                        if ($spAddPrice == 0) {
+                            return;
+                        }
                         $dealerInfoSuper->total_income = $dealerInfoSuper->total_income + $spAddPrice;
                         $dealerInfoSuper->save();
                         CashLog::create([
@@ -99,13 +118,16 @@ class CalculateIncome implements ShouldQueue
                             "cash_type" => Common::CASH_TYPE_SHARE,
                             "cash_status" => Common::CASH_STATUS_INCOME,
                             "cash_price" => $spAddPrice,
-                            "created_at" => $dateTime,
-                            "updated_at" => $dateTime,
                         ]);
+                        if($dealerInfoSuper->user->user_type == Common::USER_TYPE_ADMIN) {
+                            return;
+                        }
                         $cs = Dealer::where("openid", $dealerInfoSuper->parent_openid)->first();
                         if (!empty($cs)) {
-                            $csAddPrice = $rechargeOrder->recharge_price *
-                                $dealerInfoSuper->give_proportion * 0.01 * $dealerInfo->give_proportion * 0.01;
+                            $csAddPrice = $rechargeOrder->recharge_price - $addPrice - $spAddPrice;
+                            if ($csAddPrice == 0) {
+                                return;
+                            }
                             $cs->total_income = $cs->total_income + $csAddPrice;
                             $cs->save();
                             CashLog::create([
@@ -115,22 +137,19 @@ class CalculateIncome implements ShouldQueue
                                 "cash_type" => Common::CASH_TYPE_SHARE,
                                 "cash_status" => Common::CASH_STATUS_INCOME,
                                 "cash_price" => $csAddPrice,
-                                "created_at" => $dateTime,
-                                "updated_at" => $dateTime,
                             ]);
                         }
                     }
-                }, 5);
+                });
             } catch (\Exception $e) {
                 Log::debug("calculate_income:" . serialize($e->getMessage()));
                 return;
             }
         } catch (\Exception $exception) {
-            Log::info("calculate_income_error:" . $exception->getMessage());
             $errmsg = [
                 "adr" => __METHOD__ . "," . __FUNCTION__,
                 "desc" => "计算收入有误",
-                "detail" => "order_id=" . $this->orderId,
+                "detail" => "order_id=" . $this->orderId ."exception:".$exception->getMessage(),
             ];
             Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
         }
@@ -145,11 +164,10 @@ class CalculateIncome implements ShouldQueue
      */
     public function failed(\Exception $exception)
     {
-        Log::info("fail_calculate_income:" . serialize($exception->getMessage()));
         $errmsg = [
             "adr" => __METHOD__ . "," . __FUNCTION__,
             "desc" => "计算收入有误",
-            "detail" => "order_id=" . $this->orderId,
+            "detail" => "order_id=" . $this->orderId ."exception:".$exception->getMessage(),
         ];
         Mail::to(Common::$emailOferrorForWechcatOrder)->queue(new CommonError($errmsg));
     }

@@ -79,7 +79,7 @@ class ElectricController extends Controller
         $unitSecond = $chargingEquipment->charging_unit_second;
         $nowTime = time();
         return view('electric/recharge', [
-            "unit_hour" => $unitSecond / 60,
+            "unit_hour" => $unitSecond / 3600,
 //            "created_at" => $rechargeInfo->created_at,
             "socket_info" => $chargingEquipment->address . $rechargeInfo->jack_id . "号插座",
             "charge_time" => ceil(($nowTime-strtotime($rechargeInfo->created_at))/60),
@@ -90,7 +90,7 @@ class ElectricController extends Controller
     public function choosesocket(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'devid' => 'required|string|max:20|min:10',
+            'devid' => 'required|string|max:20|min:10|exists:charging_equipments,equipment_id',
         ]);
         if ($validator->fails()) {
             return redirect('/prompt')->with([
@@ -125,25 +125,12 @@ class ElectricController extends Controller
                 $portInfoRes[$port->port] = $port->status;
             }
         }
-
         return view('electric/choosesocket', [
-            "device_info" => Common::getNeedObj([
-                "equipment_status",
-                "net_status",
-                "equipment_id",
-                "province",
-                "city",
-                "area",
-                "street",
-                "address",
-                "manager_phone",
-                "charging_unit_second",
-                "jack_info",
-                "board_info",//存储board1
-            ], $device),
+            "device_info" => $device,
             "charge_type_list" => Charge::$chargeTypeList,
             "portInfo" => $portInfoRes,
-            "user_money" => $userInfo->user_money,
+            "user_money" => sprintf("%.2f",$userInfo->user_money*1.0 / 100),
+            "unit_hour" => $device->charging_unit_second / 3600,
         ]);
     }
 
@@ -285,6 +272,7 @@ class ElectricController extends Controller
                 return Common::myJson(ErrorCall::$errPortUserd);
             }
             //生成订单
+            $createTime =  date("Y-m-d H:i:s");
             $orderInfo = [
                 "order_id" => Snowflake::nextId(),
                 "recharge_str" => $userInfo->openid,
@@ -294,7 +282,8 @@ class ElectricController extends Controller
                 "recharge_unit_second" => $deviceInfo->charging_unit_second,
                 "recharge_price" => ceil(Charge::$chargeTypeList[$request->recharge_type] / $deviceInfo->charging_unit_second) * 100,
                 "type" => Charge::ORDER_RECHARGE_TYPE_USER,
-                "created_at" => date("Y-m-d H:i:s")
+                "recharge_end_time" => date("Y-m-d H:i:s",strtotime($createTime) + Charge::$chargeTypeList[$request->recharge_type]),
+                "created_at" => $createTime,
             ];
             RechargeOrder::insert($orderInfo);
             $portInfo->status = Eletric::PORT_STATUS_USE;
@@ -311,7 +300,7 @@ class ElectricController extends Controller
             "port" => intval($request->port),
             "left_time" => intval($orderInfo["recharge_total_time"])
         ];
-        //通知下位机
+//        通知下位机
         dispatch(new SendWulianQue($request->equipment_id, $callArr));
         dispatch(new SendTemplateMsg($userInfo->openid, "jDcmC6spBaUxKVHtnoVtJxRjb9dZEAAw13R2yokl5No", [
             "first" => "您好，充电已开始",
@@ -340,14 +329,14 @@ class ElectricController extends Controller
             DB::transaction(function () use ($rechargeOrder, $portInfo) {
                 $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_ENDING;
                 $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                $rechargeOrder->recharge_price = ceil(time() - strtotime($rechargeOrder->created_at))/($rechargeOrder->recharge_unit_second) ;
+                $rechargeOrder->recharge_price = intval(ceil((time() - strtotime($rechargeOrder->created_at))/$rechargeOrder->recharge_unit_second));
                 $rechargeOrder->save();
                 $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
                 $portInfo->save();
                 $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();
                 $userInfo->user_money = $userInfo->user_money - $rechargeOrder->price;
                 $userInfo->save();
-            }, 5);
+            });
         } catch (\Exception $e) {
             Log::debug(__FUNCTION__ . ":" . serialize($e->getMessage()));
             return Common::myJson(ErrorCall::$errSys);

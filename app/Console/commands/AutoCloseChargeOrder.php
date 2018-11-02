@@ -83,7 +83,7 @@ class AutoCloseChargeOrder extends Command
                                 $rechargeOrder->port)->first();
                             $portInfo->status = Eletric::PORT_STATUS_DEFAULT;
                             $portInfo->save();
-                        }, 5);
+                        });
                     } catch (\Exception $e) {
                         Log::debug("auto_close_error1:" . serialize($e->getMessage()));
                         return;
@@ -91,12 +91,10 @@ class AutoCloseChargeOrder extends Command
                 }
             }
             if ($rechargeOrder->recharge_status == Charge::ORDER_RECHARGE_STATUS_CHARGING) {
-                if (time() > strtotime($rechargeOrder->created_at) + $rechargeOrder->recharge_total_time) {
+                if (time() >= strtotime($rechargeOrder->recharge_end_time)) {
                     try {
                         DB::transaction(function () use ($rechargeOrder) {
                             $rechargeOrder->recharge_status = Charge::ORDER_RECHARGE_STATUS_END;
-                            $rechargeOrder->recharge_end_time = date("Y-m-d H:i:s");
-                            $rechargeOrder->recharge_price =  ceil(time() - strtotime($rechargeOrder->created_at))/($rechargeOrder->recharge_unit_second) ;
                             $rechargeOrder->save();
                             $portInfo = EquipmentPort::where("equipment_id",
                                 $rechargeOrder->equipment_id)->where("port",
@@ -113,7 +111,7 @@ class AutoCloseChargeOrder extends Command
                                 $cardInfo->money = $cardInfo->money - $rechargeOrder->recharge_price;
                                 $cardInfo->save();
                             }
-                        }, 5);
+                        });
                         if ($rechargeOrder->type == Charge::ORDER_RECHARGE_TYPE_USER) {
                             $userInfo = User::where("openid", $rechargeOrder->recharge_str)->first();
                             dispatch(new SendTemplateMsg($rechargeOrder->recharge_str,

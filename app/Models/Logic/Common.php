@@ -77,11 +77,6 @@ class Common
         return $res;
     }
 
-    public static function getNeedObj($needObj, $org)
-    {
-        return $org;
-    }
-
     public static function getCost($unitPrice, $time)
     {
         return ($unitPrice * 0.01 * 1.0 / 60.0) * $time;//unit单位是分，换为元，再算一个小时的，乘以时间就是花费
@@ -115,5 +110,10 @@ class Common
     {
         $preg =  '/^(13[0-9]|14[579]|15[0-3,5-9]|166|17[0135678]|18[0-9])\\d{8}$/';
         return (bool)preg_match($preg, $phone);
+    }
+
+    public static function getInt($floatVal)
+    {
+        return intval($floatVal * 10 /10);
     }
 }
