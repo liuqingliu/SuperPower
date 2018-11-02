@@ -138,7 +138,7 @@ $('#querydealer').click(function () {
     $('.body2-step2').hide();
     $('.body2-step2 ul a').remove();
 });
-var dealer_type = "";
+var dealer_type = 1;
 $('#normalDealer').click(function () {
     $('#normalDealer').addClass("text-40-white dealer-swich-seclect").removeClass("text-40-b3 dealer-swich");
     $('#superDealer').addClass("text-40-b3 dealer-swich").removeClass("text-40-white dealer-swich-seclect");
@@ -218,6 +218,7 @@ function querySingleDealer() {
         data: querydata,
         dataType: "json",
         success: function(data){
+            console.log(data);
             if (data.errno==0){
                 var arry = data.result;
                 $('.body1').hide();
@@ -240,12 +241,12 @@ function loaddealer(arry) {
         html += '<span class="pull-left text-36">'+dealer.name+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:2.5rem;">';
-        html += '<span class="pull-left mini-text">'+dealer.user.phone+'</span>';
+        html += '<span class="pull-left mini-text">'+dealer.phone+'</span>';
         html += ' <span class="pull-right mini-text">'+dealer.province+dealer.city+dealer.area+'</span>';
         html += '</div>';
         html += ' <div class="revenus-item-row" style="top:4rem;">';
         html += ' <span class="pull-left mini-text">'+dealer.id_card+'</span>';
-        if (dealer.user.user_status =="0"){
+        if (dealer.user_status =="0"){
             html += ' <span class="pull-right mini-text">正常</span>';
         }else {
             html += '<span class="pull-right mini-text-red">冻结</span>';
@@ -270,6 +271,7 @@ function queryAllDealer() {
         data: {},
         dataType: "json",
         success: function(data){
+            console.log(data);
             if (data.errno==0){
                 $('.body1').hide();
                 $('.body2-step1').hide();

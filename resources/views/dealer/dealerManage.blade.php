@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/dealerManage.js?v=1.8')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/dealerManage.js?v=1.2')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
