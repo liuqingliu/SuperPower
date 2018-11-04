@@ -2,12 +2,17 @@
 
 @section('title', '首页')
 @section('system', '运营商管理系统')
+@section('dialogMsg',"只有超级经销商才有管理权限")
+@section('buttonText',"知道了")
 @section('content')
 
 <section class="header">
     <div style="height:18.75rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
+        @endcomponent
+            @component('layouts._normaldialog')
+                <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->
         <div style="height:14rem;">
@@ -51,7 +56,7 @@
                 </a>
             </div>
             <div class="col-xs-4 col-md-4 col-lg-4">
-                <a href="{{route('dealer_manage')}}">
+                <a @if($type==1) data-toggle="modal" data-target="#myNormalDialog" @else href="{{route('dealer_manage')}}" @endif>
                     <img src="{{URL::asset('images/pm1_06.png')}}" class="img-responsive center-block nav-img">
                     <span class="borad-text-left text-center center-block nav-text">经销商管理</span>
                 </a>

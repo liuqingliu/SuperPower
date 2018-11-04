@@ -1,13 +1,15 @@
 
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/revenueSummary.js?v=1.2')}}"></script>
+@endsection
 @section('title', '营收汇总')
 @section('system', '运营商管理系统')
 @section('content')
 
 <section class="header">
     <div style="height:10rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->
@@ -42,75 +44,42 @@
                 </li>
                 <li class="revenus-heigh">
                     <span class="borad-text-left">数据来源：</span>
-                    <span class="borad-text-right">全部</span>
+                    <span class="borad-text-red" id="bydevice">按设备分析</span>
+                    <span class="borad-text-right" style="margin-left: 1rem;" id="bydealer">按经销商分析</span>
                 </li>
                 <li class="revenus-heigh">
                     <span class="borad-text-left">营收总汇：</span>
-                    <span class="borad-text-red">111.11</span>
+                    <span id="sum" class="borad-text-red"></span>
                 </li>
             </ul>
-            <div align="center" style="margin-top:2rem;">
-                <a class="button-style3">查询</a>
-            </div>
+            {{--<div align="center" style="margin-top:2rem;">--}}
+                {{--<a class="button-style3">查询</a>--}}
+            {{--</div>--}}
         </div>
     </div>
 </section>
 <section class="footer">
     <ul style="padding: 0;">
-        <li class="revenus-item">
-            <div class="revenus-item-row" style="top: 1rem;">
-                <span class="pull-left text-36">李小龙</span>
-                <span class="pull-right text-36-red">1346.01</span>
-            </div>
-            <div class="revenus-item-row" style="top:2.5rem;">
-                <span class="pull-left mini-text">18081884532</span>
-                <span class="pull-right mini-text">四川省成都市锦江区</span>
-            </div>
-            <div class="revenus-item-row" style="top:4rem;">
-                <span class="pull-left mini-text">510922199913254567</span>
-                <span class="pull-right mini-text-red">冻结</span>
-            </div>
-            <div class="item-line">
-                <div class="line-dark"></div>
-            </div>
-        </li>
-        <li class="revenus-item">
-            <div class="revenus-item-row" style="top: 1rem;">
-                <span class="pull-left text-36">李小龙</span>
-                <span class="pull-right text-36-red">1346.01</span>
-            </div>
-            <div class="revenus-item-row" style="top:2.5rem;">
-                <span class="pull-left mini-text">18081884532</span>
-                <span class="pull-right mini-text">四川省成都市锦江区</span>
-            </div>
-            <div class="revenus-item-row" style="top:4rem;">
-                <span class="pull-left mini-text">510922199913254567</span>
-                <span class="pull-right mini-text-red">冻结</span>
-            </div>
-            <div class="item-line">
-                <div class="line-dark"></div>
-            </div>
-        </li>
-        <li class="revenus-item">
-            <div class="revenus-item-row" style="top: 1rem;">
-                <span class="pull-left text-36">李小龙</span>
-                <span class="pull-right text-36-red">1346.01</span>
-            </div>
-            <div class="revenus-item-row" style="top:2.5rem;">
-                <span class="pull-left mini-text">18081884532</span>
-                <span class="pull-right mini-text">四川省成都市锦江区</span>
-            </div>
-            <div class="revenus-item-row" style="top:4rem;">
-                <span class="pull-left mini-text">510922199913254567</span>
-                <span class="pull-right mini-text-red">冻结</span>
-            </div>
-            <div class="item-line">
-                <div class="line-dark"></div>
-            </div>
-        </li>
+        {{--<li class="revenus-item">--}}
+            {{--<div class="revenus-item-row" style="top: 1rem;">--}}
+                {{--<span class="pull-left text-36">李小龙</span>--}}
+                {{--<span class="pull-right text-36-red">1346.01</span>--}}
+            {{--</div>--}}
+            {{--<div class="revenus-item-row" style="top:2.5rem;">--}}
+                {{--<span class="pull-left mini-text">18081884532</span>--}}
+                {{--<span class="pull-right mini-text">四川省成都市锦江区</span>--}}
+            {{--</div>--}}
+            {{--<div class="revenus-item-row" style="top:4rem;">--}}
+                {{--<span class="pull-left mini-text">510922199913254567</span>--}}
+                {{--<span class="pull-right mini-text-red">冻结</span>--}}
+            {{--</div>--}}
+            {{--<div class="item-line">--}}
+                {{--<div class="line-dark"></div>--}}
+            {{--</div>--}}
+        {{--</li>--}}
     </ul>
-    <div align="center">
-        <a href="#" class="text-45-b3">查看更多</a>
-    </div>
+    {{--<div align="center">--}}
+        {{--<a href="#" class="text-45-b3">查看更多</a>--}}
+    {{--</div>--}}
 </section>
 @endsection

@@ -39,7 +39,7 @@ $(function() {
     }
 
     //bind the click event for 'input' element
-    $("#psArea").click(function() {
+    $("#input2").click(function() {
         var PROVINCES = [],
             startCities = [],
             startDists = [];
@@ -117,6 +117,7 @@ $(function() {
         });
     });
 });
+changeVcode();
 function goback() {
     history.back(-1);
 }
@@ -124,15 +125,15 @@ var equipment_status = $('#status_on').data('equipmentStatus');
 $('#status_on').click(function () {
     $('#status_on').addClass("text-40-white equipment-swich-seclect").removeClass("text-40-b3 dealer-swich");
     $('#status_off').addClass("text-40-b3 dealer-swich").removeClass("text-40-white equipment-swich-seclect");
-    equipment_status = 0;
+    equipment_status = 1;
 });
 $('#status_off').click(function () {
     $('#status_on').addClass("text-40-b3 dealer-swich").removeClass("text-40-white equipment-swich-seclect");
     $('#status_off').addClass("text-40-white equipment-swich-seclect").removeClass("text-40-b3 dealer-swich");
-    equipment_status = 1;
+    equipment_status = 2;
 });
 
-//修改电数据
+//修改电站数据
 function changePowerStation() {
     if ($('#input5').val().length==0){
         Toast('请输入电价成本', 2000);
@@ -142,23 +143,24 @@ function changePowerStation() {
         Toast('请输入计费标准', 2000);
         return;
     }
-    if ($('#input7').val().length<4){
+    if ($('#phoneVcode').val().length<4){
         Toast('请输入完整验证码', 2000);
         return;
     }
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/dealer/doUpdateEquipment",
         data: {"street":$('#input3').val(),"address":$('#input4').val(),"province":$('#input2').val().split(" ")[0],"city":$('#input2').val().split(" ")[1]
-            ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"equipment_id":$('#input1').val()
-            ,"equipment_status":"1" ,"verifyCode":$('#input7').val()},
+            ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"equipment_id":$('#input1').text()
+            ,"equipment_status":equipment_status ,"verifyCode":$('#phoneVcode').val()},
         dataType: "json",
         success: function(data){
             if (data.errno==0){
-                $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
+                Toast('修改成功', 3000);
+                // $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });

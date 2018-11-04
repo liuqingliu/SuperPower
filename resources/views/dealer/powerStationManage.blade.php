@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/psManage.js?v=2.1')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/psManage.js?v=1.0')}}"></script>
     <script type="text/javascript" src="{{asset('/js/jquery.scs.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('/js/CNAddrArr.min.js')}}"></script>
 @endsection
@@ -14,7 +14,7 @@
     @endcomponent
 
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
     <div class="swich-container" align="center">
@@ -77,7 +77,7 @@
         <li class="borad-heigh">
             <span class="borad-text-left">充电计费</span>
             <input id="input6" class="my-input1 borad-text-left" type="number" name="identifying-code" placeholder="1元可充电时长 " oninput="if(value.length>4)value=value.slice(0,4)">
-            <span class="borad-text-right pull-right">单位：小時/元</span>
+            <span class="borad-text-right pull-right">单位：小时/元</span>
         </li>
         <li class="line"></li>
         <li class="borad-heigh">

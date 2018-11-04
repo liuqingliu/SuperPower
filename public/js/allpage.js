@@ -47,7 +47,7 @@ function getVcodewihtPhone(){
                 Toast("验证码已发送");
                 settime();
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });
@@ -64,6 +64,7 @@ function getVcodewihtoutPhone(){
         data: {"captcha":$('#imageVcode').val()},
         dataType: "json",
         success: function(data){
+            console.log(data);
             if (data.errno==0){
                 Toast("验证码已发送");
                 settime();

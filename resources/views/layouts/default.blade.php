@@ -13,7 +13,7 @@
 {{--<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">--}}
 <!-- 私有 -->
     {{--<link href="{{URL::asset('css/index.css?v=1.4')}}" rel="stylesheet">--}}
-    <link rel="stylesheet" href="/css/app.css?v=1.6.5.5">
+    <link rel="stylesheet" href="/css/app.css?v=1.0">
 
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
@@ -29,7 +29,7 @@
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{asset('/js/allpage.js')}}?v=2.6"></script>
+<script type="text/javascript" src="{{asset('/js/allpage.js')}}?v=2.7"></script>
 @yield('myjs')
 @yield('scanjs')
 </html>

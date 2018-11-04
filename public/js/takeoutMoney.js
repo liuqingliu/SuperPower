@@ -22,7 +22,7 @@ function setPassword() {
                 //     $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
                 // }
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });
@@ -53,7 +53,7 @@ function bindPhone() {
                 //     $('#bindbankdialog').modal({backdrop:'static',keyboard:false});
                 // }
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });
@@ -80,7 +80,7 @@ function doCarry() {
             if (data.errno==0){
                 $('#myNormalDialog').modal({backdrop:'static',keyboard:false});
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });
@@ -89,3 +89,12 @@ $(".dialog-single-button").click(function () {
     $('#myNormalDialog').modal('hide');
     location.replace(document.referrer);
 });
+function keyPress() {
+    var keyCode = event.keyCode;
+    if ((keyCode >= 48 && keyCode <= 57))
+    {
+        event.returnValue = true;
+    } else {
+        event.returnValue = false;
+    }
+}

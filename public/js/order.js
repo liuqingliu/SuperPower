@@ -4,32 +4,38 @@ $(document).ready(function () {
         recharge_money = $(this).data("real_price");
         $("ul li div").removeClass("money-block-select");
         $("li div p.real_price").addClass("text-48-grey").removeClass("text-48-white");
+        $("li div p.given_price").addClass("mini-text-red").removeClass("mini-text-white");
         if ($(this.getElementsByClassName('recharge-block_title')[0]).data("new_user")){
             $("ul li div div").css({'visibility':'visible'});
             this.getElementsByClassName('recharge-block_title')[0].style.visibility  ="hidden";
         }
         $(this).addClass("money-block-select");
         $(this.getElementsByClassName('real_price')[0]).addClass("text-48-white").removeClass("text-48-grey");
+        $(this.getElementsByClassName('given_price')[0]).addClass("mini-text-white").removeClass("mini-text-red");
         // $(".given_price").style.visibility = "hidden";
     });
 });
 
 
 $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+var isClick = true;
 function creatOrder() {
-    if (recharge_money!=0){
-        $.ajax({
-            type: 'POST',
-            url: "/user/createOrder",
-            data: {"pay_money_type":recharge_money},
-            dataType: "json",
-            success: function(data){
-                console.log(data);
-                callpay(data.result);
-            },
-        });
-    }else {
-     Toast("请选择充值金额",2000);
+    if (isClick) {
+        isClick = false;
+        if (recharge_money!=0){
+            $.ajax({
+                type: 'POST',
+                url: "/user/createOrder",
+                data: {"pay_money_type":recharge_money},
+                dataType: "json",
+                success: function(data){
+                    console.log(data);
+                    callpay(data.result);
+                },
+            });
+        }else {
+            Toast("请选择充值金额",2000);
+        }
     }
 }
 // //调用微信JS api 支付
@@ -43,10 +49,13 @@ function jsApiCall($res)
             WeixinJSBridge.log(answer.err_msg);
             // console.log(answer);
             // alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
+            isClick = true;
             if(answer.err_msg=='get_brand_wcpay_request:ok'){
             //     alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
                 window.location.href = "/user/orderanswser";
-            }else {
+            }else if (answer.err_msg=='get_brand_wcpay_request:cancel'){
+
+            } else {
                 alert('微信支付异常请，稍后再试！')
             }
         }

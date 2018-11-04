@@ -118,9 +118,9 @@ function bindBank() {
         success: function(data){
             if (data.errno==0){
                 Toast("银行卡绑定成功",3000);
-               history.go(-1);
+                self.location=document.referrer;
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });

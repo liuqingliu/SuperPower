@@ -1,12 +1,14 @@
 @extends('layouts.default')
-
+@section('myjs')
+    <script type="text/javascript" src="{{asset('/js/incomeAndExpense.js?v=1.1')}}"></script>
+@endsection
 @section('title', '收支明细')
 @section('system', '运营商管理系统')
 @section('content')
 
 
 <section class="header">
-    @component('layouts._dealerheader')
+   @component('layouts._dealerheader',['type'=>$type])
         <strong>Whoops!</strong> Something went wrong!
     @endcomponent
     <div class="swich-container" align="center" style="display: none">
@@ -25,19 +27,21 @@
 </section>
 <section class="body">
     <ul class="board1">
-        <li class="revenus-item">
-            <div class="revenus-item-row" style="top: 1.5rem;">
-                <span class="pull-left text-36">提成收入</span>
-                <span class="pull-right text-36-b3">2018-08-15</span>
-            </div>
-            <div class="revenus-item-row" style="top:3rem;">
-                <span class="pull-left text-36">余额8.67</span>
-                <span class="pull-right text-36">+1.32</span>
-            </div>
-            <div class="item-line">
-                <div class="line-dark"></div>
-            </div>
-        </li>
+        {{--@foreach($cash_log as $cashLogList)--}}
+        {{--<li class="revenus-item">--}}
+            {{--<div class="revenus-item-row" style="top: 1.5rem;">--}}
+                {{--<span class="pull-left text-36">提成收入</span>--}}
+                {{--<span class="pull-right text-36-b3">2018-08-15</span>--}}
+            {{--</div>--}}
+            {{--<div class="revenus-item-row" style="top:3rem;">--}}
+                {{--<span class="pull-left text-36">余额8.67</span>--}}
+                {{--<span class="pull-right text-36">+1.32</span>--}}
+            {{--</div>--}}
+            {{--<div class="item-line">--}}
+                {{--<div class="line-dark"></div>--}}
+            {{--</div>--}}
+        {{--</li>--}}
+        {{--@endforeach--}}
     </ul>
 </section>
 <section class="footer" style="display: none">

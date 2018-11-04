@@ -1,7 +1,7 @@
 
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.4')}}"></script>
+    <script type="text/javascript" src="{{asset('/js/takeoutMoney.js?1.5')}}"></script>
     @if(!$is_bind_phone)
         <script type="text/javascript">
             $(document).ready(function () {
@@ -42,7 +42,7 @@
     <input id="isbindbank" style="display: none" value="{{$is_bind_bank}}">
     <input id="issetpassword" style="display: none" value="{{$is_set_password}}">
     <div style="height:14.6875rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <!-- title -->
@@ -59,7 +59,7 @@
     <ul class="board1">
         <li class="borad-heigh">
             <span class="borad-text-left">提现金额</span>
-            <input class="my-input1 borad-text-left" type="number" id="money" placeholder="请输提现金额" oninput="if(value.length>9)value=value.slice(0,9)">
+            <input class="my-input1 borad-text-left" type="number" id="money" placeholder="请输提现金额" style="ime-mode:disabled;" onpaste="return false;"  onkeypress="keyPress()"  oninput="if(value.length>9)value=value.slice(0,9)">
         </li>
         <li class="line"></li>
         <li class="borad-heigh">

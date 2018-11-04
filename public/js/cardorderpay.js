@@ -4,10 +4,11 @@ $(document).ready(function () {
     $(".money-block").click(function () {
         $("ul li div").removeClass("money-block-select");
         $("li div p.real_price").addClass("text-48-grey").removeClass("text-48-white");
+        $("li div p.given_price").addClass("mini-text-red").removeClass("mini-text-white");
 
         $(this).addClass("money-block-select");
         $(this.getElementsByClassName('real_price')[0]).addClass("text-48-white").removeClass("text-48-grey");
-        // $(".given_price").style.visibility = "hidden";
+        $(this.getElementsByClassName('given_price')[0]).addClass("mini-text-white").removeClass("mini-text-red");
         var text = $(this.getElementsByClassName('real_price')[0]).text();
         recharge_money = parseInt(text.substring(1,text.length-1)) ;
     });
@@ -53,20 +54,24 @@ function scanCard(){
     });
 }
 $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+ var isClick = true;
 function creatCardOrder() {
-    if (recharge_money!=0){
-        $.ajax({
-            type: 'POST',
-            url: "/electric/createOrder",
-            data: {"pay_money_type":recharge_money,"card_id":recharge_cardNum},
-            dataType: "json",
-            success: function(data){
-                // console.log(data.errno);
-                callpay(data.result);
-            },
-        });
-    }else {
-        Toast("请选择充值金额",2000);
+    if (isClick){
+        isClick = false;
+        if (recharge_money!=0){
+            $.ajax({
+                type: 'POST',
+                url: "/electric/createOrder",
+                data: {"pay_money_type":recharge_money,"card_id": $('#cardNum').val()},
+                dataType: "json",
+                success: function(data){
+                    // console.log(data.errno);
+                    callpay(data.result);
+                },
+            });
+        }else {
+            Toast("请选择充值金额",2000);
+        }
     }
 }
 
@@ -80,9 +85,12 @@ function jsApiCall($res)
         function(answer){
             WeixinJSBridge.log(answer.err_msg);
             // alert(answer.err_code+">"+answer.err_desc+">"+answer.err_msg+">");
+            isClick = true;
             if(answer.err_msg=='get_brand_wcpay_request:ok'){
                window.location.href = "/electric/cardorderpayanswer";
-            }else {
+            }else if (answer.err_msg=='get_brand_wcpay_request:cancel'){
+
+            } else {
                 alert('微信支付异常请，稍后再试！')
             }
         }

@@ -117,6 +117,7 @@ $(function() {
         });
     });
 });
+$.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
 //点击激活电站
 function activePS() {
     $('.swich-bar2').css("background-image","url(/images/pm5_01_l.png)");
@@ -184,7 +185,7 @@ function addPowerStation() {
     }
     $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "/dealer/doUpdateEquipment",
         data: {"street":$('#input3').val(),"address":$('#input4').val(),"province":$('#input2').val().split(" ")[0],"city":$('#input2').val().split(" ")[1]
             ,"area":$('#input2').val().split(" ")[2],"charging_cost":$('#input5').val(),"charging_unit_min":$('#input6').val(),"equipment_id":$('#input1').val()
@@ -194,7 +195,7 @@ function addPowerStation() {
             if (data.errno==0){
                 $('#myNormalDialog').modal({backdrop: 'static', keyboard: false})
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });
@@ -221,8 +222,6 @@ function querySingleEquipment() {
     if ($('#input8').val()!=''){
         querydata = {"equipment_id":$('#input8').val()};
     }
-
-    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'GET',
         url: "/dealer/getEquipmentInfo",
@@ -246,7 +245,7 @@ function querySingleEquipment() {
                     loaddealer(arry)
                 }
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });
@@ -255,7 +254,7 @@ function loaddealer(arry) {
     for (var i = 0; i <arry.length; i++) {
         var equipment = arry[i];
         var html = '';//遍历拼接html
-        html += '<a href="../dealer/powerStationDetail?devid=869300034342473">';
+        html += '<a href="../dealer/powerStationDetail?devid='+equipment.equipment_id+'">';
         html += '<li class="revenus-item">';
         html += '<div class="revenus-item-row" style="top: 1rem;">';
         html += '<span class="pull-left text-36">'+equipment.street+equipment.address+'</span>';
@@ -283,7 +282,6 @@ function loaddealer(arry) {
 }
 //查询所有电站
 function queryAllEquipment() {
-    $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
     $.ajax({
         type: 'GET',
         url: "/dealer/getEquipmentInfoList",
@@ -308,7 +306,7 @@ function queryAllEquipment() {
                     dealerLoader(arry);
                 }
             }else {
-                Toast(data.errmsg);
+               Toast(data.errmsg);
             }
         },
     });

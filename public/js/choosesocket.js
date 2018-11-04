@@ -35,10 +35,11 @@ function opensocket(equipment_id) {
         dataType: "json",
         success: function(data){
             if(data.errno==0){
-                $('#myNormalDialog').modal('show');
+                $('#chooseDialog').modal('hide');
+                $('#myNormalDialog').modal({backdrop:'static',keyboard:false});
+            }else {
+                Toast(data.errmsg);
             }
-           console.log(data.errno+data.errmsg);
-
         },
     });
 }
@@ -62,5 +63,9 @@ $(document).ready(function () {
 });
 
 $('.dialog-single-button').click(function () {
-    history.back(-1);
-})
+    if (history.length = 1) {
+        window.location.replace("/user/center");
+    } else {
+        window.history.go(-1);
+    }
+});

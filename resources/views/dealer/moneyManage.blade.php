@@ -5,7 +5,7 @@
 @section('content')
 <section class="header">
     <div style="height:18.75rem;background: #F15A24;">
-        @component('layouts._dealerheader')
+       @component('layouts._dealerheader',['type'=>$type])
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
         <div style="height:14rem;">
@@ -71,21 +71,21 @@
             </li>
         </a>
 
-        <li class="line"></li>
-        <a href="{{route("electric_rechargelog")}}">
-            <li class="borad-heigh">
-                <img class="borad-img pull-left img-rounded" src="../images/pm9_04.png" alt="用户充电记录">
-                <span class="borad-text-left">用户充电记录</span>
-                <img class="img-getin pull-right img-rounded" src="../images/p15_02.png">
-            </li>
-        </a>
+        {{--<li class="line"></li>--}}
+        {{--<a href="{{route("electric_rechargelog")}}">--}}
+            {{--<li class="borad-heigh">--}}
+                {{--<img class="borad-img pull-left img-rounded" src="../images/pm9_04.png" alt="用户充电记录">--}}
+                {{--<span class="borad-text-left">用户充电记录</span>--}}
+                {{--<img class="img-getin pull-right img-rounded" src="../images/p15_02.png">--}}
+            {{--</li>--}}
+        {{--</a>--}}
 
-        <li class="line"></li>
-        <li class="borad-heigh">
-            <img class="borad-img pull-left img-rounded" src="../images/pm9_05.png" alt="旁观账户设置">
-            <span class="borad-text-left">旁观账户设置</span>
-            <img class="img-getin pull-right img-rounded" src="../images/p15_02.png">
-        </li>
+        {{--<li class="line"></li>--}}
+        {{--<li class="borad-heigh">--}}
+            {{--<img class="borad-img pull-left img-rounded" src="../images/pm9_05.png" alt="旁观账户设置">--}}
+            {{--<span class="borad-text-left">旁观账户设置</span>--}}
+            {{--<img class="img-getin pull-right img-rounded" src="../images/p15_02.png">--}}
+        {{--</li>--}}
     </ul>
 </section>
 <section class="footer">

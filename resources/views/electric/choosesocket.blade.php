@@ -1,7 +1,7 @@
 @extends('layouts.default')
 @section('myjs')
-    <script type="text/javascript" src="{{asset('/js/choosesocket.js?1.3')}}"></script>
-    @if(!(($device_info->equipment_status==0)&&($device_info->net_status==0)))
+    <script type="text/javascript" src="{{asset('/js/choosesocket.js?1.0')}}"></script>
+    @if(!(($device_info->equipment_status==1)&&($device_info->net_status==0)))
         <script type="text/javascript">
             $(document).ready(function () {
                 $('#myNormalDialog').modal('show');
@@ -23,7 +23,10 @@
             <strong>Whoops!</strong> Something went wrong!
         @endcomponent
     </section>
-    @if(($device_info->equipment_status==0)&&($device_info->net_status==0))
+    @component('layouts._normaldialog')
+        <strong>Whoops!</strong> Something went wrong!
+    @endcomponent
+    @if(($device_info->equipment_status==1)&&($device_info->net_status==0))
     <section class="body1">
         <div class="borad-text-left borad-heigh location-title">{{$device_info->address}}
             <a href="#" onclick="showHideCode()"><img id="choosesocke_updownimg" src="{{URL::asset('images/p17_01.png')}}" class="up-down"/></a>
@@ -81,13 +84,13 @@
                 </p>
                 <div style="height: 3rem;">
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{$device_info->charging_unit_second}}元</span>/4小时</p>
+                        <p class="middle-text2">1元/<span class="big-red-text">{{$unit_hour}}</span>小时</p>
                     </div>
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_second)*2}}元</span>/8小时</p>
+                        <p class="middle-text2">2元/<span class="big-red-text">{{($unit_hour)*2}}</span>小时</p>
                     </div>
                     <div class="col-xs-4 col-md-4 col-lg-4" align="center">
-                        <p class="middle-text2"><span class="big-red-text">{{($device_info->charging_unit_second)*3}}元</span>/12小时</p>
+                        <p class="middle-text2">3元/<span class="big-red-text">{{($unit_hour)*3}}</span>小时</p>
                     </div>
                 </div>
             </div>
@@ -145,7 +148,7 @@
                     </ul>
                     <div class="line-dark" style="margin-top: 1.5rem"></div>
                     <div style="height: 3.125rem;line-height: 3.125;padding-left: 1.75rem;padding-right: 1.75rem;">
-                        <div class="pull-left text-36" ><img src="{{URL::asset('images/p20_02.png')}}" style="height: 1.2rem;width: 1.2rem;">账户余额</div>
+                        <div class="pull-left text-36" ><img src="{{URL::asset('images/p20_02.png')}}" style="height: 1.2rem;width: 1.2rem;margin-right: 0.5rem;"> 账户余额</div>
                         <span  class="pull-right text-36">{{$user_money}}元</span>
                     </div>
                     <div class="text-36-red" style="height: 1.5rem;display: none" align="center">账户余额不足，请充值</div>
@@ -165,8 +168,5 @@
         </div>
         <div class="faile-text">获取联网设备状态</div>
     </section>
-    @component('layouts._normaldialog')
-        <strong>Whoops!</strong> Something went wrong!
-    @endcomponent
 @endif
 @endsection
