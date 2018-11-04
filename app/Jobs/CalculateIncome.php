@@ -87,10 +87,11 @@ class CalculateIncome implements ShouldQueue
                     }
                     $dealerInfo->total_income = $dealerInfo->total_income + $addPrice;
                     $dealerInfo->save();
+                    $cashId = Snowflake::nextId();
                     CashLog::create([
                         "openid" => $deviceInfo->openid,
                         "equipment_id" => $deviceInfo->equipment_id,
-                        "cash_id" => Snowflake::nextId(),
+                        "cash_id" => $cashId,
                         "cash_type" => Common::CASH_TYPE_DEVIC,
                         "cash_status" => Common::CASH_STATUS_INCOME,
                         "cash_price" => $addPrice,
@@ -114,7 +115,7 @@ class CalculateIncome implements ShouldQueue
                         CashLog::create([
                             "openid" => $dealerInfoSuper->openid,
                             "equipment_id" => $deviceInfo->equipment_id,
-                            "cash_id" => Snowflake::nextId(),
+                            "cash_id" => $cashId,
                             "cash_type" => Common::CASH_TYPE_SHARE,
                             "cash_status" => Common::CASH_STATUS_INCOME,
                             "cash_price" => $spAddPrice,
@@ -133,7 +134,7 @@ class CalculateIncome implements ShouldQueue
                             CashLog::create([
                                 "openid" => $cs->openid,
                                 "equipment_id" => $deviceInfo->equipment_id,
-                                "cash_id" => Snowflake::nextId(),
+                                "cash_id" => $cashId,
                                 "cash_type" => Common::CASH_TYPE_SHARE,
                                 "cash_status" => Common::CASH_STATUS_INCOME,
                                 "cash_price" => $csAddPrice,

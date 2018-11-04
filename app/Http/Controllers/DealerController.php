@@ -335,13 +335,14 @@ class DealerController extends Controller
         if ($userInfo->user_type == Common::USER_TYPE_NORMAL || $userInfo->user_type == Common::USER_TYPE_JXS) {
             return Common::myJson(ErrorCall::$errNotPermit);
         }
-        Log::info("request-dealer-info:" . serialize($request->all()));
         $searchUser = null;
+        $nameFlag = false;
         if (!empty($request->phone)) {
             $searchUser = User::where("phone", $request->phone)->get();
         } elseif (!empty($request->user_id)) {
             $searchUser = User::where("user_id", $request->user_id)->get();
         } elseif (!empty($request->name)) {
+            $nameFlag = true;
             $searchUser = Dealer::where("name", 'like', $request->name)->get();
         }
         if (empty($searchUser)) {
@@ -350,18 +351,32 @@ class DealerController extends Controller
         if ($userInfo->user_type == Common::USER_TYPE_ADMIN) {
             $dealerList = null;
             foreach ($searchUser as $user) {
-                $dealerInfo = $user->dealer;
-                $dealerInfo->phone = $user->phone;
-                $dealerInfo->user_status = $user->user_status;
+                if($nameFlag) {
+                    $dealerInfo = $user;
+                    $dealerInfo->phone = $dealerInfo->user->phone;
+                    $dealerInfo->user_status = $dealerInfo->user->user_status;
+                    unset($dealerInfo->user);
+                }else{
+                    $dealerInfo = $user->dealer;
+                    $dealerInfo->phone = $user->phone;
+                    $dealerInfo->user_status = $user->user_status;
+                }
                 $dealerList[] = $dealerInfo;
             }
             return Common::myJson(ErrorCall::$errSucc, $dealerList);
         } else {//超级经销商
             $dealerList = null;
             foreach ($searchUser as $user) {
-                $dealerInfo = $user->dealer->where("parent_openid", $userInfo->openid)->first();
-                $dealerInfo->phone = $user->phone;
-                $dealerInfo->user_status = $user->user_status;
+                if($nameFlag && $user->parent_openid == $userInfo->openid) {
+                    $dealerInfo = $user;
+                    $dealerInfo->phone = $dealerInfo->user->phone;
+                    $dealerInfo->user_status = $dealerInfo->user->user_status;
+                    unset($dealerInfo->user);
+                }else{
+                    $dealerInfo = $user->dealer()->where("parent_openid", $userInfo->openid)->first();
+                    $dealerInfo->phone = $user->phone;
+                    $dealerInfo->user_status = $user->user_status;
+                }
                 if (!empty($dealerInfo)) {
                     $dealerList[] = $dealerInfo;
                 }
@@ -377,7 +392,7 @@ class DealerController extends Controller
         if ($userInfo->user_type == Common::USER_TYPE_NORMAL || $userInfo->user_type == Common::USER_TYPE_JXS) {
             return Common::myJson(ErrorCall::$errNotPermit);
         }
-        $dealerInfo = session(Common::SESSION_KEY_DEALER);
+        $dealerInfo = $userInfo->dealer;
 
         if ($userInfo->user_type == Common::USER_TYPE_ADMIN) {
             $dealerList = null;

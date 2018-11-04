@@ -18,7 +18,7 @@ class CreateCashlogsTable extends Migration
             $table->increments('id');
             $table->string('openid',34)->index()->default("");
             $table->string('equipment_id',16)->index()->default("");
-            $table->string('cash_id',34)->unique()->default("");
+            $table->string('cash_id',34)->index()->default("");
             $table->unsignedTinyInteger('cash_type')->default(0);
             $table->unsignedTinyInteger('cash_status')->default(0);
             $table->unsignedInteger('cash_price')->default(0);
